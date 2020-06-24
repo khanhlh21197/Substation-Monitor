@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.fragments.PostFragment">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/custom_action_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/circularImageView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+
+        android:layout_marginTop="8dp"
+        android:src="@drawable/profile_photo"
+        app:civ_border_color="@color/cyan"
+        app:civ_border_width="2dp"
+        app:civ_shadow="true"
+        app:civ_shadow_color="#3f51b5"
+        app:civ_shadow_radius="1"
+        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <EditText
+
+        android:id="@+id/editText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/login_et_background"
+        android:gravity="top"
+        android:hint="Post a new suggest or request"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/circularImageView"
+        app:layout_constraintVertical_bias="0.0"></EditText>
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:fontFamily="@font/advent_pro_light"
+        android:text="Profile Name"
+        android:textColor="@color/coral"
+        app:layout_constraintBottom_toBottomOf="@+id/circularImageView"
+        app:layout_constraintStart_toEndOf="@+id/circularImageView"
+        app:layout_constraintTop_toTopOf="@+id/circularImageView" />
+
+    <LinearLayout
+        android:background="@drawable/login_et_background"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+
+            android:src="@drawable/emoji"
+            android:layout_marginLeft="16dp"
+            android:layout_gravity="center"
+            android:layout_width="33dp"
+            android:layout_height="33dp">
+
+        </ImageView>
+        <ImageView
+            android:src="@drawable/gallery"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center"
+            android:layout_width="33dp"
+            android:layout_height="33dp">
+
+        </ImageView>
+        <ImageView
+
+            android:src="@drawable/people"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center"
+            android:layout_width="33dp"
+            android:layout_height="33dp">
+
+        </ImageView>
+        <ImageView
+            android:src="@drawable/location"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center"
+            android:layout_width="33dp"
+            android:layout_height="33dp">
+
+        </ImageView>
+        <ImageView
+            android:src="@drawable/hashtag"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center"
+            android:layout_width="33dp"
+            android:layout_height="33dp">
+
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <Button
+                android:layout_margin="8dp"
+                android:textColor="@color/white"
+                android:text="Lets post it"
+                android:background="@drawable/login_bt_background"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </Button>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

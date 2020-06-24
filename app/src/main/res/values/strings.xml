@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Substation Monitoring</string>
+
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="login">Đăng nhập</string>
+    <string name="login_success">Đăng nhập thành công</string>
+    <string name="login_error">Đăng nhập thất bại</string>
+    <string name="login_uppercase">ĐĂNG NHẬP</string>
+    <string name="register">Đăng ký</string>
+    <string name="require_length">Tài khoản và mật khẩu phải nhiều hơn 6 kí tự</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
