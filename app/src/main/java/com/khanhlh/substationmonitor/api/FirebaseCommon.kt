@@ -1,46 +1,92 @@
 package com.khanhlh.substationmonitor.api
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.*
 import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.extensions.set
+import com.khanhlh.substationmonitor.utils.DEVICES
 import durdinapps.rxfirebase2.RxFirestore
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 
 object FirebaseCommon {
     @SuppressLint("CheckResult")
     fun firestore(
-        store: FirebaseFirestore,
         collection: String,
         document: String
-    ): MutableLiveData<DocumentSnapshot> {
-        val documentSnapshot = MutableLiveData<DocumentSnapshot>()
-        val docRef = store.collection(collection).document(document)
-        RxFirestore.observeDocumentRef(docRef).subscribe { documentSnapshot.set(it) }
-        return documentSnapshot
+    ): Flowable<DocumentSnapshot> {
+        val docRef = db.collection(collection).document(document)
+        return RxFirestore.observeDocumentRef(docRef)
     }
 
-    fun getListDocument(collection: String): Observable<List<String>> {
-        return Observable.create { emitter ->
+    fun getListDocument(collection: String): Single<QuerySnapshot> {
+        return Single.create { emitter ->
             db.collection(collection).get().addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val docs = mutableListOf<String>()
-                    for (doc: QueryDocumentSnapshot in it.result!!) {
-                        docs.add(doc.id)
-                    }
-                    emitter.onNext(docs)
+                    emitter.onSuccess(it.result!!)
                 } else {
                     logD(it.exception.toString())
+                    emitter.onError(it.exception!!)
                 }
             }
         }
     }
+
+//    fun observerAllDevices(): Observable<Map<String, Any>> =
+//        Observable.create { emitter ->
+//            run {
+//                db.collection(DEVICES).addSnapshotListener { querySnapshot, e ->
+//                    if (e != null) {
+//                        logD(e.toString())
+//                        emitter.onError(e)
+//                        return@addSnapshotListener
+//                    } else {
+//                        querySnapshot!!.forEach {
+//                            logD(it.toString())
+//                            emitter.onNext(it.data)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+    fun observerAllDevices(): Observable<QueryDocumentSnapshot> =
+        Observable.create { emitter ->
+            run {
+                db.collection(DEVICES).addSnapshotListener { querySnapshot, e ->
+                    if (e != null) {
+                        logD(e.toString())
+                        emitter.onError(e)
+                        return@addSnapshotListener
+                    } else {
+                        querySnapshot!!.forEach {
+                            logD(it.toString() + System.currentTimeMillis())
+                            emitter.onNext(it)
+                        }
+                    }
+                }
+            }
+        }
+
+    fun observerAllDevice() = RxFirestore.getCollection(db.collection(DEVICES))
+
+    fun observerDevice(doc: String): Observable<DocumentSnapshot> =
+        Observable.create { emitter ->
+            apply {
+                db.collection(DEVICES).document(doc)
+                    .addSnapshotListener { documentSnapshot, e ->
+                        if (e != null) {
+                            emitter.onError(e)
+                            return@addSnapshotListener
+                        } else {
+                            emitter.onNext(documentSnapshot!!)
+                            logD(documentSnapshot.toString())
+                        }
+                    }
+            }
+        }
 
     fun <K, V> push(
         collection: String,
@@ -59,6 +105,10 @@ object FirebaseCommon {
                     logD("onError")
                 }
         }
+
+    public interface Callback<T> {
+        fun onSuccess(t: T)
+    }
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val db = FirebaseFirestore.getInstance()

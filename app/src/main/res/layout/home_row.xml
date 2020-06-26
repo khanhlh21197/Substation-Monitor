@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    app:cardCornerRadius="15dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <data>
+
+        <variable
+            name="item"
+            type="com.khanhlh.substationmonitor.model.Device" />
+
+        <variable
+            name="presenter"
+            type="com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="200dp"
+        android:onClick="@{v -> presenter.onItemClick(v, item)}"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/bg_5" />
+            android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="70dp"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:scaleType="fitXY" />
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bg_5" />
 
-            <TextView
-                android:id="@+id/title"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@{item.id}"
+                    android:textColor="@color/textColor"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Bed Room"
-                android:textColor="@color/textColor"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                android:layout_alignParentBottom="true"
+                android:layout_margin="10dp">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvDeviceCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@{item.temp}"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="10dp">
-
-            <TextView
-                android:id="@+id/tvDeviceCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="5 Devices"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="14dp"
-                android:textStyle="bold" />
-
-            <com.suke.widget.SwitchButton
-                android:id="@+id/switchBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="5dp" />
+                <com.suke.widget.SwitchButton
+                    android:id="@+id/switchBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="5dp" />
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+
+</layout>

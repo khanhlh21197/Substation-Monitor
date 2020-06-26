@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -14,22 +15,44 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:background="@color/forestgreen"
         tools:context=".ui.main.fragments.home.HomeFragment">
 
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="FRAGMENT HOME"
-            android:textSize="70dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v -> viewModel.observerDevice()}"
+            android:text="observe"
+            app:layout_constraintBottom_toTopOf="@id/recycler"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/insert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{(v) -> viewModel.insertUserToFireStore()}" />
+            android:onClick="@{v -> viewModel.insertUserToFireStore()}"
+            android:text="insert"
+            app:layout_constraintBottom_toTopOf="@id/recycler"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v -> viewModel.observerAllDevices()}"
+            android:text="get all devices"
+            app:layout_constraintBottom_toTopOf="@id/insert"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:reverseLayout="true"
+            tools:itemCount="2"
+            tools:listitem="@layout/home_row" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

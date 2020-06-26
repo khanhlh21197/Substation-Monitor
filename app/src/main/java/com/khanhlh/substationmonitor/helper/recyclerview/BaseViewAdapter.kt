@@ -6,7 +6,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.databinding.ObservableList
 import androidx.databinding.ViewDataBinding
-import androidx.databinding.library.baseAdapters.BR
+import com.khanhlh.substationmonitor.BR
 import com.khanhlh.substationmonitor.helper.recyclerview.animators.ScaleInItemAnimator
 
 /**
