@@ -131,6 +131,8 @@
     <color name="backgroungColor">#f5f5f5</color>
     <color name="white">#ffffff</color>
 
+    <color name="deep_sky_blue">#03A9F4</color>
+
     <!--OnBoard-->
 
     <color name="selected_dot">#2D9CDB</color>

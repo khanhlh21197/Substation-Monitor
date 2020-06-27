@@ -7,12 +7,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
+import com.khanhlh.substationmonitor.extensions.get
 import com.khanhlh.substationmonitor.extensions.init
 import com.khanhlh.substationmonitor.extensions.set
 
 class RegisterActivityViewModel : BaseViewModel<Any?>() {
-    var mail: String = ""
-    var password: String = ""
+    var mail = MutableLiveData<String>()
+    var password = MutableLiveData<String>()
+    var rePassword = MutableLiveData<String>()
     val onBackPress = MutableLiveData<Boolean>().init(false)
     val isRegisterSuccess = MutableLiveData<Boolean>().init(false)
 
@@ -20,31 +22,26 @@ class RegisterActivityViewModel : BaseViewModel<Any?>() {
         tryRegister()
     }
 
-
-    fun afterMailChange(s: CharSequence) {
-        mail = s.toString()
-        println(mail)
-    }
-
-    fun afterPasswordChange(s: CharSequence) {
-        password = s.toString()
-    }
-
     @SuppressLint("CheckResult")
     fun tryRegister() {
-        if (password.length > 6 && mail.length > 4) {
-            showLoading()
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(mail, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        isRegisterSuccess.set(true)
-                        errorMessage.value = MyApp.context.getString(R.string.login_success)
-                    } else {
-                        isRegisterSuccess.set(false)
-                        errorMessage.value = task.exception?.localizedMessage
+        if (password.get()!!.length > 6 && mail.get()!!.length > 4) {
+            if (password.get() == rePassword.get()) {
+                showLoading()
+                FirebaseAuth.getInstance()
+                    .createUserWithEmailAndPassword(mail.get()!!, password.get()!!)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            isRegisterSuccess.set(true)
+                            errorMessage.value = MyApp.context.getString(R.string.login_success)
+                        } else {
+                            isRegisterSuccess.set(false)
+                            errorMessage.value = task.exception?.localizedMessage
+                        }
+                        hideLoading()
                     }
-                    hideLoading()
-                }
+            } else {
+                errorMessage.value = MyApp.context.getString(R.string.require_length)
+            }
         } else {
             errorMessage.value = MyApp.context.getString(R.string.require_length)
         }

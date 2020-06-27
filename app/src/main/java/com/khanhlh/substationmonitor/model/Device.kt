@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.model
 
+import android.graphics.Bitmap
 import com.google.firebase.firestore.PropertyName
 
 data class Device(
@@ -7,5 +8,6 @@ data class Device(
     @PropertyName("name")
     val name: String,
     @PropertyName("temp")
-    val temp: String
+    val temp: String,
+    val image: Bitmap? = null
 )

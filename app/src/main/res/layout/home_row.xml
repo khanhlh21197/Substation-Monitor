@@ -17,7 +17,7 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:onClick="@{v -> presenter.onItemClick(v, item)}"
+        android:onClick="@{(v)->presenter.onItemClick(v,item)}"
         app:cardCornerRadius="15dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true">
@@ -38,19 +38,34 @@
                 android:orientation="vertical"
                 android:padding="10dp">
 
-                <ImageView
-                    android:id="@+id/image_view"
+                <RelativeLayout
                     android:layout_width="70dp"
                     android:layout_height="70dp"
-                    android:layout_gravity="center"
-                    android:scaleType="fitXY" />
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:onClick="@{(v)->presenter.onImageClick(v)}"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_air_conditioner" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_edit" />
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{item.id}"
+                    android:text="@{item.name}"
                     android:textColor="@color/textColor"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -78,7 +93,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="5dp" />
+                    android:layout_marginTop="5dp"
+                    android:onClick="@{v -> presenter.onImageClick(v)}" />
             </RelativeLayout>
         </RelativeLayout>
 

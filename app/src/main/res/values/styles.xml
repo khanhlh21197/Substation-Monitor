@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
+
+    <style name="TextAppearance.FloatLabelHint"
+        parent="@android:style/TextAppearance.Material.Caption">
+        <item name="android:textColor">?android:colorAccent</item>
+    </style>
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -49,63 +50,194 @@
                 android:layout_margin="24dp"
                 android:orientation="vertical">
 
-                <EditText
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:afterTextChanged="@{(editable)->viewModel.afterMailChange(editable)}"
-                    android:background="@drawable/login_et_background"
-                    android:hint="@string/email"
-                    android:padding="8dp">
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/custom_edit_text"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
 
-                </EditText>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/ic_user"
+                        tools:ignore="ContentDescription" />
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="12dp"
-                    android:afterTextChanged="@{(editable)->viewModel.afterPasswordChange(editable)}"
-                    android:background="@drawable/login_et_background"
-                    android:hint="@string/password"
-                    android:padding="8dp">
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="#CACACA" />
 
-                </EditText>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-
-                        android:id="@+id/btLogin"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/email_float_label"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/login_bt_background"
-                        android:onClick="@{viewModel.registerClickListener}"
-                        android:text="@string/register"
-                        android:textColor="@color/white"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:error="@{viewModel.mail}"
+                        app:errorEnabled="true"
+                        app:errorTextColor="@color/red"
+                        app:hintTextAppearance="@style/TextAppearance.FloatLabelHint">
 
-                    <TextView
-                        android:id="@+id/btnLogin"
-                        android:layout_width="wrap_content"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/email"
+                            android:inputType="textPassword"
+                            android:selectAllOnFocus="true"
+                            android:text="@={viewModel.mail}"
+                            android:textColorHighlight="@color/deep_sky_blue" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/custom_edit_text"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/ic_password"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="#CACACA" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/rePassword_float_label"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginLeft="16dp"
-                        android:fontFamily="@font/advent_pro_light"
-                        android:text="@string/login_uppercase"
-                        app:layout_constraintBottom_toBottomOf="@+id/btLogin"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/btLogin"
-                        app:layout_constraintVertical_bias="0.448" />
+                        app:errorEnabled="true"
+                        app:hintTextAppearance="@style/TextAppearance.FloatLabelHint"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="?colorControlNormal">
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/password"
+                            android:inputType="textPassword"
+                            android:selectAllOnFocus="true"
+                            android:text="@={viewModel.password}"
+                            android:textColorHighlight="@color/deep_sky_blue" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llSignUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:id="@+id/llRePassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/custom_edit_text"
+                        android:padding="10dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:background="@drawable/ic_password"
+                            tools:ignore="ContentDescription" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:background="#CACACA" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/password_float_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="-10dp"
+                            app:errorEnabled="true"
+                            app:hintTextAppearance="@style/TextAppearance.FloatLabelHint"
+                            app:passwordToggleEnabled="true"
+                            app:passwordToggleTint="?colorControlNormal">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/rePassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:hint="@string/re_password"
+                                android:inputType="textPassword"
+                                android:selectAllOnFocus="true"
+                                android:text="@={viewModel.rePassword}"
+                                android:textColorHighlight="@color/deep_sky_blue" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btLogin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/login_bt_background"
+                            android:onClick="@{viewModel.registerClickListener}"
+                            android:text="@string/register"
+                            android:textColor="@color/white"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/btnLogin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:fontFamily="@font/advent_pro_light"
+                            android:text="@string/login_uppercase"
+                            app:layout_constraintBottom_toBottomOf="@+id/btLogin"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/btLogin"
+                            app:layout_constraintVertical_bias="0.448" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+                </LinearLayout>
             </LinearLayout>
-
 
         </LinearLayout>
 
@@ -117,15 +249,15 @@
             android:scaleType="fitXY"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/cornerdesign" />
+            app:srcCompat="@drawable/cornerdesign"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginLeft="24dp"
-            android:fontFamily="@font/advent_pro_light"
+            android:fontFamily="@font/montserrat_regular"
             android:text="@string/register"
             android:textAllCaps="false"
             android:textColor="@color/themeColor1"
