@@ -78,7 +78,7 @@
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:hint="@string/email"
-                            android:inputType="textPassword"
+                            android:inputType="textEmailAddress"
                             android:selectAllOnFocus="true"
                             android:text="@={viewModel.mail}"
                             android:textColorHighlight="@color/deep_sky_blue" />

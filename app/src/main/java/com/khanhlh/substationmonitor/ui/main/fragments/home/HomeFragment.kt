@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.integration.android.IntentIntegrator
@@ -24,9 +25,11 @@ import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
 import com.khanhlh.substationmonitor.extensions.dpToPx
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.extensions.replaceFragmentSafely
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.Device
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -37,7 +40,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
     lateinit var txtInputDevice: EditText
 
     private val mAdapter by lazy {
-        SingleTypeAdapter<Device>(mContext, R.layout.home_row, vm.list).apply {
+        SingleTypeAdapter<Device>(mContext, R.layout.item_device, vm.list).apply {
             itemPresenter = this@HomeFragment
         }
     }
@@ -71,12 +74,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
                     outRect.top = activity?.dpToPx(R.dimen.xdp_12_0) ?: 0
                 }
             })
+            isPrepared = true
         }
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_home
     override fun onItemClick(v: View?, item: Device) {
         logD(item.id)
+        (activity as AppCompatActivity).replaceFragmentSafely(
+            DetailDeviceFragment.newInstance(item.id),
+            "",
+            false
+        )
     }
 
     override fun onImageClick(v: View?) {

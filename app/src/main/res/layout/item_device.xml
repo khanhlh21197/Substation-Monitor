@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -51,6 +52,17 @@
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_air_conditioner" />
 
+                    <me.angrybyte.blinkerview.BlinkerView
+                        android:id="@+id/image_warning"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:scaleType="fitXY"
+                        android:visibility="@{item.warning}"
+                        app:blink_drawable="@drawable/ic_warning_red"
+                        app:blink_interval="200"
+                        app:blink_scale_type="constrain"
+                        tools:visibility="gone" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -83,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{item.temp}"
+                    android:text="@{item.tempDisplay}"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="14dp"
                     android:textStyle="bold" />

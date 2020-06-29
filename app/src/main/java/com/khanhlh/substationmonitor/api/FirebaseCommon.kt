@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.utils.DEVICES
+import com.khanhlh.substationmonitor.utils.USER_COLLECTION
 import durdinapps.rxfirebase2.RxFirestore
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -34,23 +35,15 @@ object FirebaseCommon {
         }
     }
 
-//    fun observerAllDevices(): Observable<Map<String, Any>> =
-//        Observable.create { emitter ->
-//            run {
-//                db.collection(DEVICES).addSnapshotListener { querySnapshot, e ->
-//                    if (e != null) {
-//                        logD(e.toString())
-//                        emitter.onError(e)
-//                        return@addSnapshotListener
-//                    } else {
-//                        querySnapshot!!.forEach {
-//                            logD(it.toString())
-//                            emitter.onNext(it.data)
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    fun getProfile(): Observable<DocumentSnapshot> = Observable.create { emitter ->
+        db.collection(USER_COLLECTION).document(currentUser!!.uid).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                emitter.onNext(it.result!!)
+            } else {
+                logD(it.exception.toString())
+            }
+        }
+    }
 
     fun observerAllDevices(): Observable<QueryDocumentSnapshot> =
         Observable.create { emitter ->
@@ -72,10 +65,10 @@ object FirebaseCommon {
 
     fun observerAllDevice() = RxFirestore.getCollection(db.collection(DEVICES))
 
-    fun observerDevice(doc: String): Observable<DocumentSnapshot> =
+    fun observerDevice(id: String): Observable<DocumentSnapshot> =
         Observable.create { emitter ->
             apply {
-                db.collection(DEVICES).document(doc)
+                db.collection(DEVICES).document(id)
                     .addSnapshotListener { documentSnapshot, e ->
                         if (e != null) {
                             emitter.onError(e)

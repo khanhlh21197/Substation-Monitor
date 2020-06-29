@@ -6,15 +6,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.Observable
-import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import com.khanhlh.substationmonitor.BuildConfig
 import com.khanhlh.substationmonitor.annotation.ToastType
@@ -89,8 +90,8 @@ fun <T : Any> androidx.fragment.app.FragmentActivity.argument(key: String) =
     lazy { intent.extras!![key] as? T ?: error("Intent Argument $key is missing") }
 
 fun AppCompatActivity.switchFragment(
-    current: androidx.fragment.app.Fragment?,
-    targetFg: androidx.fragment.app.Fragment,
+    current: Fragment?,
+    targetFg: Fragment,
     tag: String? = null
 ) {
     val ft = supportFragmentManager.beginTransaction()
@@ -100,6 +101,26 @@ fun AppCompatActivity.switchFragment(
     }
     ft.show(targetFg)
     ft.commitAllowingStateLoss();
+}
+
+fun AppCompatActivity.replaceFragmentSafely(
+    fragment: Fragment,
+    tag: String,
+    allowStateLoss: Boolean = false,
+    @AnimRes enterAnimation: Int = 0,
+    @AnimRes exitAnimation: Int = 0,
+    @AnimRes popEnterAnimation: Int = 0,
+    @AnimRes popExitAnimation: Int = 0
+) {
+    val ft = supportFragmentManager
+        .beginTransaction()
+        .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
+        .replace(com.khanhlh.substationmonitor.R.id.nav_host_container, fragment, tag)
+    if (!supportFragmentManager.isStateSaved) {
+        ft.commit()
+    } else if (allowStateLoss) {
+        ft.commitAllowingStateLoss()
+    }
 }
 
 fun Activity.dpToPx(@DimenRes resID: Int): Int = this.resources.getDimensionPixelOffset(resID)

@@ -17,7 +17,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import com.khanhlh.substationmonitor.R
+import com.khanhlh.substationmonitor.model.Device
+import com.khanhlh.substationmonitor.ui.main.MainActivity
 import com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel
+import com.khanhlh.substationmonitor.warning.NotificationIntentService
 import com.khanhlh.substationmonitor.warning.WarningService
 import java.io.IOException
 import java.io.Serializable
@@ -66,7 +69,7 @@ class TempMonitoringService : LifecycleService(), Serializable {
             && intent.extras!!.getString("idDevice") != null
         ) {
             val idDevice =
-                Objects.requireNonNull(intent.extras).getString("idDevice")
+                intent.extras!!.getString("idDevice")
             Log.v("TempMonitoringService", "onStartCommand")
             startTimer()
             val viewModel = HomeViewModel()
@@ -98,25 +101,24 @@ class TempMonitoringService : LifecycleService(), Serializable {
 //        this.sendBroadcast(broadcastIntent);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun getData(
-        dataSnapshot: DataSnapshot,
-        callBack: FireBaseCallBack<ArrayList<Device>>
-    ) {
-        val t: GenericTypeIndicator<ArrayList<Device>> =
-            object : GenericTypeIndicator<ArrayList<Device?>?>() {}
-        val devices: ArrayList<Device> = dataSnapshot.getValue(t)
-        callBack.afterDataChanged(devices)
-    }
+//    @RequiresApi(api = Build.VERSION_CODES.O)
+//    private fun getData(
+//        dataSnapshot: DataSnapshot,
+//        callBack: FireBaseCallBack<ArrayList<Device>>
+//    ) {
+//        val t: GenericTypeIndicator<ArrayList<Device>> =
+//            object : GenericTypeIndicator<ArrayList<Device?>?>() {}
+//        val devices: ArrayList<Device> = dataSnapshot.getValue(t)
+//        callBack.afterDataChanged(devices)
+//    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private fun createNotification(device: Device, idNoti: Int) {
         val notificationLayout =
             RemoteViews(packageName, R.layout.notification_monitoring)
         notificationLayout.setTextViewText(
-            R.id.message, device.getNO()
-                .toString() + " độ trên thiết bị "
-                    + device.getName()
+            R.id.message, device.temp + " độ trên thiết bị "
+                    + device.name
         )
         val stopWarning = Intent(this, NotificationIntentService::class.java)
         stopWarning.action = "stopWarning"
@@ -129,7 +131,7 @@ class TempMonitoringService : LifecycleService(), Serializable {
             NotificationCompat.Builder(applicationContext, "notify_001")
         val ii = Intent(applicationContext, MainActivity::class.java)
         ii.putExtra("menuFragment", "DetailDeviceFragment")
-        ii.putExtra("idDevice", device.getId())
+        ii.putExtra("idDevice", device.id)
         mBuilder.setSmallIcon(R.drawable.ic_warning_red)
         mBuilder.setCustomContentView(notificationLayout)
         mBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -181,7 +183,7 @@ class TempMonitoringService : LifecycleService(), Serializable {
     private fun vibrate() {
         v =
             getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (!CommonActivity.isNullOrEmpty(v)) {
+        if (v != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 v!!.vibrate(
                     VibrationEffect.createOneShot(

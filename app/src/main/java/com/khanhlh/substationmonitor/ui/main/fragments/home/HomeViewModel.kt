@@ -44,7 +44,8 @@ class HomeViewModel : BaseViewModel<Any>() {
     private val deviceList = mutableListOf<Device>()
 
     private fun add(id: String, data: Map<String, Any>) {
-        val device = Device(id, data[NAME].toString(), data[TEMP] as String)
+        val device =
+            Device(id, data[NAME].toString(), data[TEMP] as String, data[THRESHOLD] as String)
         if (!idSet.add(id)) {
             val index = idSet.indexOf(id)
             list[index] = device
@@ -52,8 +53,6 @@ class HomeViewModel : BaseViewModel<Any>() {
             list.add(device)
         }
     }
-
-    fun observerDevice() = FirebaseCommon.observerDevice(doc.get()!!).subscribe()
 
     @SuppressLint("CheckResult")
     fun insertUserToFireStore(): Observable<DocumentReference> {

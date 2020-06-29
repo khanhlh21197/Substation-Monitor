@@ -7,6 +7,10 @@ data class User(
     val id: String,
     @PropertyName("email")
     val email: String,
+    @PropertyName("name")
+    val name: String,
+    @PropertyName("phone_number")
+    val phoneNumber: String,
     @PropertyName("deviceList")
     val deviceList: String
 )

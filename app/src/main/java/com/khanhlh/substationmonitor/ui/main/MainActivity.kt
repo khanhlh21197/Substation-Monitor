@@ -10,11 +10,14 @@ import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.extensions.setupWithNavController
 
 class MainActivity : AppCompatActivity() {
-
+    companion object{
+        lateinit var instance: MainActivity
+    }
     private var currentNavController: LiveData<NavController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        instance = this
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
@@ -59,5 +62,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return currentNavController?.value?.navigateUp() ?: false
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 }

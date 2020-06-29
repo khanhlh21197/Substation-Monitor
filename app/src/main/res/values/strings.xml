@@ -66,4 +66,5 @@
     <string name="input_device_name">Vui lòng nhập tên thiết bị</string>
     <string name="delete">Xóa</string>
     <string name="change_device_name">Đổi tên thiết bị</string>
+    <string name="profile">Thông tin tài khoản</string>
 </resources>

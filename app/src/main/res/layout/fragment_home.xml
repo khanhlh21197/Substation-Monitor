@@ -10,6 +10,7 @@
         <variable
             name="viewModel"
             type="com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel" />
+
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -45,7 +46,7 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/label"
                 tools:itemCount="2"
-                tools:listitem="@layout/home_row" />
+                tools:listitem="@layout/item_device" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab"
