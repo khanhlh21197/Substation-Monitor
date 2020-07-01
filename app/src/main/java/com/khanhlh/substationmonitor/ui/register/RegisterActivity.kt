@@ -15,7 +15,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
             this,
             ViewModelFactory(this)
         ).get(RegisterActivityViewModel::class.java)
-        baseDataBinding.viewModel = baseViewModel
+        binding.viewModel = baseViewModel
     }
 
     override fun observeViewModel() {

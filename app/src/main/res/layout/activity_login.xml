@@ -136,6 +136,15 @@
 
                 </LinearLayout>
 
+                <Switch
+                    android:id="@+id/switchSaveUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_margin="8dp"
+                    android:checked="false"
+                    android:text="@string/save_user" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -159,7 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:fontFamily="@font/advent_pro_light"
+                        android:fontFamily="@font/montserrat_regular"
                         android:onClick="@{viewModel.registerClickListener}"
                         android:text="@string/register"
                         app:layout_constraintBottom_toBottomOf="@+id/btLogin"
@@ -200,7 +209,6 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
-
             android:layout_width="132dp"
             android:layout_height="178dp"
             android:layout_weight="1"

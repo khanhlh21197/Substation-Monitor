@@ -81,10 +81,11 @@
 
                 <TextView
                     android:id="@+id/txtHumanTemp"
+                    isFlashing="@{vm.isFlashing()}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@{vm.device.temp}"
+                    android:text="@{vm.device.tempDisplay}"
                     android:textColor="@color/red"
                     android:textSize="@dimen/_86ssp"
                     tools:text="37.4" />
@@ -141,14 +142,18 @@
 
             <Button
                 android:id="@+id/btnWarning"
+                isFlashing="@{vm.isFlashing()}"
+                android:onClick="@{v -> vm.stopWarning()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Tắt cảnh báo"
                 android:textColor="@color/red"
-                android:visibility="gone"
+                android:visibility="@{vm.visibility}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lnWarning" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

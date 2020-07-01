@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateDeviceType
 import com.khanhlh.substationmonitor.utils.DEVICES
 import com.khanhlh.substationmonitor.utils.USER_COLLECTION
 import durdinapps.rxfirebase2.RxFirestore
@@ -63,8 +64,6 @@ object FirebaseCommon {
             }
         }
 
-    fun observerAllDevice() = RxFirestore.getCollection(db.collection(DEVICES))
-
     fun observerDevice(id: String): Observable<DocumentSnapshot> =
         Observable.create { emitter ->
             apply {
@@ -99,8 +98,43 @@ object FirebaseCommon {
                 }
         }
 
-    public interface Callback<T> {
-        fun onSuccess(t: T)
+    fun update(
+        collection: String,
+        document: String,
+        key: String,
+        value: String
+    ): Observable<String> =
+        Observable.create { emitter ->
+            db.collection(collection).document(document)
+                .update(key, value)
+                .addOnSuccessListener {
+                    emitter.onNext("Success")
+                }
+                .addOnFailureListener {
+                    emitter.onError(it)
+                    logD("onError")
+                }
+        }
+
+    fun getDevicesOfUser(): Observable<String> {
+        return Observable.create { emitter ->
+            db.collection(USER_COLLECTION).document(currentUser!!.uid).get()
+                .addOnSuccessListener {
+                    emitter.onNext(it[DEVICES].toString())
+                    logD(it[DEVICES] as String?)
+                }
+        }
+    }
+
+    fun updateDevice(id: String, add: UpdateDeviceType): Observable<String> {
+        return Observable.create { emitter ->
+            getDevicesOfUser().map {
+                when (add) {
+                    UpdateDeviceType.ADD -> "$it,$id"
+                    UpdateDeviceType.REMOVE -> it.replace(id, "")
+                }
+            }.subscribe({ emitter.onNext("Thành công") }, { emitter.onError(it) })
+        }
     }
 
     val currentUser = FirebaseAuth.getInstance().currentUser

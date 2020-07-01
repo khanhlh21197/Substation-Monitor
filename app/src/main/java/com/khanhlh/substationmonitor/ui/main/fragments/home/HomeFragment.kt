@@ -23,9 +23,9 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
-import com.khanhlh.substationmonitor.extensions.dpToPx
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.replaceFragmentSafely
+import com.khanhlh.substationmonitor.helper.dialog.alert
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.Device
@@ -48,14 +48,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
     override fun initView() {
         vm = HomeViewModel()
         mBinding.viewModel = vm
-        vm.getAllUsers()
 
         initRecycler()
         observer()
+        fab.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                addDevice()
+            }
+        }
     }
 
     private fun observer() {
-        vm.insertUserToFireStore()
         vm.observerAllDevices()
     }
 
@@ -71,7 +74,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
                     state: RecyclerView.State
                 ) {
                     super.getItemOffsets(outRect, view, parent, state)
-                    outRect.top = activity?.dpToPx(R.dimen.xdp_12_0) ?: 0
+//                    outRect.top = activity?.dpToPx(R.dimen.xdp_12_0) ?: 0
                 }
             })
             isPrepared = true
@@ -130,7 +133,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
             getString(R.string.ok)
         ) { dialog: DialogInterface?, which: Int ->
             if (txtInputDevice.text != null) {
-
+                vm.updateDevice(txtInputDevice.text.toString(), UpdateDeviceType.ADD).subscribe({
+                    toast(it)
+                }, { toast(it.toString()) })
             } else {
                 Toast.makeText(
                     activity,
@@ -173,6 +178,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
             cursor.close()
             imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath))
         }
+    }
+
+    override fun onItemLongClick(v: View?, item: Device) {
+    }
+
+    override fun onDeleteClick(v: View?, item: Device) {
+        alert(
+            this,
+            R.string.delete_device,
+            R.string.app_name,
+            R.string.cancel,
+            R.string.ok,
+            null,
+            View.OnClickListener {
+                vm.updateDevice(item.id, UpdateDeviceType.REMOVE)
+                    .subscribe({ toast(R.string.delete_device_success) },
+                        { toast(R.string.delete_device_fail) })
+            })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        logD("HomeFragment::onDestroy")
     }
 
 }

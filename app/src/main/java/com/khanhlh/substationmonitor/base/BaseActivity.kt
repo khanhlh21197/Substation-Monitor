@@ -16,13 +16,13 @@ import com.khanhlh.substationmonitor.R
 
 abstract class BaseActivity<B : ViewDataBinding, T : BaseViewModel<*>> :
     AppCompatActivity() {
-    lateinit var baseDataBinding: B
+    lateinit var binding: B
     lateinit var baseViewModel: T
     private lateinit var errorSnackbar: Snackbar
     private lateinit var progressDialog: Dialog
 
     protected fun bindView(layoutId: Int) {
-        baseDataBinding = DataBindingUtil.setContentView(this, layoutId)
+        binding = DataBindingUtil.setContentView(this, layoutId)
     }
 
     abstract fun initVariables()
@@ -56,7 +56,7 @@ abstract class BaseActivity<B : ViewDataBinding, T : BaseViewModel<*>> :
     }
 
     private fun showError(error: String) {
-        errorSnackbar = Snackbar.make(baseDataBinding.root, error, Snackbar.LENGTH_LONG)
+        errorSnackbar = Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG)
         errorSnackbar.show()
     }
 

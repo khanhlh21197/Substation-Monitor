@@ -7,12 +7,21 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
+import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.get
 import com.khanhlh.substationmonitor.extensions.init
 import com.khanhlh.substationmonitor.extensions.set
+import com.khanhlh.substationmonitor.utils.EMAIL
+import com.khanhlh.substationmonitor.utils.ID
+import com.khanhlh.substationmonitor.utils.USER_COLLECTION
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.functions.BiConsumer
 
 
 class LoginActivityViewModel : BaseViewModel<Any?>() {
@@ -37,6 +46,9 @@ class LoginActivityViewModel : BaseViewModel<Any?>() {
     private fun hideLoading() {
         loadingVisibility.value = View.INVISIBLE
     }
+
+    fun getAllUsers(): Single<QuerySnapshot> =
+        FirebaseCommon.getListDocument(USER_COLLECTION)
 
     @SuppressLint("CheckResult")
     fun tryLogin() {

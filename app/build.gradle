@@ -166,4 +166,9 @@ dependencies {
 
     //Blink View
     implementation "me.angrybyte.blinkerview:blinkerview:1.0.1"
+    //easy permission
+    // For developers using AndroidX in their applications
+    implementation 'pub.devrel:easypermissions:3.0.0'
+    //switch button
+    compile 'com.github.zcweng:switch-button:0.0.3@aar'
 }

@@ -123,6 +123,26 @@ fun AppCompatActivity.replaceFragmentSafely(
     }
 }
 
+fun AppCompatActivity.addFragmentSafely(
+    fragment: Fragment,
+    tag: String,
+    allowStateLoss: Boolean = false,
+    @AnimRes enterAnimation: Int = 0,
+    @AnimRes exitAnimation: Int = 0,
+    @AnimRes popEnterAnimation: Int = 0,
+    @AnimRes popExitAnimation: Int = 0
+) {
+    val ft = supportFragmentManager
+        .beginTransaction()
+        .setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
+        .add(com.khanhlh.substationmonitor.R.id.nav_host_container, fragment, tag)
+    if (!supportFragmentManager.isStateSaved) {
+        ft.commit()
+    } else if (allowStateLoss) {
+        ft.commitAllowingStateLoss()
+    }
+}
+
 fun Activity.dpToPx(@DimenRes resID: Int): Int = this.resources.getDimensionPixelOffset(resID)
 
 fun Activity.navigateToActivity(c: Class<*>, serializable: Serializable? = null) {

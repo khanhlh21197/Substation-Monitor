@@ -16,6 +16,8 @@ data class Device(
 ) {
     val warning: Int
         get() = if (temp.toDouble() > threshold.toDouble()) View.VISIBLE else View.GONE
+    val flashing: Boolean
+        get() = temp.toDouble() > threshold.toDouble()
     val tempDisplay: String
         get() = temp + 0x00B0.toChar() + "C"
 }

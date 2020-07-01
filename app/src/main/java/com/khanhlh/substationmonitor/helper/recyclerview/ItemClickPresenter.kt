@@ -11,7 +11,9 @@ import androidx.databinding.ViewDataBinding
  */
 interface ItemClickPresenter<in Any> {
     fun onItemClick(v: View? = null, item: Any)
+    fun onItemLongClick(v: View? = null, item: Any)
     fun onImageClick(v: View? = null)
+    fun onDeleteClick(v: View? = null, item: Any)
 }
 
 interface ItemDecorator {

@@ -4,13 +4,13 @@ import com.google.firebase.firestore.PropertyName
 
 data class User(
     @PropertyName("id")
-    val id: String,
+    val id: String = "",
     @PropertyName("email")
-    val email: String,
+    val email: String = "",
     @PropertyName("name")
-    val name: String,
+    val name: String = "",
     @PropertyName("phone_number")
-    val phoneNumber: String,
+    val phoneNumber: String = "",
     @PropertyName("deviceList")
-    val deviceList: String
+    val deviceList: String = ""
 )

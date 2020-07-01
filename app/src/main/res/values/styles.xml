@@ -13,4 +13,16 @@
         parent="@android:style/TextAppearance.Material.Caption">
         <item name="android:textColor">?android:colorAccent</item>
     </style>
+
+    <style name="searchView" parent="android:style/Widget.Material.SearchView">
+        <item name="colorControlActivated">?android:colorAccent</item>
+        <item name="android:searchIcon">@android:color/transparent</item>
+        <item name="android:queryBackground">@android:color/transparent</item>
+        <item name="android:submitBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="SearchWindowAnimations">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
+    </style>
 </resources>

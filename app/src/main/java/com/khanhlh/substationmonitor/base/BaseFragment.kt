@@ -118,6 +118,10 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show()
     }
 
+    fun toast(msg: Int) {
+        Toast.makeText(mContext, mContext.getString(msg), Toast.LENGTH_SHORT).show()
+    }
+
     fun toastSuccess(msg: String?) {
         msg?.let { activity?.toast(it, ToastType.SUCCESS) }
     }

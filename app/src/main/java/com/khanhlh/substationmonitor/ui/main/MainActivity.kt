@@ -7,12 +7,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.khanhlh.substationmonitor.R
+import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.setupWithNavController
 
 class MainActivity : AppCompatActivity() {
-    companion object{
+    companion object {
         lateinit var instance: MainActivity
     }
+
     private var currentNavController: LiveData<NavController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +55,8 @@ class MainActivity : AppCompatActivity() {
             intent = intent
         )
 
+        bottomNavigationView.menu.findItem(R.id.bm_search).isVisible = false
+
         // Whenever the selected controller changes, setup the action bar.
         controller.observe(this, Observer { navController ->
             //     setupActionBarWithNavController(navController)
@@ -65,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        logD(supportFragmentManager.backStackEntryCount.toString())
         super.onBackPressed()
     }
 }

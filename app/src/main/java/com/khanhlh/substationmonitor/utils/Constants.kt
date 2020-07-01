@@ -3,6 +3,7 @@ package com.khanhlh.substationmonitor.utils
 
 const val BASE_URL: String = "https://picsum.photos/v2/"
 const val KEY_SERIALIZABLE = "serializable"
+const val USER_PREF = "USER_PREF";
 
 const val HOST_API = "http://api.jcodecraeer.com/"
 
