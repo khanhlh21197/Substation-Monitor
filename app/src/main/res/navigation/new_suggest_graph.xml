@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/new_suggest_graph"
-    app:startDestination="@id/createNewSuggest2">
+    app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/createNewSuggest2"
-        android:name="com.khanhlh.substationmonitor.ui.main.fragments.CreateNewSuggest"
-        android:label="fragment_create_new_suggest"
-        tools:layout="@layout/fragment_create_new_suggest" />
+        android:id="@+id/detailDeviceFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceFragment"
+        android:label="DetailDeviceFragment">
+        <argument
+            android:name="idDevice"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/back_action"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.home.HomeFragment"
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_detailDeviceFragment"
+            app:destination="@id/detailDeviceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.profile.ProfileFragment"
+        android:label="ProfileFragment" />
 </navigation>

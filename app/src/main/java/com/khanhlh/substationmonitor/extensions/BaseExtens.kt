@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
@@ -17,6 +18,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.navigation.fragment.NavHostFragment
 import com.khanhlh.substationmonitor.BuildConfig
 import com.khanhlh.substationmonitor.annotation.ToastType
 import com.khanhlh.substationmonitor.exception.EmptyException
@@ -102,6 +104,9 @@ fun AppCompatActivity.switchFragment(
     ft.show(targetFg)
     ft.commitAllowingStateLoss();
 }
+
+fun Fragment.navigate(@IdRes idRes: Int, args: Bundle? = null) =
+    NavHostFragment.findNavController(this).navigate(idRes, args)
 
 fun AppCompatActivity.replaceFragmentSafely(
     fragment: Fragment,

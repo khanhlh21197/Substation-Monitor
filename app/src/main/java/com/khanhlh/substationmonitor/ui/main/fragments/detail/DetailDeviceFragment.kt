@@ -1,21 +1,13 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.detail
 
-import android.os.Bundle
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailDeviceFragmentBinding
 
 class DetailDeviceFragment : BaseFragment<DetailDeviceFragmentBinding>() {
     companion object {
-        private val ID_DEVICE = "ID_DEVICE"
-        fun newInstance(idDevice: String): DetailDeviceFragment {
-            val args = Bundle()
-            args.putString(ID_DEVICE, idDevice)
-
-            val fragment = DetailDeviceFragment()
-            fragment.arguments = args
-            return fragment
-        }
+        const val ID_DEVICE = "ID_DEVICE"
+        const val TAG = "DetailDeviceFragment"
     }
 
     lateinit var vm: DetailDeviceViewModel

@@ -2,6 +2,8 @@ package com.khanhlh.substationmonitor.ui.main.fragments.home
 
 import android.annotation.SuppressLint
 import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
@@ -13,6 +15,7 @@ import com.khanhlh.substationmonitor.utils.THRESHOLD
 
 class HomeViewModel : BaseViewModel<Any>() {
     val list = ObservableArrayList<Device>()
+    val devices = MutableLiveData<ArrayList<Device>>()
     private val idSet = mutableSetOf<String>()
 
     @SuppressLint("CheckResult", "LogNotTimber")

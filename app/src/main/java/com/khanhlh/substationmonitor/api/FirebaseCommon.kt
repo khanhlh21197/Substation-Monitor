@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateDeviceType
 import com.khanhlh.substationmonitor.utils.DEVICES
 import com.khanhlh.substationmonitor.utils.USER_COLLECTION
@@ -139,4 +140,5 @@ object FirebaseCommon {
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val db = FirebaseFirestore.getInstance()
+    val devices = arrayListOf<Device>()
 }

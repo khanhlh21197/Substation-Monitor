@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bm_home"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/detailDeviceFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/detail_device_fragment" />
+    <action
+        android:id="@+id/action_bm_detail_device"
+        app:destination="@id/bm_home"
+        app:enterAnim="@anim/fadein"
+        app:exitAnim="@anim/fadeout" />
+</navigation>

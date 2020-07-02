@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,9 @@
 
         <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.register.RegisterActivity" />
+
+        <service android:name=".service.TempMonitoringService" />
+        <service android:name=".service.warning.WarningService" />
     </application>
 
 </manifest>

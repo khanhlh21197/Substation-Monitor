@@ -38,6 +38,10 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
         }
     }
 
+    fun updateThreshold() {
+
+    }
+
     fun stopWarning() {
         isFlashing.set(false)
         visibility.set(View.GONE)

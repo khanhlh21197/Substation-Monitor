@@ -1,4 +1,4 @@
-package com.khanhlh.substationmonitor.warning
+package com.khanhlh.substationmonitor.service.warning
 
 import android.app.IntentService
 import android.content.Intent

@@ -16,7 +16,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.integration.android.IntentIntegrator
@@ -24,11 +24,12 @@ import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
 import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.extensions.replaceFragmentSafely
+import com.khanhlh.substationmonitor.extensions.navigate
 import com.khanhlh.substationmonitor.helper.dialog.alert
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.Device
+import com.khanhlh.substationmonitor.service.TempMonitoringService
 import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -60,6 +61,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
 
     private fun observer() {
         vm.observerAllDevices()
+        requireActivity().startService(Intent(activity, TempMonitoringService::class.java))
     }
 
     private fun initRecycler() {
@@ -84,11 +86,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), ItemClickPresenter<Dev
     override fun getLayoutId(): Int = R.layout.fragment_home
     override fun onItemClick(v: View?, item: Device) {
         logD(item.id)
-        (activity as AppCompatActivity).replaceFragmentSafely(
-            DetailDeviceFragment.newInstance(item.id),
-            "",
-            false
-        )
+        val bundle = bundleOf(DetailDeviceFragment.ID_DEVICE to item.id)
+        navigate(R.id.detailDeviceFragment, bundle)
     }
 
     override fun onImageClick(v: View?) {

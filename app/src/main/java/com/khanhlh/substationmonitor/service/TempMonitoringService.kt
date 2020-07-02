@@ -15,13 +15,14 @@ import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.databinding.ObservableList
 import androidx.lifecycle.LifecycleService
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.model.Device
+import com.khanhlh.substationmonitor.service.warning.NotificationIntentService
+import com.khanhlh.substationmonitor.service.warning.WarningService
 import com.khanhlh.substationmonitor.ui.main.MainActivity
 import com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel
-import com.khanhlh.substationmonitor.warning.NotificationIntentService
-import com.khanhlh.substationmonitor.warning.WarningService
 import java.io.IOException
 import java.io.Serializable
 import java.util.*
