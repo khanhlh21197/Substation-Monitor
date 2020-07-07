@@ -9,6 +9,7 @@ import com.khanhlh.substationmonitor.di.modules.NetworkModule
 import com.khanhlh.substationmonitor.ui.login.LoginActivityViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.profile.ProfileViewModel
+import com.khanhlh.substationmonitor.ui.main.fragments.room.RoomViewModel
 import com.khanhlh.substationmonitor.ui.register.RegisterActivityViewModel
 
 
@@ -43,6 +44,7 @@ abstract class BaseViewModel<T> : ViewModel() {
             is RegisterActivityViewModel -> injector.inject(this)
             is HomeViewModel -> injector.inject(this)
             is ProfileViewModel -> injector.inject(this)
+            is RoomViewModel -> injector.inject(this)
         }
     }
 }

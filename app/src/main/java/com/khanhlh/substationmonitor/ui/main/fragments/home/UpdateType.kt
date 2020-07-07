@@ -1,5 +1,5 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.home
 
-enum class UpdateDeviceType {
+enum class UpdateType {
     ADD, REMOVE
 }

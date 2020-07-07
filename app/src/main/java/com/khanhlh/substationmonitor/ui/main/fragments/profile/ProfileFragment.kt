@@ -23,8 +23,7 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 /**
  * A simple [Fragment] subclass.
  */
-class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
-    private lateinit var vm: ProfileViewModel
+class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>() {
     lateinit var sharedPref: SharedPreferences
 
     override fun initView() {

@@ -13,6 +13,8 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import com.khanhlh.substationmonitor.annotation.ToastType
 import com.khanhlh.substationmonitor.extensions.dispatchFailure
 import com.khanhlh.substationmonitor.extensions.toast
@@ -24,7 +26,7 @@ import com.khanhlh.substationmonitor.extensions.toast
  * Created by ditclear on 2017/9/27.
  */
 
-abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragment() {
     protected val mBinding by lazy {
         DataBindingUtil.inflate<VB>(
             layoutInflater,
@@ -33,6 +35,10 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
             false
         )
     }
+
+    lateinit var vm: T
+
+    private lateinit var errorSnackbar: Snackbar
 
     protected lateinit var mContext: Context
 
@@ -61,6 +67,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
         mContext = activity ?: throw Exception("activity 为null")
         retainInstance = true
         initView()
+        observeViewModel()
         if (lazyLoad) {
             //延迟加载，需重写lazyLoad方法
             lazyLoad()
@@ -79,6 +86,10 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
         mBinding.executePendingBindings()
         mBinding.lifecycleOwner = this
         return mBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     /**
@@ -181,4 +192,22 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
         requireActivity().requestPermissions(arrayOf(perm), requestCode)
     }
 
+    open fun observeViewModel() {
+        vm.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
+            showError(errorMessage)
+        })
+//        baseViewModel.loadingVisibility.observe(this, Observer { visibility ->
+//            if (visibility == View.VISIBLE) showLoading() else hideLoading()
+//        })
+    }
+
+    override fun onDestroy() {
+        vm.detachView()
+        super.onDestroy()
+    }
+
+    private fun showError(error: String) {
+        errorSnackbar = Snackbar.make(mBinding.root, error, Snackbar.LENGTH_LONG)
+        errorSnackbar.show()
+    }
 }

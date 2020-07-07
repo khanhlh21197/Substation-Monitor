@@ -30,9 +30,11 @@ const val JUST_HOUR = "HH : mm"
 
 //firebase
 const val USER_COLLECTION = "users"
+const val ROOM_COLLECTION = "rooms"
 const val ID = "id"
 const val EMAIL = "email"
 const val DEVICES = "devices"
+const val NUMBER_OF_DEVICES = "number_of_devices"
 const val TEMP = "temp"
 const val NAME = "name"
 const val THRESHOLD = "threshold"

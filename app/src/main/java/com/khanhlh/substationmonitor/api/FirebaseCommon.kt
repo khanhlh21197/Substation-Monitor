@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
-import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateDeviceType
+import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateType
 import com.khanhlh.substationmonitor.utils.DEVICES
 import com.khanhlh.substationmonitor.utils.USER_COLLECTION
 import durdinapps.rxfirebase2.RxFirestore
@@ -127,12 +127,12 @@ object FirebaseCommon {
         }
     }
 
-    fun updateDevice(id: String, add: UpdateDeviceType): Observable<String> {
+    fun updateDevice(id: String, add: UpdateType): Observable<String> {
         return Observable.create { emitter ->
             getDevicesOfUser().map {
                 when (add) {
-                    UpdateDeviceType.ADD -> "$it,$id"
-                    UpdateDeviceType.REMOVE -> it.replace(id, "")
+                    UpdateType.ADD -> "$it,$id"
+                    UpdateType.REMOVE -> it.replace(id, "")
                 }
             }.subscribe({ emitter.onNext("Thành công") }, { emitter.onError(it) })
         }

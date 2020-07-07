@@ -1,46 +1,30 @@
-package com.khanhlh.substationmonitor.ui.main.fragments.home
+package com.khanhlh.substationmonitor.ui.main.fragments.room
 
 import android.annotation.SuppressLint
 import androidx.databinding.ObservableArrayList
-import com.google.firebase.firestore.QuerySnapshot
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
-import com.khanhlh.substationmonitor.model.Room
-import com.khanhlh.substationmonitor.utils.*
+import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateType
+import com.khanhlh.substationmonitor.utils.DEVICES
+import com.khanhlh.substationmonitor.utils.NAME
+import com.khanhlh.substationmonitor.utils.TEMP
+import com.khanhlh.substationmonitor.utils.THRESHOLD
 
-class HomeViewModel : BaseViewModel<Any>() {
+class RoomViewModel : BaseViewModel<Any>() {
     val list = ObservableArrayList<Device>()
-    val rooms = ObservableArrayList<Room>()
     private val idSet = mutableSetOf<String>()
 
     @SuppressLint("CheckResult", "LogNotTimber")
-    fun observerAllDevices() {
+    fun observerAllDevices(devices: String) {
         FirebaseCommon.observerAllDevices().subscribe {
-            add(it.id, it.data)
+            add(it.id, it.data, devices)
         }
     }
 
-    @SuppressLint("CheckResult")
-    fun getAllRooms() {
-        FirebaseCommon.getListDocument(ROOM_COLLECTION).subscribe { t: QuerySnapshot? ->
-            t!!.forEach {
-                var devices = ""
-                var name = ""
-                var numberOfDevices = ""
-                val id = it.id
-                it[DEVICES].let { if (it != null) devices = it as String }
-                it[NAME].let { if (it != null) name = it as String }
-                it[NUMBER_OF_DEVICES].let { if (it != null) numberOfDevices = it as String }
-                val room = Room(id, name, devices, numberOfDevices)
-                rooms.add(room)
-                logD(room.toString())
-            }
-        }
-    }
-
-    private fun add(id: String, data: Map<String, Any>) {
+    private fun add(id: String, data: Map<String, Any>, devices: String) {
+        if (!devices.contains(id)) return
         val device =
             Device(id, data[NAME].toString(), data[TEMP] as String, data[THRESHOLD] as String)
         if (!idSet.add(id)) {

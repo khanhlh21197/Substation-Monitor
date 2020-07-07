@@ -16,7 +16,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -124,8 +125,8 @@
                         android:background="@null"
                         android:hint="Nhập giá trị ngưỡng"
                         android:inputType="numberDecimal"
-                        android:paddingLeft="@dimen/_8sdp"
-                        android:text="@{vm.device.threshold}" />
+                        android:paddingStart="@dimen/_8sdp"
+                        android:text="@{vm.threshold}" />
 
                     <Button
                         android:id="@+id/btnThreshold"
@@ -133,6 +134,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="4"
                         android:background="@drawable/btn_onpress_background_gradient_blue"
+                        android:onClick="@{v->vm.updateThreshold(vm.device.id)}"
                         android:text="cài ngưỡng"
                         android:textColor="@color/red" />
 
@@ -143,10 +145,10 @@
             <Button
                 android:id="@+id/btnWarning"
                 isFlashing="@{vm.isFlashing()}"
-                android:onClick="@{v -> vm.stopWarning()}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:onClick="@{v -> vm.stopWarning()}"
                 android:text="Tắt cảnh báo"
                 android:textColor="@color/red"
                 android:visibility="@{vm.visibility}"

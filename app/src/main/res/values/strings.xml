@@ -65,7 +65,9 @@
     <string name="turn_off_monitoring">Tắt theo dõi nhiệt độ</string>
     <string name="input_device_name">Vui lòng nhập tên thiết bị</string>
     <string name="delete">Xóa</string>
+    <string name="device">Thiết bị</string>
     <string name="delete_device">Bạn có muốn xóa thiết bị ?</string>
+    <string name="delete_room">Bạn có muốn xóa phòng ?</string>
     <string name="delete_device_success">Xóa thành công</string>
     <string name="delete_device_fail">Xóa thất bại, vui lòng thử lại</string>
     <string name="change_device_name">Đổi tên thiết bị</string>
@@ -73,4 +75,8 @@
     <string name="close">Đóng</string>
     <string name="add_note">Ghi chú</string>
     <string name="log_out">Đăng xuất ?</string>
+    <string name="configure_threshold_success">Cài ngưỡng thành công</string>
+    <string name="configure_threshold_fail">Cài ngưỡng thất bại</string>
+    <string name="empty_threshold">Vui lòng nhập ngưỡng!</string>
+    <string name="add_room">Thêm phòng</string>
 </resources>

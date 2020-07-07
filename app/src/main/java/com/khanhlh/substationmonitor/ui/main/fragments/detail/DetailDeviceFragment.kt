@@ -4,13 +4,12 @@ import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailDeviceFragmentBinding
 
-class DetailDeviceFragment : BaseFragment<DetailDeviceFragmentBinding>() {
+class DetailDeviceFragment : BaseFragment<DetailDeviceFragmentBinding, DetailDeviceViewModel>() {
     companion object {
         const val ID_DEVICE = "ID_DEVICE"
         const val TAG = "DetailDeviceFragment"
     }
 
-    lateinit var vm: DetailDeviceViewModel
     override fun initView() {
         vm = DetailDeviceViewModel()
         mBinding.vm = vm

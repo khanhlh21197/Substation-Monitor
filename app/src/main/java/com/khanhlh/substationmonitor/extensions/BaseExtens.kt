@@ -266,3 +266,7 @@ fun ObservableBoolean.toFlowable(): Flowable<Boolean> = Flowable.create({ emitte
         }
     }
 }, BackpressureStrategy.LATEST)
+
+fun <T : Any> T?.notNull(f: (it: T) -> Unit) {
+    if (this != null) f(this)
+}

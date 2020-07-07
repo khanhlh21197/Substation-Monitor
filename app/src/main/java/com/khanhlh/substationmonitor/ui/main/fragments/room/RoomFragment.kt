@@ -1,5 +1,4 @@
-package com.khanhlh.substationmonitor.ui.main.fragments.home
-
+package com.khanhlh.substationmonitor.ui.main.fragments.room
 
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
@@ -22,35 +21,43 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.integration.android.IntentIntegrator
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
-import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
+import com.khanhlh.substationmonitor.databinding.FragmentRoomBinding
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.navigate
 import com.khanhlh.substationmonitor.helper.dialog.alert
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
-import com.khanhlh.substationmonitor.model.Room
-import com.khanhlh.substationmonitor.ui.main.fragments.room.RoomFragment
+import com.khanhlh.substationmonitor.model.Device
+import com.khanhlh.substationmonitor.service.TempMonitoringService
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceFragment
+import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateType
 import com.khanhlh.substationmonitor.utils.DEVICES
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
-    ItemClickPresenter<Room> {
+class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
+    ItemClickPresenter<Device> {
+    companion object {
+        const val ID_ROOM = "ID_ROOM"
+    }
+
+    var idRoom = ""
+    var devices = ""
     private val RESULT_LOAD_IMAGE = 1
     lateinit var imageView: ImageView
     lateinit var txtInputDevice: EditText
-    lateinit var txtLabel: EditText
 
     private val mAdapter by lazy {
-        SingleTypeAdapter<Room>(mContext, R.layout.item_room, vm.rooms).apply {
-            itemPresenter = this@HomeFragment
+        SingleTypeAdapter<Device>(mContext, R.layout.item_device, vm.list).apply {
+            itemPresenter = this@RoomFragment
         }
     }
 
     override fun initView() {
-        vm = HomeViewModel()
+        vm = RoomViewModel()
         mBinding.viewModel = vm
 
+        getBundleData()
         initRecycler()
         observer()
         fab.setOnClickListener {
@@ -58,10 +65,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
                 addDevice()
             }
         }
+
+    }
+
+    private fun getBundleData() {
+        if (arguments != null) {
+            idRoom = requireArguments().getString(ID_ROOM)!!
+            devices = requireArguments().getString(DEVICES)!!
+        }
     }
 
     private fun observer() {
-        vm.getAllRooms()
+        vm.observerAllDevices(devices)
+        requireActivity().startService(Intent(activity, TempMonitoringService::class.java))
     }
 
     private fun initRecycler() {
@@ -83,11 +99,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         }
     }
 
-    override fun getLayoutId(): Int = R.layout.fragment_home
-    override fun onItemClick(v: View?, item: Room) {
-        logD(item.name)
-        val bundle = bundleOf(RoomFragment.ID_ROOM to item.id, DEVICES to item.devices)
-        navigate(R.id.roomFragment, bundle)
+    override fun getLayoutId(): Int = R.layout.fragment_room
+    override fun onItemClick(v: View?, item: Device) {
+        logD(item.id)
+        val bundle = bundleOf(DetailDeviceFragment.ID_DEVICE to item.id)
+        navigate(R.id.detailDeviceFragment, bundle)
     }
 
     override fun onImageClick(v: View?) {
@@ -105,14 +121,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
-        txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
-        txtLabel = alertLayout.findViewById(R.id.txtLabel)
+        txtInputDevice = alertLayout.findViewById<EditText>(R.id.txtInputDevice)
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
-        alert.setMessage(getString(R.string.add_room))
         alert.setView(alertLayout)
         alert.setCancelable(false)
         scanBarcode.setOnClickListener { v: View? ->
@@ -181,10 +195,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         }
     }
 
-    override fun onItemLongClick(v: View?, item: Room) {
+    override fun onItemLongClick(v: View?, item: Device) {
     }
 
-    override fun onDeleteClick(v: View?, item: Room) {
+    override fun onDeleteClick(v: View?, item: Device) {
         alert(
             this,
             R.string.delete_device,
