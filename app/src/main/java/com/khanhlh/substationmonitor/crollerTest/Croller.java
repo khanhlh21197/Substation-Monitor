@@ -5,8 +5,10 @@ import android.content.res.AssetManager;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -19,7 +21,7 @@ import com.khanhlh.substationmonitor.crollerTest.utilities.Utils;
 public class Croller extends View {
 
     private float midx, midy;
-    private Paint textPaint, circlePaint, circlePaint2, linePaint;
+    private Paint textPaint, circlePaint, circlePaint2, linePaint, arcPaint;
     private float currdeg = 0, deg = 3, downdeg = 0;
 
     private boolean isContinuous = false;
@@ -128,15 +130,22 @@ public class Croller extends View {
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(indicatorWidth);
 
+        arcPaint = new Paint();
+        arcPaint.setAntiAlias(true);
+        arcPaint.setStrokeWidth(indicatorWidth);
+
         if (isEnabled) {
             circlePaint2.setColor(progressPrimaryColor);
             circlePaint.setColor(progressSecondaryColor);
+            circlePaint.setShader(new LinearGradient(0, 0, 0, getHeight(), Color.RED, Color.YELLOW, Shader.TileMode.MIRROR));
             linePaint.setColor(indicatorColor);
+            arcPaint.setColor(indicatorColor);
             textPaint.setColor(labelColor);
         } else {
             circlePaint2.setColor(progressPrimaryDisabledColor);
             circlePaint.setColor(progressSecondaryDisabledColor);
             linePaint.setColor(indicatorDisabledColor);
+            arcPaint.setColor(indicatorDisabledColor);
             textPaint.setColor(labelDisabledColor);
         }
 
@@ -274,12 +283,15 @@ public class Croller extends View {
         if (isEnabled) {
             circlePaint2.setColor(progressPrimaryColor);
             circlePaint.setColor(progressSecondaryColor);
+            circlePaint.setShader(new LinearGradient(0, 0, 0, getHeight(), Color.RED, Color.YELLOW, Shader.TileMode.MIRROR));
             linePaint.setColor(indicatorColor);
+            arcPaint.setColor(indicatorColor);
             textPaint.setColor(labelColor);
         } else {
             circlePaint2.setColor(progressPrimaryDisabledColor);
             circlePaint.setColor(progressSecondaryDisabledColor);
             linePaint.setColor(indicatorDisabledColor);
+            arcPaint.setColor(indicatorDisabledColor);
             textPaint.setColor(labelDisabledColor);
         }
 
@@ -288,6 +300,7 @@ public class Croller extends View {
             startOffset2 = startOffset - 15;
 
             linePaint.setStrokeWidth(indicatorWidth);
+            arcPaint.setStrokeWidth(indicatorWidth * 3);
             textPaint.setTextSize(labelSize);
 
             int radius = (int) (Math.min(midx, midy) * ((float) 14.5 / 16));
@@ -361,6 +374,7 @@ public class Croller extends View {
             canvas.drawCircle(midx, midy, mainCircleRadius, circlePaint);
             canvas.drawText(label, midx, midy + (float) (radius * 1.1) - textPaint.getFontMetrics().descent, textPaint);
             canvas.drawLine(x1, y1, x2, y2, linePaint);
+            canvas.drawArc(x1, y1, x2, y2, 0f, 20f, true, arcPaint);
 
         } else {
 
@@ -385,6 +399,7 @@ public class Croller extends View {
             circlePaint2.setStrokeWidth(progressPrimaryStrokeWidth);
             circlePaint2.setStyle(Paint.Style.STROKE);
             linePaint.setStrokeWidth(indicatorWidth);
+            arcPaint.setStrokeWidth(indicatorWidth);
             textPaint.setTextSize(labelSize);
 
             float deg3 = Math.min(deg, max + 2);
@@ -423,6 +438,7 @@ public class Croller extends View {
             canvas.drawCircle(midx, midy, mainCircleRadius, circlePaint);
             canvas.drawText(label, midx, midy + (float) (radius * 1.1) - textPaint.getFontMetrics().descent, textPaint);
             canvas.drawLine(x1, y1, x2, y2, linePaint);
+            canvas.drawArc(x1, y1, x2, y2, 180f, 20f, true, arcPaint);
         }
     }
 

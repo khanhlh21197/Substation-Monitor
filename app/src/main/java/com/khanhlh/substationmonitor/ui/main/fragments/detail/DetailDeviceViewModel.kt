@@ -46,12 +46,12 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
 
     @SuppressLint("CheckResult")
     fun updateThreshold(id: String) {
-        if (threshold.get() != null){
+        if (threshold.get() != null) {
             FirebaseCommon.update(DEVICES, id, THRESHOLD, threshold.get()!!).subscribe(
                 { errorMessage.set(MyApp.context.getString(R.string.configure_threshold_success)) },
                 { errorMessage.set(MyApp.context.getString(R.string.configure_threshold_fail)) }
             )
-        }else{
+        } else {
             errorMessage.set(MyApp.context.getString(R.string.configure_threshold_success))
         }
     }
@@ -59,5 +59,9 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
     fun stopWarning() {
         isFlashing.set(false)
         visibility.set(View.GONE)
+    }
+
+    fun onMinusClicked(){
+
     }
 }

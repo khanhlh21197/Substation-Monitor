@@ -1,4 +1,4 @@
-package com.khanhlh.substationmonitor.annotation;
+package com.khanhlh.substationmonitor.helper.annotation;
 
 import androidx.annotation.IntDef;
 

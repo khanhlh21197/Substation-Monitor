@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.fragment.NavHostFragment
 import com.khanhlh.substationmonitor.BuildConfig
-import com.khanhlh.substationmonitor.annotation.ToastType
+import com.khanhlh.substationmonitor.helper.annotation.ToastType
 import com.khanhlh.substationmonitor.exception.EmptyException
 import com.khanhlh.substationmonitor.model.BaseResponse
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE

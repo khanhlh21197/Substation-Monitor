@@ -9,7 +9,7 @@
         android:id="@+id/detailDeviceFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/detail_device_fragment" />
+        tools:layout="@layout/detail_temp_frag" />
     <action
         android:id="@+id/action_bm_detail_device"
         app:destination="@id/bm_home"

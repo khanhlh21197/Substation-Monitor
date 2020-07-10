@@ -22,15 +22,16 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentRoomBinding
+import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.navigate
+import com.khanhlh.substationmonitor.helper.annotation.DeviceType
 import com.khanhlh.substationmonitor.helper.dialog.alert
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.service.TempMonitoringService
-import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceFragment
-import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateType
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailTempFrag
 import com.khanhlh.substationmonitor.utils.DEVICES
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -102,8 +103,14 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     override fun getLayoutId(): Int = R.layout.fragment_room
     override fun onItemClick(v: View?, item: Device) {
         logD(item.id)
-        val bundle = bundleOf(DetailDeviceFragment.ID_DEVICE to item.id)
-        navigate(R.id.detailDeviceFragment, bundle)
+        val bundle = bundleOf(DetailTempFrag.ID_DEVICE to item.id)
+        when ((item.type)) {
+            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
+            DeviceType.FAN -> navigate(R.id.detailDeviceFragment, bundle)
+            DeviceType.LIGHT -> navigate(R.id.detailDeviceFragment, bundle)
+            DeviceType.TEMP -> navigate(R.id.detailDeviceFragment, bundle)
+            DeviceType.TV -> navigate(R.id.detailDeviceFragment, bundle)
+        }
     }
 
     override fun onImageClick(v: View?) {

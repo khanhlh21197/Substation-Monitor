@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
-import com.khanhlh.substationmonitor.ui.main.fragments.home.UpdateType
+import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.utils.DEVICES
 import com.khanhlh.substationmonitor.utils.USER_COLLECTION
 import durdinapps.rxfirebase2.RxFirestore

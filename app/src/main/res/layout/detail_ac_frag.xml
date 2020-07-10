@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceViewModel" />
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".view.gallery.GalleryFragment">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/airConditioner"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_150sdp"
+                android:padding="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_air_conditioner" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/minus"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_margin="16dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/ic_arrow_down"
+                android:stateListAnimator="@animator/button_state_list_anim"
+                app:layout_constraintBottom_toBottomOf="@id/switchButton"
+                app:layout_constraintEnd_toStartOf="@id/switchButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/switchButton"
+                app:srcCompat="@drawable/ic_arrow_down" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/plus"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_arrow_up"
+                android:stateListAnimator="@animator/button_state_list_anim"
+                app:layout_constraintBottom_toBottomOf="@id/switchButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/switchButton"
+                app:layout_constraintTop_toTopOf="@id/switchButton" />
+
+            <com.khanhlh.substationmonitor.crollerTest.Croller
+                android:id="@+id/croller"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="@dimen/_200sdp"
+                android:layout_centerInParent="true"
+                android:layout_margin="16dp"
+                app:back_circle_color="#FFFFFF"
+                app:indicator_color="@color/purple"
+                app:indicator_width="0"
+                app:is_continuous="true"
+                app:label_color="#000000"
+                app:layout_constraintBottom_toTopOf="@id/switchButton"
+                app:layout_constraintEnd_toStartOf="@id/plus"
+                app:layout_constraintStart_toEndOf="@id/minus"
+                app:layout_constraintTop_toBottomOf="@id/airConditioner"
+                app:main_circle_color="#FFFFFF"
+                app:max="15"
+                app:progress_primary_color="#0B3C49"
+                app:progress_secondary_color="#EEEEEE"
+                app:start_offset="45" />
+
+            <com.khanhlh.substationmonitor.crollerTest.VerticalSeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_200sdp"
+                android:progressDrawable="@drawable/custom_seekbar"
+                app:layout_constraintBottom_toBottomOf="@id/croller"
+                app:layout_constraintStart_toEndOf="@id/croller"
+                app:layout_constraintTop_toTopOf="@id/croller" />
+
+            <com.suke.widget.SwitchButton
+                android:id="@+id/switchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="64dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/croller"
+                app:sb_checked="true" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

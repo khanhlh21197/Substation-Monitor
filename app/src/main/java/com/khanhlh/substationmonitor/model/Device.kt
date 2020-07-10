@@ -12,7 +12,9 @@ data class Device(
     val temp: String,
     @PropertyName("threshold")
     val threshold: String,
-    val image: Bitmap? = null
+    val image: Bitmap? = null,
+    @PropertyName("temp")
+    val type: Long = 0
 ) {
     val warning: Int
         get() = if (temp.toDouble() > threshold.toDouble()) View.VISIBLE else View.GONE

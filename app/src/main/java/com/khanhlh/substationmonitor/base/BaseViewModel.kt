@@ -7,6 +7,7 @@ import com.khanhlh.substationmonitor.di.components.DaggerViewModelInjector
 import com.khanhlh.substationmonitor.di.components.ViewModelInjector
 import com.khanhlh.substationmonitor.di.modules.NetworkModule
 import com.khanhlh.substationmonitor.ui.login.LoginActivityViewModel
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.profile.ProfileViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.room.RoomViewModel
@@ -45,6 +46,7 @@ abstract class BaseViewModel<T> : ViewModel() {
             is HomeViewModel -> injector.inject(this)
             is ProfileViewModel -> injector.inject(this)
             is RoomViewModel -> injector.inject(this)
+            is DetailDeviceViewModel -> injector.inject(this)
         }
     }
 }

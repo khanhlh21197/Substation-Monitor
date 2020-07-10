@@ -23,6 +23,7 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
+import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.navigate
 import com.khanhlh.substationmonitor.helper.dialog.alert

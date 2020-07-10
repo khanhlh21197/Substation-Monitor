@@ -15,9 +15,9 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
-import com.khanhlh.substationmonitor.annotation.ToastType
 import com.khanhlh.substationmonitor.extensions.dispatchFailure
 import com.khanhlh.substationmonitor.extensions.toast
+import com.khanhlh.substationmonitor.helper.annotation.ToastType
 
 
 /**
@@ -27,7 +27,7 @@ import com.khanhlh.substationmonitor.extensions.toast
  */
 
 abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragment() {
-    protected val mBinding by lazy {
+    protected val mBinding: VB by lazy {
         DataBindingUtil.inflate<VB>(
             layoutInflater,
             getLayoutId(),

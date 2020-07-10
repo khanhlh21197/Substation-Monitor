@@ -1,4 +1,4 @@
-package com.khanhlh.substationmonitor.annotation;
+package com.khanhlh.substationmonitor.helper.annotation;
 
 import androidx.annotation.IntDef;
 
@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static com.khanhlh.substationmonitor.annotation.ArticleType.ANDROID;
+import static com.khanhlh.substationmonitor.helper.annotation.ArticleType.ANDROID;
 
 /**
  * 页面描述：ArticleType 文章类型

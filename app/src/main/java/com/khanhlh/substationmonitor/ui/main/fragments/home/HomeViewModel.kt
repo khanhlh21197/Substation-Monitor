@@ -5,6 +5,7 @@ import androidx.databinding.ObservableArrayList
 import com.google.firebase.firestore.QuerySnapshot
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
+import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.model.Room
