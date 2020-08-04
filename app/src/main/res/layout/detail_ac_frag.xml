@@ -60,6 +60,36 @@
                 app:layout_constraintStart_toEndOf="@id/switchButton"
                 app:layout_constraintTop_toTopOf="@id/switchButton" />
 
+            <ImageView
+                android:id="@+id/hot"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_hot"
+                app:layout_constraintBottom_toBottomOf="@id/cool"
+                app:layout_constraintEnd_toStartOf="@id/cool"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cool" />
+
+            <ImageView
+                android:id="@+id/cool"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_cool"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/airConditioner" />
+
+            <ImageView
+                android:id="@+id/humidity"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/humidity"
+                app:layout_constraintBottom_toBottomOf="@id/cool"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cool"
+
+                app:layout_constraintTop_toTopOf="@id/cool" />
+
             <com.khanhlh.substationmonitor.crollerTest.Croller
                 android:id="@+id/croller"
                 android:layout_width="@dimen/_200sdp"
@@ -68,13 +98,13 @@
                 android:layout_margin="16dp"
                 app:back_circle_color="#FFFFFF"
                 app:indicator_color="@color/purple"
-                app:indicator_width="0"
+                app:indicator_width="15"
                 app:is_continuous="true"
                 app:label_color="#000000"
                 app:layout_constraintBottom_toTopOf="@id/switchButton"
                 app:layout_constraintEnd_toStartOf="@id/plus"
                 app:layout_constraintStart_toEndOf="@id/minus"
-                app:layout_constraintTop_toBottomOf="@id/airConditioner"
+                app:layout_constraintTop_toBottomOf="@id/cool"
                 app:main_circle_color="#FFFFFF"
                 app:max="15"
                 app:progress_primary_color="#0B3C49"
@@ -94,7 +124,7 @@
                 android:id="@+id/switchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="64dp"
+                android:layout_marginBottom="48dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -2,6 +2,7 @@ package com.khanhlh.substationmonitor.ui.main.fragments.home
 
 import android.annotation.SuppressLint
 import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.QuerySnapshot
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
@@ -15,6 +16,7 @@ class HomeViewModel : BaseViewModel<Any>() {
     val list = ObservableArrayList<Device>()
     val rooms = ObservableArrayList<Room>()
     private val idSet = mutableSetOf<String>()
+    val loading = MutableLiveData<Boolean>(true)
 
     @SuppressLint("CheckResult", "LogNotTimber")
     fun observerAllDevices() {

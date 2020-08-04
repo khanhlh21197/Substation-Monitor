@@ -109,7 +109,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
             DeviceType.FAN -> navigate(R.id.detailDeviceFragment, bundle)
             DeviceType.LIGHT -> navigate(R.id.detailDeviceFragment, bundle)
             DeviceType.TEMP -> navigate(R.id.detailDeviceFragment, bundle)
-            DeviceType.TV -> navigate(R.id.detailDeviceFragment, bundle)
+            DeviceType.TV -> navigate(R.id.detailTvFrag, bundle)
         }
     }
 

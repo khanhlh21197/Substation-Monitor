@@ -61,7 +61,7 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
         visibility.set(View.GONE)
     }
 
-    fun onMinusClicked(){
+    fun onMinusClicked() {
 
     }
 }

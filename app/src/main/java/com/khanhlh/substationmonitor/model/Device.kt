@@ -6,6 +6,8 @@ import com.google.firebase.firestore.PropertyName
 
 data class Device(
     val id: String,
+    val wattage: String,
+    val status: Boolean,
     @PropertyName("name")
     val name: String,
     @PropertyName("temp")

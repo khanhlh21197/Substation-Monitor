@@ -79,4 +79,6 @@
     <string name="configure_threshold_fail">Cài ngưỡng thất bại</string>
     <string name="empty_threshold">Vui lòng nhập ngưỡng!</string>
     <string name="add_room">Thêm phòng</string>
+    <string name="light_timer_on"><u>Hẹn giờ bật đèn</u></string>
+    <string name="light_timer_off"><u>Hẹn giờ tắt đèn</u></string>
 </resources>

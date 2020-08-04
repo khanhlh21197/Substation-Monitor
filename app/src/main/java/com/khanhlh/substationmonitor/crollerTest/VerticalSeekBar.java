@@ -2,13 +2,13 @@ package com.khanhlh.substationmonitor.crollerTest;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class VerticalSeekBar extends androidx.appcompat.widget.AppCompatSeekBar {
+
+    private boolean mIsMovingThumb = false;
+    static private float THUMB_SLOP = 25;
 
     public VerticalSeekBar(Context context) {
         super(context);
@@ -37,18 +37,19 @@ public class VerticalSeekBar extends androidx.appcompat.widget.AppCompatSeekBar 
         c.translate(-getHeight(), 0);
 
         super.onDraw(c);
-        drawProgressToThumb(c);
     }
 
-    private void drawProgressToThumb(Canvas c) {
-        int thumb_x = (int) (((double) this.getProgress() / this.getMax()) * (double) this.getWidth());
-        float middle = (float) (this.getHeight());
-
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(40);
-        paint.setFakeBoldText(true);
-        c.drawText("" + this.getProgress(), thumb_x, middle, paint);
+    private boolean isWithinThumb(MotionEvent event) {
+        final float progress = getProgress();
+        final float density = this.getResources().getDisplayMetrics().density;
+        final float height = getHeight();
+        final float y = event.getY();
+        final float max = getMax();
+        if (progress >= max - (int) (max * (y + THUMB_SLOP * density) / height)
+                && progress <= max - (int) (max * (y - THUMB_SLOP * density) / height))
+            return true;
+        else
+            return false;
     }
 
     @Override
@@ -56,22 +57,33 @@ public class VerticalSeekBar extends androidx.appcompat.widget.AppCompatSeekBar 
         if (!isEnabled()) {
             return false;
         }
-
+        boolean handled = false;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if (isWithinThumb(event)) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                    mIsMovingThumb = true;
+                    handled = true;
+                }
+                break;
             case MotionEvent.ACTION_MOVE:
+
             case MotionEvent.ACTION_UP:
-                int i = 0;
-                i = getMax() - (int) (getMax() * event.getY() / getHeight());
-                setProgress(i);
-                Log.i("Progress", getProgress() + "");
+                setProgress(getMax() - (int) (getMax() * event.getY() / getHeight()));
                 onSizeChanged(getWidth(), getHeight(), 0, 0);
+                if (mIsMovingThumb) {
+                    setProgress(getMax() - (int) (getMax() * event.getY() / getHeight()));
+                    onSizeChanged(getWidth(), getHeight(), 0, 0);
+                    handled = true;
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                getParent().requestDisallowInterceptTouchEvent(false);
+                mIsMovingThumb = false;
+                handled = true;
                 break;
 
-            case MotionEvent.ACTION_CANCEL:
-                break;
         }
         return true;
     }
-
 }

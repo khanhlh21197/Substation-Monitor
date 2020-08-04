@@ -1,6 +1,7 @@
 package com.khanhlh.substationmonitor.base
 
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.khanhlh.substationmonitor.di.components.DaggerViewModelInjector
@@ -49,5 +50,11 @@ abstract class BaseViewModel<T> : ViewModel() {
             is DetailDeviceViewModel -> injector.inject(this)
         }
     }
+
+    private val _title = MutableLiveData<String>()
+    val title: LiveData<String>
+        get() = _title
+
+    open fun updateActionBarTitle(title: String) = _title.postValue(title)
 }
 

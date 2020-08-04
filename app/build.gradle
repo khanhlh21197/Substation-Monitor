@@ -172,4 +172,8 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
     //switch button
     compile 'com.github.zcweng:switch-button:0.0.3@aar'
+    //permission
+    implementation 'com.karumi:dexter:6.2.1'
+    //wheel
+    implementation 'com.yanzhenjie:wheel:1.0.0'
 }
