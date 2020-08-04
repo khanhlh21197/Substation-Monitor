@@ -107,7 +107,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         when ((item.type)) {
             DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
             DeviceType.FAN -> navigate(R.id.detailDeviceFragment, bundle)
-            DeviceType.LIGHT -> navigate(R.id.detailDeviceFragment, bundle)
+            DeviceType.LIGHT -> navigate(R.id.detailLightFragment, bundle)
             DeviceType.TEMP -> navigate(R.id.detailDeviceFragment, bundle)
             DeviceType.TV -> navigate(R.id.detailTvFrag, bundle)
         }

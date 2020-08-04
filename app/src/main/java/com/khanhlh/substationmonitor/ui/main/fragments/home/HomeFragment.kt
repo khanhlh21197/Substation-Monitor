@@ -1,6 +1,5 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.home
 
-
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent

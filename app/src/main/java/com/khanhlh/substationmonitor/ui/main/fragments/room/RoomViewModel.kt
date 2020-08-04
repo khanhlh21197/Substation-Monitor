@@ -15,21 +15,38 @@ class RoomViewModel : BaseViewModel<Any>() {
 
     @SuppressLint("CheckResult", "LogNotTimber")
     fun observerAllDevices(devices: String) {
-        FirebaseCommon.observerAllDevices().subscribe {
+        FirebaseCommon.observerAllDevices().subscribe({
             add(it.id, it.data, devices)
-        }
+        }, {
+            logD(it.toString())
+        })
     }
 
     private fun add(id: String, data: Map<String, Any>, devices: String) {
         if (!devices.contains(id)) return
+
+        var name = ""
+        var temp = "0"
+        var threshold = "0"
+        var status = false
+        var wattage = "0"
+        var type = 0L
+        if (data[NAME] != null) name = data[NAME] as String
+        if (data[TEMP] != null) temp = data[TEMP] as String
+        if (data[THRESHOLD] != null) threshold = data[THRESHOLD] as String
+        if (data[WATTAGE] != null) wattage = data[WATTAGE] as String
+        if (data[STATUS] != null) status = data[STATUS] as Boolean
+        if (data[TYPE] != null) type = data[TYPE] as Long
+
         val device =
             Device(
                 id,
-                data[NAME].toString(),
-                data[TEMP] as String,
-                data[THRESHOLD] as String,
+                name,
+                temp, threshold,
+                type,
                 null,
-                data[TYPE] as Long
+                wattage,
+                status
             )
         if (!idSet.add(id)) {
             val index = idSet.indexOf(id)

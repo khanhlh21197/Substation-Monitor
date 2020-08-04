@@ -9,12 +9,10 @@ import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.get
 import com.khanhlh.substationmonitor.extensions.init
+import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.set
 import com.khanhlh.substationmonitor.model.Device
-import com.khanhlh.substationmonitor.utils.DEVICES
-import com.khanhlh.substationmonitor.utils.NAME
-import com.khanhlh.substationmonitor.utils.TEMP
-import com.khanhlh.substationmonitor.utils.THRESHOLD
+import com.khanhlh.substationmonitor.utils.*
 import io.reactivex.disposables.Disposable
 
 class DetailDeviceViewModel : BaseViewModel<Any>() {
@@ -23,14 +21,20 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
     val visibility = MutableLiveData<Int>().init(View.GONE)
     val threshold = MutableLiveData<String>().init("")
 
-    fun observerDevice(id: String): Disposable = FirebaseCommon.observerDevice(id).subscribe {
+    fun observerDevice(id: String): Disposable = FirebaseCommon.observerDevice(id).subscribe({
         var name = ""
         var temp = ""
         var threshold = ""
+        var status = false
+        var wattage = ""
+        var type = 0L
         if (it[NAME] != null) name = it[NAME] as String
         if (it[TEMP] != null) temp = it[TEMP] as String
         if (it[THRESHOLD] != null) threshold = it[THRESHOLD] as String
-        device.set(Device(id, name, temp, threshold))
+        if (it[WATTAGE] != null) status = it[WATTAGE] as Boolean
+        if (it[STATUS] != null) wattage = it[STATUS] as String
+        if (it[TYPE] != null) type = it[TYPE] as Long
+        device.set(Device(id, name, temp, threshold, type, null, wattage, status))
         try {
             if (temp.toDouble() > threshold.toDouble()) {
                 isFlashing.set(true)
@@ -42,7 +46,9 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         }
-    }
+    }, {
+        logD(it.toString())
+    })
 
     @SuppressLint("CheckResult")
     fun updateThreshold(id: String) {

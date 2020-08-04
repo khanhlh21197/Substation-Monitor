@@ -7,38 +7,44 @@
 
         <import type="android.view.View" />
 
-        <variable
-            name="vm"
-            type="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceViewModel" />
-
-        <variable
-            name="device"
-            type="com.khanhlh.substationmonitor.model.Device" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/_48sdp"
         android:animateLayoutChanges="true"
         android:padding="@dimen/_8sdp">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/lightOn"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_300sdp"
+        <FrameLayout
+            android:id="@+id/frameLight"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_200sdp"
             android:src="@drawable/ic_light_on"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/lightOff"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_300sdp"
-            android:src="@drawable/ic_light_off"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/lightOn"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_200sdp"
+                android:src="@drawable/ic_light_on"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/lightOff"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_200sdp"
+                android:src="@drawable/ic_light_off"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,20 +53,19 @@
             android:fontFamily="@font/montserrat_regular"
             android:textSize="@dimen/_24ssp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/lightOn"
-            app:layout_constraintStart_toEndOf="@id/lightOn"
-            app:layout_constraintTop_toTopOf="@id/lightOn"
-            tools:text="@{device.wattage}" />
+            app:layout_constraintBottom_toBottomOf="@id/frameLight"
+            app:layout_constraintStart_toEndOf="@id/frameLight"
+            app:layout_constraintTop_toTopOf="@id/frameLight" />
 
         <com.suke.widget.SwitchButton
             android:id="@+id/lightSwitch"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_48sdp"
             android:layout_marginTop="@dimen/_16sdp"
-            app:sb_checked="@{device.status}"
+            android:layout_marginBottom="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@id/llTimerOn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lightOn" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:id="@+id/llTimerOn"
@@ -69,9 +74,10 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/lightSwitch">
+            app:layout_constraintBottom_toTopOf="@id/llTimerOff">
 
             <TextView
+                android:id="@+id/timerOn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
@@ -98,9 +104,10 @@
             android:layout_marginStart="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/llTimerOn">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
+                android:id="@+id/timerOff"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"

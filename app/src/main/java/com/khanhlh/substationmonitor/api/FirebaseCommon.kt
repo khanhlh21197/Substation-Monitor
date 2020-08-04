@@ -3,9 +3,9 @@ package com.khanhlh.substationmonitor.api
 import android.annotation.SuppressLint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
-import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.utils.DEVICES
 import com.khanhlh.substationmonitor.utils.USER_COLLECTION
 import durdinapps.rxfirebase2.RxFirestore
@@ -57,8 +57,12 @@ object FirebaseCommon {
                         return@addSnapshotListener
                     } else {
                         querySnapshot!!.forEach {
-                            logD(it.toString() + System.currentTimeMillis())
-                            emitter.onNext(it)
+                            if (it != null) {
+                                logD(it.toString() + System.currentTimeMillis())
+                                emitter.onNext(it)
+                            } else {
+                                emitter.onError(Throwable("null"))
+                            }
                         }
                     }
                 }

@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_roomFragment_to_detailTvFrag"
             app:destination="@id/detailTvFrag" />
+        <action
+            android:id="@+id/action_roomFragment_to_detailLightFragment"
+            app:destination="@id/detailLightFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailAcFragment"
@@ -61,6 +64,18 @@
         android:label="DetailTvFrag" >
         <action
             android:id="@+id/action_detailTvFrag_to_roomFragment"
+            app:destination="@id/roomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailLightFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailLightFragment"
+        android:label="DetailLightFragment" >
+        <argument
+            android:name="idDevice"
+            android:defaultValue=""
+            app:argType="string" />
+        <action
+            android:id="@+id/action_detailLightFragment_to_roomFragment"
             app:destination="@id/roomFragment" />
     </fragment>
 </navigation>
