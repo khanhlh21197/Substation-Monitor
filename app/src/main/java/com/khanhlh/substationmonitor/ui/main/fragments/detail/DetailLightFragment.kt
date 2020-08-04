@@ -1,6 +1,7 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.detail
 
 import android.app.Dialog
+import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.view.Window
 import android.widget.TextView
@@ -28,7 +29,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
     override fun initView() {
         vm = DetailDeviceViewModel()
-//        mBinding.vm = vm
+        mBinding.vm = vm
         getBundleData()
         initWheelAdapter()
         initListener()
@@ -47,26 +48,17 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     }
 
     private fun initWheelAdapter() {
-        wheelMenu1 = arrayOf(1,2,3,4,5)
-        wheelMenu2 = arrayOf(2,3,4,1,21,2)
+        wheelMenu1 = arrayOf(1, 2, 3, 4, 5)
+        wheelMenu2 = arrayOf(2, 3, 4, 1, 21, 2)
     }
 
     private fun onSwitchChange() {
-        if (lightSwitch.isChecked) {
-            lightOn.visibility = View.VISIBLE
-            lightOff.visibility = View.GONE
-        } else {
-            lightOn.visibility = View.GONE
-            lightOff.visibility = View.VISIBLE
-        }
-
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val drawable: TransitionDrawable = light.drawable as TransitionDrawable
             if (isChecked) {
-                lightOn.visibility = View.VISIBLE
-                lightOff.visibility = View.GONE
+                drawable.startTransition(100)
             } else {
-                lightOn.visibility = View.GONE
-                lightOff.visibility = View.VISIBLE
+                drawable.reverseTransition(100)
             }
         }
     }
