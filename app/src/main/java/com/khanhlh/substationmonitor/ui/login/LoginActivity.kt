@@ -19,7 +19,6 @@ import com.khanhlh.substationmonitor.helper.shared_preference.clear
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
 import com.khanhlh.substationmonitor.model.UserTest
-import com.khanhlh.substationmonitor.mqtt.MqttCommon
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.ui.main.MainActivity
 import com.khanhlh.substationmonitor.ui.register.RegisterActivity
@@ -53,21 +52,25 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
     }
 
     private fun initMqtt() {
-        gson = Gson()
-        val mqttCommon = MqttCommon(this, "abc", object: MqttCommon.ReceiveMessage{
-            override fun onSuccess(message: String?) {
-                logD(message)
-            }
+        val macAddress = getMacAddr()
 
-        })
-//        mqttHelper = MqttHelper(this)
-//        mqttHelper.connect("abc", "123")
-        val user =
-            getMacAddr()?.let { UserTest("abc@gmail.com", "abc", "khanh", "123456", "asdfasd", it) }
+        gson = Gson()
+        mqttHelper = MqttHelper(this)
+        macAddress?.let { mqttHelper.connect(it) }
+        val user = macAddress?.let {
+            UserTest(
+                "abc@gmail.com",
+                "abc",
+                "khanh",
+                "123456",
+                "asdfasd",
+                it
+            )
+        }
         logD(gson.toJson(user))
         textView.setOnClickListener {
-//            mqttHelper.publishMessage("registeruser", gson.toJson(user))
-            mqttCommon.publishMessage("registeruser", gson.toJson(user))
+            mqttHelper.publishMessage("registeruser", gson.toJson(user))
+//            mqttCommon.publishMessage("registeruser", gson.toJson(user))
         }
     }
 

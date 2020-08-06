@@ -1,36 +1,74 @@
-package br.com.hussan.mqttandroid
+package com.khanhlh.substationmonitor.mqtt
 
 import android.content.Context
 import android.util.Log
+import com.khanhlh.substationmonitor.extensions.logD
 import org.eclipse.paho.android.service.MqttAndroidClient
-import org.eclipse.paho.client.mqttv3.IMqttActionListener
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken
-import org.eclipse.paho.client.mqttv3.IMqttToken
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended
-import org.eclipse.paho.client.mqttv3.MqttClient
-import org.eclipse.paho.client.mqttv3.MqttException
-import org.eclipse.paho.client.mqttv3.MqttMessage
+import org.eclipse.paho.client.mqttv3.*
 
-class MqttClient(private val context: Context) {
-    val client by lazy {
+class MqttHelper(private val context: Context) {
+    private var userName = ""
+    private var passWord = ""
+    private val host = "tcp://45.119.82.186:1234"
+    private val TAG = "MqttClient"
+    private var clientId = ""
+    private var mqttConnectOptions: MqttConnectOptions
+
+    private val PRODUCTKEY = "a11xsrW****"
+    private val DEVICENAME = "paho_android"
+    private val DEVICESECRET = "tLMT9QWD36U2SArglGqcHCDK9rK9****"
+
+    init {
+        /* Obtain the MQTT connection information clientId, username, and password. */
+        val aiotMqttOption =
+            AiotMqttOption().getMqttOption(PRODUCTKEY, DEVICENAME, DEVICESECRET)
+        if (aiotMqttOption == null) {
+            Log.e("AiotMqttOption", "device info error")
+        } else {
+            clientId = aiotMqttOption.clientId
+            userName = aiotMqttOption.username
+            passWord = aiotMqttOption.password
+        }
+
+        /* Create an MqttConnectOptions object and configure the username and password. */
+
+        /* Create an MqttConnectOptions object and configure the username and password. */
+        mqttConnectOptions = MqttConnectOptions()
+        mqttConnectOptions.userName = userName
+        mqttConnectOptions.password = passWord.toCharArray()
+    }
+
+    private val client by lazy {
         val clientId = MqttClient.generateClientId()
-        MqttAndroidClient(context, "tcp://iot.eclipse.org:1883",
-            clientId)
+        MqttAndroidClient(context, host, clientId)
     }
 
     companion object {
         const val TAG = "MqttClient"
     }
 
-    fun connect(topics: Array<String>? = null,
-                messageCallBack: ((topic: String, message: MqttMessage) -> Unit)? = null) {
+    fun connect(
+        vararg topics: String,
+        messageCallBack: ((topic: String, message: MqttMessage) -> Unit)? = null
+    ) {
         try {
-            client.connect()
-            client.setCallback(object : MqttCallbackExtended {
-                override fun connectComplete(reconnect: Boolean, serverURI: String) {
-                    topics?.forEach {
+            client.connect(mqttConnectOptions, null, object: IMqttActionListener{
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    topics.forEach {
                         subscribeTopic(it)
                     }
+                    logD("Connect Succeed")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    logD("Connect Failed")
+                }
+            })
+            client.setCallback(object : MqttCallbackExtended {
+                override fun connectComplete(reconnect: Boolean, serverURI: String) {
+//                    topics.forEach {
+//                        subscribeTopic(it)
+//                    }
                     Log.d(TAG, "Connected to: $serverURI")
                 }
 
@@ -55,12 +93,41 @@ class MqttClient(private val context: Context) {
         }
     }
 
+//    fun publishMessage(topic: String, msg: String) {
+//
+//        try {
+//            val message = MqttMessage()
+//            message.payload = msg.toByteArray()
+//            client.publish(topic, message.payload, 0, true)
+//            Log.d(TAG, "$msg published to $topic")
+//        } catch (e: MqttException) {
+//            Log.d(TAG, "Error Publishing to $topic: " + e.message)
+//            e.printStackTrace()
+//        }
+//
+//    }
+
     fun publishMessage(topic: String, msg: String) {
 
         try {
+            if (!client.isConnected){
+                client.connect()
+            }
+
             val message = MqttMessage()
+            message.qos = 0
             message.payload = msg.toByteArray()
-            client.publish(topic, message.payload, 0, true)
+
+            client.publish(topic, message, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    logD("Publish succeed!")
+                }
+
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    logD("Publish Failed!")
+                }
+
+            })
             Log.d(TAG, "$msg published to $topic")
         } catch (e: MqttException) {
             Log.d(TAG, "Error Publishing to $topic: " + e.message)
