@@ -1,9 +1,13 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.detail
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.view.Window
+import android.widget.SeekBar
 import android.widget.TextView
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
@@ -18,8 +22,8 @@ import kotlinx.android.synthetic.main.detail_light_frag.*
 class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceViewModel>(),
     View.OnClickListener {
     private var wheelScrolled = false
-    lateinit var wheelMenu1: Array<Int>
-    lateinit var wheelMenu2: Array<Int>
+    private var wheelMenu1 = arrayOfNulls<Int>(24)
+    private var wheelMenu2 = arrayOfNulls<Int>(60)
 
     companion object {
         const val ID_DEVICE = "ID_DEVICE"
@@ -34,6 +38,36 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         initWheelAdapter()
         initListener()
         onSwitchChange()
+        setupWheel()
+        setupSeekBar()
+    }
+
+    private fun setupSeekBar() {
+        seekBar.progress = 125
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                light.colorFilter = setBrightness(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+        })
+    }
+
+    fun setBrightness(progress: Int): PorterDuffColorFilter? {
+        return if (progress >= 100) {
+            val value = (progress - 100) * 255 / 100
+            PorterDuffColorFilter(Color.argb(value, 255, 255, 255), PorterDuff.Mode.SRC_OVER)
+        } else {
+            val value = (100 - progress) * 255 / 100
+            PorterDuffColorFilter(Color.argb(value, 0, 0, 0), PorterDuff.Mode.SRC_ATOP)
+        }
     }
 
     private fun getBundleData() {
@@ -48,8 +82,12 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     }
 
     private fun initWheelAdapter() {
-        wheelMenu1 = arrayOf(1, 2, 3, 4, 5)
-        wheelMenu2 = arrayOf(2, 3, 4, 1, 21, 2)
+        for (i in 1..24) {
+            wheelMenu1[i] = i
+        }
+        for (i in 1..60) {
+            wheelMenu2[i] = i
+        }
     }
 
     private fun onSwitchChange() {
@@ -87,9 +125,14 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     private val changedListener =
         OnWheelChangedListener { wheel, oldValue, newValue ->
             if (!wheelScrolled) {
-//                updateStatus()
+                updateStatus(newValue)
             }
         }
+
+    private fun updateStatus(newValue: Int) {
+        tvTimerOff.text = newValue.toString()
+        tvTimerOn.text = newValue.toString()
+    }
 
     private fun showDialog(title: String) {
         val dialog = Dialog(requireActivity())
@@ -120,5 +163,31 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
         noBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
+    }
+
+    private fun setupWheel() {
+        hourOnWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu1))
+        hourOnWheel.visibleItems = 3
+        hourOnWheel.currentItem = 0
+        hourOnWheel.addChangingListener(changedListener)
+        hourOnWheel.addScrollingListener(scrolledListener)
+
+        hourOffWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu1))
+        hourOffWheel.visibleItems = 3
+        hourOffWheel.currentItem = 0
+        hourOffWheel.addChangingListener(changedListener)
+        hourOffWheel.addScrollingListener(scrolledListener)
+
+        minuteOnWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu2))
+        minuteOnWheel.visibleItems = 3
+        minuteOnWheel.currentItem = 0
+        minuteOnWheel.addChangingListener(changedListener)
+        minuteOnWheel.addScrollingListener(scrolledListener)
+
+        minuteOffWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu2))
+        minuteOffWheel.visibleItems = 3
+        minuteOffWheel.currentItem = 0
+        minuteOffWheel.addChangingListener(changedListener)
+        minuteOffWheel.addScrollingListener(scrolledListener)
     }
 }

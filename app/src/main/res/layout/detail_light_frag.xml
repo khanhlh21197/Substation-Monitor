@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -33,6 +32,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="255"
+                app:layout_constraintTop_toBottomOf="@id/light" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,15 +80,22 @@
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_16ssp" />
 
+                <com.yanzhenjie.wheel.WheelView
+                    android:id="@+id/hourOnWheel"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_16sdp" />
+
+                <com.yanzhenjie.wheel.WheelView
+                    android:id="@+id/minuteOnWheel"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_16sdp" />
+
                 <TextView
                     android:id="@+id/tvTimerOn"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:textColor="@color/red"
-                    android:textSize="@dimen/_16ssp"
-                    tools:text="Sau 4 giờ 4 phút" />
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
@@ -104,15 +117,22 @@
                     android:textColor="@color/blue"
                     android:textSize="@dimen/_16ssp" />
 
+                <com.yanzhenjie.wheel.WheelView
+                    android:id="@+id/hourOffWheel"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_16sdp" />
+
+                <com.yanzhenjie.wheel.WheelView
+                    android:id="@+id/minuteOffWheel"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_marginStart="@dimen/_16sdp" />
+
                 <TextView
                     android:id="@+id/tvTimerOff"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:textColor="@color/red"
-                    android:textSize="@dimen/_16ssp"
-                    tools:text="Sau 4 giờ 4 phút" />
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
