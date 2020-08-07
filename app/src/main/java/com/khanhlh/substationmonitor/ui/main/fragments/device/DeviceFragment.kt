@@ -1,4 +1,4 @@
-package com.khanhlh.substationmonitor.ui.main.fragments.home
+package com.khanhlh.substationmonitor.ui.main.fragments.device
 
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
@@ -12,7 +12,6 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -25,50 +24,55 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
-import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
+import com.khanhlh.substationmonitor.databinding.FragmentDeviceBinding
 import com.khanhlh.substationmonitor.extensions.getMacAddr
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.navigate
 import com.khanhlh.substationmonitor.extensions.toJson
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
-import com.khanhlh.substationmonitor.model.Nha
+import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailTempFrag
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
-    ItemClickPresenter<Nha> {
-    private val RESULT_LOAD_IMAGE = 1
-    private lateinit var imageView: ImageView
-    private lateinit var txtInputDevice: EditText
-    private lateinit var txtLabel: TextView
-    private lateinit var id: String
+class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
+    ItemClickPresenter<ThietBi> {
     private lateinit var mqttHelper: MqttHelper
     private lateinit var gson: Gson
     private lateinit var macAddress: String
-    private lateinit var idNha: String
-    lateinit var nha: Nha
-    val homes = ObservableArrayList<Nha>()
+    private lateinit var thietbi: ThietBi
+    private val thietbis = ObservableArrayList<ThietBi>()
+    private lateinit var idThietBi: String
+
+    companion object {
+        const val ID_ROOM = "ID_ROOM"
+    }
+
+    var idPhong = ""
+    private val RESULT_LOAD_IMAGE = 1
+    lateinit var imageView: ImageView
+    lateinit var txtInputDevice: EditText
 
     private val mAdapter by lazy {
-        SingleTypeAdapter<Nha>(mContext, R.layout.item_home, homes).apply {
-            itemPresenter = this@HomeFragment
+        SingleTypeAdapter<ThietBi>(mContext, R.layout.item_device, thietbis).apply {
+            itemPresenter = this@DeviceFragment
         }
     }
 
     override fun initView() {
-        vm = HomeViewModel(MyApp())
+        vm = DeviceViewModel(MyApp())
         mBinding.viewModel = vm
 
+        getBundleData()
+        initMqtt()
         initRecycler()
         fab.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                addHome()
+                addRoom()
             }
         }
-        getBundleData()
-        initMqtt()
     }
 
     private fun initMqtt() {
@@ -81,9 +85,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
             mqttHelper.connect(it)
                 .subscribe({
                     if ("0" == it.errorCode && "true" == it.result) {
-                        idNha = it.id!!
-                        nha.id = idNha
-                        homes.add(nha)
+                        idThietBi = it.id!!
+                        thietbi.id = idThietBi
+                        thietbis.add(thietbi)
                     } else {
                         toast("Error")
                     }
@@ -95,8 +99,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     }
 
     private fun getBundleData() {
-        val args = arguments
-        id = args!!.getString("id").toString()
+        if (arguments != null) {
+            idPhong = requireArguments().getString("idphong")!!
+        }
     }
 
     private fun initRecycler() {
@@ -114,15 +119,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 //                    outRect.top = activity?.dpToPx(R.dimen.xdp_12_0) ?: 0
                 }
             })
-//            isPrepared = true
+            isPrepared = true
         }
     }
 
-    override fun getLayoutId(): Int = R.layout.fragment_home
-    override fun onItemClick(v: View?, item: Nha) {
-        logD(item.tennha)
-        val bundle = bundleOf("idnha" to idNha)
-        navigate(R.id.roomFragment, bundle)
+    override fun getLayoutId(): Int = R.layout.fragment_room
+    override fun onItemClick(v: View?, item: ThietBi) {
+        logD(item.id)
+        val bundle = bundleOf(DetailTempFrag.ID_DEVICE to item.id)
+        navigate(R.id.detailLightFragment, bundle)
+//        when ((item.type)) {
+//            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
+//            DeviceType.FAN -> navigate(R.id.detailDeviceFragment, bundle)
+//            DeviceType.LIGHT -> navigate(R.id.detailLightFragment, bundle)
+//            DeviceType.TEMP -> navigate(R.id.detailDeviceFragment, bundle)
+//            DeviceType.TV -> navigate(R.id.detailTvFrag, bundle)
+//        }
     }
 
     override fun onImageClick(v: View?) {
@@ -136,18 +148,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun addHome() {
+    private fun addRoom() {
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
         txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
-        txtLabel = alertLayout.findViewById(R.id.txtLabel)
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
-        alert.setMessage(getString(R.string.add_home))
         alert.setView(alertLayout)
         alert.setCancelable(false)
         scanBarcode.setOnClickListener { v: View? ->
@@ -169,7 +179,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
             getString(R.string.ok)
         ) { dialog: DialogInterface?, which: Int ->
             if (txtInputDevice.text != null) {
-                registerHome(txtInputDevice.text.toString())
+                thietbi = ThietBi("", idPhong, txtInputDevice.text.toString(), "123")
+                mqttHelper.publishMessage("registerthietbi", toJson(thietbi)!!).subscribe()
             } else {
                 Toast.makeText(
                     activity,
@@ -180,11 +191,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         }
         val dialog = alert.create()
         dialog.show()
-    }
-
-    private fun registerHome(ten: String) {
-        nha = Nha("", id, ten, getMacAddr()!!)
-        mqttHelper.publishMessage("registernha", toJson(nha)!!).subscribe()
     }
 
     override fun onActivityResult(
@@ -219,17 +225,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         }
     }
 
-    override fun onItemLongClick(v: View?, item: Nha) {
+    override fun onItemLongClick(v: View?, item: ThietBi) {
     }
 
-    override fun onDeleteClick(v: View?, item: Nha) {
+    override fun onDeleteClick(v: View?, item: ThietBi) {
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
         logD("HomeFragment::onDestroy")
-        mqttHelper.close()
     }
 
 }

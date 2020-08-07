@@ -1,20 +1,18 @@
 package com.khanhlh.substationmonitor.ui.login
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseActivity
 import com.khanhlh.substationmonitor.databinding.ActivityLoginBinding
 import com.khanhlh.substationmonitor.di.ViewModelFactory
-import com.khanhlh.substationmonitor.extensions.get
-import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.extensions.navigateToActivity
-import com.khanhlh.substationmonitor.extensions.set
+import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.shared_preference.clear
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
@@ -24,19 +22,18 @@ import com.khanhlh.substationmonitor.ui.main.MainActivity
 import com.khanhlh.substationmonitor.ui.register.RegisterActivity
 import com.khanhlh.substationmonitor.utils.USER_PREF
 import kotlinx.android.synthetic.main.activity_login.*
-import okhttp3.internal.and
-import java.net.NetworkInterface
-import java.util.*
 
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>() {
     private lateinit var vm: LoginActivityViewModel
-    lateinit var sharedPref: SharedPreferences
-    lateinit var mqttHelper: MqttHelper
-    lateinit var gson: Gson
+    private lateinit var sharedPref: SharedPreferences
+    private lateinit var mqttHelper: MqttHelper
+    private lateinit var gson: Gson
+    private lateinit var macAddress: String
+    private lateinit var id: String
 
     override fun initVariables() {
-        baseViewModel = LoginActivityViewModel()
+        baseViewModel = LoginActivityViewModel(MyApp())
         baseViewModel.apply { }
         baseViewModel.attachView(this)
         baseViewModel = ViewModelProvider(this, ViewModelFactory(this))
@@ -45,32 +42,38 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         bindView(R.layout.activity_login)
         binding.viewModel = vm
         sharedPref = getSharedPreferences(USER_PREF, Context.MODE_PRIVATE)
-        onSwitchListener()
         getUser()
+        onSwitchListener()
 
         initMqtt()
     }
 
     private fun initMqtt() {
-        val macAddress = getMacAddr()
+        macAddress = getMacAddr()!!
 
         gson = Gson()
         mqttHelper = MqttHelper(this)
-        macAddress?.let { mqttHelper.connect(it) }
-        val user = macAddress?.let {
-            UserTest(
-                "abc@gmail.com",
-                "abc",
-                "khanh",
-                "123456",
-                "asdfasd",
-                it
-            )
+
+        macAddress.let {
+            mqttHelper.connect(it)
+                .subscribe({
+                    if ("0" == it.errorCode && "true" == it.result) {
+                        baseViewModel.isLoginSuccess.set(true)
+                        id = it.id!!
+                        navigateToActivity(MainActivity::class.java, id)
+                        if (switchSaveUser.isChecked) saveUser()
+                    } else {
+                        baseViewModel.isLoginSuccess.set(false)
+                    }
+                    baseViewModel.hideLoading()
+                }, {
+                    toast(it.toString())
+                })
         }
-        logD(gson.toJson(user))
-        textView.setOnClickListener {
-            mqttHelper.publishMessage("registeruser", gson.toJson(user))
-//            mqttCommon.publishMessage("registeruser", gson.toJson(user))
+
+        btLogin.setOnClickListener {
+            baseViewModel.showLoading()
+            tryLogin()
         }
     }
 
@@ -105,16 +108,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
 
     override fun observeViewModel() {
         super.observeViewModel()
-        vm.registerButtonClicked.observe(this, Observer {
-            navigateToActivity(RegisterActivity::class.java)
-        })
-
-        vm.isLoginSuccess.observe(this, Observer {
-            if (it) {
-                navigateToActivity(MainActivity::class.java)
-                if (switchSaveUser.isChecked) saveUser()
-            }
-        })
+        btRegister.setOnClickListener { navigateToActivity(RegisterActivity::class.java) }
     }
 
     companion object {
@@ -125,25 +119,24 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         private const val DEFAULT_PASSWORD = "";
     }
 
-    fun getMacAddr(): String? {
-        try {
-            val all: List<NetworkInterface> =
-                Collections.list(NetworkInterface.getNetworkInterfaces())
-            for (nif in all) {
-                if (nif.name != "wlan0") continue
-                val macBytes: ByteArray = nif.hardwareAddress ?: return ""
-                val res1 = StringBuilder()
-                for (b in macBytes) {
-                    res1.append(Integer.toHexString(b and 0xFF) + ":")
-                }
-                if (res1.isNotEmpty()) {
-                    res1.deleteCharAt(res1.length - 1)
-                }
-                return res1.toString()
+    @SuppressLint("CheckResult")
+    fun tryLogin() {
+        baseViewModel.showLoading()
+        if (baseViewModel.password.get()!!.length > 5 && baseViewModel.mail.get()!!.length > 5) {
+            val user = macAddress.let {
+                UserTest(
+                    baseViewModel.mail.get()!!, baseViewModel.password.get()!!, mac = macAddress
+                )
             }
-        } catch (ex: Exception) {
+            mqttHelper.publishMessage("loginuser", gson.toJson(user)).subscribe()
+        } else {
+            baseViewModel.errorMessage.value = MyApp.context.getString(R.string.require_length)
         }
-        return "02:00:00:00:00:00"
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mqttHelper.close()
     }
 
 }

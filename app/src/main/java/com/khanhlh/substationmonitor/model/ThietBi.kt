@@ -1,7 +1,8 @@
 package com.khanhlh.substationmonitor.model
 
 data class ThietBi(
-    val idPhong: String,
-    val tenThietBi: String,
-    val maThietBi: String
+    var id: String = "",
+    val idphong: String,
+    val tenthietbi: String,
+    val mathietbi: String
 )

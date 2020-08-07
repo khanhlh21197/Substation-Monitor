@@ -3,48 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_textview"
     android:padding="@dimen/_8sdp">
 
-    <com.yanzhenjie.wheel.WheelView
-        android:id="@+id/hourWheel"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_80sdp"
-        app:layout_constraintEnd_toStartOf="@id/minuteWheel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.yanzhenjie.wheel.WheelView
-        android:id="@+id/minuteWheel"
-        android:layout_width="@dimen/_80sdp"
-        android:layout_height="@dimen/_80sdp"
-        android:layout_marginStart="@dimen/_8sdp"
-        app:layout_constraintBottom_toBottomOf="@id/hourWheel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/hourWheel"
-        app:layout_constraintTop_toTopOf="@id/hourWheel" />
-
-    <LinearLayout
-        app:layout_constraintTop_toBottomOf="@id/minuteWheel"
+    <TimePicker
+        android:id="@+id/timePicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginTop="@dimen/_8sdp"
+        android:timePickerMode="spinner"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/timePicker">
+
+        <Button
             android:id="@+id/ok"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/common_google_signin_btn_text_dark_pressed"
+            android:background="@null"
             android:padding="@dimen/_4sdp"
-            android:text="@string/ok" />
+            android:text="@string/ok"
+            android:textColor="@color/blue" />
 
-        <TextView
+        <Button
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/common_google_signin_btn_text_light_disabled"
+            android:background="@null"
             android:padding="@dimen/_4sdp"
-            android:text="@string/cancel" />
+            android:text="@string/cancel"
+            android:textColor="@color/blue" />
 
     </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.profile
 
 import androidx.lifecycle.MutableLiveData
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.set
@@ -8,7 +9,7 @@ import com.khanhlh.substationmonitor.model.User
 import com.khanhlh.substationmonitor.utils.*
 import io.reactivex.disposables.Disposable
 
-class ProfileViewModel : BaseViewModel<Any>() {
+class ProfileViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     var user = MutableLiveData<User>()
 
     fun getProfile(): Disposable? = FirebaseCommon.getProfile()

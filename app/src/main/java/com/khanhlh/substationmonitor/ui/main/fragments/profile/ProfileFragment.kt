@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
 import com.google.firebase.auth.FirebaseAuth
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentProfileBinding
@@ -27,7 +28,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     lateinit var sharedPref: SharedPreferences
 
     override fun initView() {
-        vm = ProfileViewModel()
+        vm = ProfileViewModel(MyApp())
         mBinding.vm = vm
         vm.getProfile()
         vm.user.observe(this) { mBinding.user = it }

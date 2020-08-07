@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.QuerySnapshot
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.enums.UpdateType
@@ -12,7 +13,7 @@ import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.model.Room
 import com.khanhlh.substationmonitor.utils.*
 
-class HomeViewModel : BaseViewModel<Any>() {
+class HomeViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     val list = ObservableArrayList<Device>()
     val rooms = ObservableArrayList<Room>()
     private val idSet = mutableSetOf<String>()

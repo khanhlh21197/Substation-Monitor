@@ -1,4 +1,4 @@
-package com.khanhlh.substationmonitor.ui.main.fragments.room
+package com.khanhlh.substationmonitor.ui.main.fragments.device
 
 import android.annotation.SuppressLint
 import androidx.databinding.ObservableArrayList
@@ -10,7 +10,7 @@ import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.utils.*
 
-class RoomViewModel(app: MyApp) : BaseViewModel<Any>(app) {
+class DeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     val list = ObservableArrayList<Device>()
     private val idSet = mutableSetOf<String>()
 

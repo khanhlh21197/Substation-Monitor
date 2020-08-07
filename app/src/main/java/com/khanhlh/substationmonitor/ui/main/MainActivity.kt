@@ -6,7 +6,6 @@ import android.provider.Settings
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -16,11 +15,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
-import okhttp3.internal.and
-import java.net.NetworkInterface
-import java.util.*
+import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 
 class MainActivity : AppCompatActivity() {
+    lateinit var id: String
+
     companion object {
         lateinit var instance: MainActivity
     }
@@ -31,15 +30,20 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getBundleData()
         instance = this
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         } // Else, need to wait for onRestoreInstanceState
-        logD("MAC: ${getMacAddr()}")
         val id = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
         logD("ANDROID_ID: $id")
         setUpActionBar()
+    }
+
+    private fun getBundleData() {
+        val bundle = intent.extras
+        id = bundle!!.getSerializable(KEY_SERIALIZABLE).toString()
     }
 
     private fun setUpActionBar() {
@@ -65,12 +69,19 @@ class MainActivity : AppCompatActivity() {
     /**
      * Called on first creation and when restoring state.
      */
+    @SuppressLint("ResourceType")
     private fun setupBottomNavigationBar() {
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_container) as NavHostFragment? ?: return
 
         // Set up Action Bar
         val controller = host.navController
+
+        val bundle = Bundle()
+        bundle.putString("id", id)
+        val navController = findNavController(R.id.nav_host_container)
+        navController.setGraph(navController.graph, bundle)
+
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomBar)
         bottomNavigationView.setupWithNavController(controller)
 
@@ -112,25 +123,4 @@ class MainActivity : AppCompatActivity() {
 //    ) {
 //        setupActionBarWithNavController(navController, appBarConfig)
 //    }
-
-    fun getMacAddr(): String? {
-        try {
-            val all: List<NetworkInterface> =
-                Collections.list(NetworkInterface.getNetworkInterfaces())
-            for (nif in all) {
-                if (nif.name != "wlan0") continue
-                val macBytes: ByteArray = nif.hardwareAddress ?: return ""
-                val res1 = StringBuilder()
-                for (b in macBytes) {
-                    res1.append(Integer.toHexString(b and 0xFF) + ":")
-                }
-                if (res1.isNotEmpty()) {
-                    res1.deleteCharAt(res1.length - 1)
-                }
-                return res1.toString()
-            }
-        } catch (ex: Exception) {
-        }
-        return "02:00:00:00:00:00"
-    }
 }

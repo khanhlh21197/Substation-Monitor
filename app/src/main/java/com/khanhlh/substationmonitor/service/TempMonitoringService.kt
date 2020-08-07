@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.databinding.ObservableList
 import androidx.lifecycle.LifecycleService
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.service.warning.NotificationIntentService
@@ -73,7 +74,7 @@ class TempMonitoringService : LifecycleService(), Serializable {
                 intent.extras!!.getString("idDevice")
             Log.v("TempMonitoringService", "onStartCommand")
             startTimer()
-            val viewModel = HomeViewModel()
+            val viewModel = HomeViewModel(MyApp())
             if (idDevice != null) {
                 viewModel.observerAllDevices()
             }

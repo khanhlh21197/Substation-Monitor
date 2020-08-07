@@ -125,7 +125,7 @@
                         android:background="#CACACA" />
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/rePassword_float_label"
+                        android:id="@+id/password_float_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
@@ -142,6 +142,147 @@
                             android:inputType="textPassword"
                             android:selectAllOnFocus="true"
                             android:text="@={viewModel.password}"
+                            android:textColorHighlight="@color/deep_sky_blue" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/custom_edit_text"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/ic_password"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="#CACACA" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/rePassword_float_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:errorEnabled="true"
+                        app:hintTextAppearance="@style/TextAppearance.FloatLabelHint"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="?colorControlNormal">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/rePassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/rePassword"
+                            android:inputType="textPassword"
+                            android:selectAllOnFocus="true"
+                            android:text="@={viewModel.rePassword}"
+                            android:textColorHighlight="@color/deep_sky_blue" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/custom_edit_text"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/ic_password"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="#CACACA" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/name_float_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:errorEnabled="true"
+                        app:hintTextAppearance="@style/TextAppearance.FloatLabelHint">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/name"
+                            android:selectAllOnFocus="true"
+                            android:text="@={viewModel.name}"
+                            android:textColorHighlight="@color/deep_sky_blue" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/custom_edit_text"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/ic_password"
+                        tools:ignore="ContentDescription" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="#CACACA" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phoneNumber_float_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:errorEnabled="true"
+                        app:hintTextAppearance="@style/TextAppearance.FloatLabelHint">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/phoneNumber"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/phoneNumber"
+                            android:selectAllOnFocus="true"
+                            android:text="@={viewModel.phoneNumber}"
                             android:textColorHighlight="@color/deep_sky_blue" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -181,24 +322,21 @@
                             android:background="#CACACA" />
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/password_float_label"
+                            android:id="@+id/home_float_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingTop="-10dp"
                             app:errorEnabled="true"
-                            app:hintTextAppearance="@style/TextAppearance.FloatLabelHint"
-                            app:passwordToggleEnabled="true"
-                            app:passwordToggleTint="?colorControlNormal">
+                            app:hintTextAppearance="@style/TextAppearance.FloatLabelHint">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/rePassword"
+                                android:id="@+id/home"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
-                                android:hint="@string/re_password"
-                                android:inputType="textPassword"
+                                android:hint="@string/home"
                                 android:selectAllOnFocus="true"
-                                android:text="@={viewModel.rePassword}"
+                                android:text="@={viewModel.home}"
                                 android:textColorHighlight="@color/deep_sky_blue" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -215,7 +353,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/login_bt_background"
-                            android:onClick="@{viewModel.registerClickListener}"
                             android:text="@string/register"
                             android:textColor="@color/white"
                             app:layout_constraintEnd_toEndOf="parent"

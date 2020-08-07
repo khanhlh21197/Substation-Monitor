@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailTvFragBinding
@@ -23,7 +24,7 @@ class DetailTvFrag : BaseFragment<DetailTvFragBinding, DetailDeviceViewModel>(),
     }
 
     override fun initView() {
-        vm = DetailDeviceViewModel()
+        vm = DetailDeviceViewModel(MyApp())
         mBinding.vm = vm
         getBundleData()
     }

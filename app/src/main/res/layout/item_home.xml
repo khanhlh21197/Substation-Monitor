@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="item"
-            type="com.khanhlh.substationmonitor.model.ThietBi" />
+            type="com.khanhlh.substationmonitor.model.Nha" />
 
         <variable
             name="presenter"
@@ -59,15 +58,7 @@
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:scaleType="fitXY"
-                        android:src="@drawable/ic_air_conditioner" />
-
-                    <ImageView
-                        android:id="@+id/image_warning"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_warning_red"
-                        tools:visibility="gone" />
+                        android:src="@drawable/ic_bath_room" />
 
                 </RelativeLayout>
 
@@ -76,6 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:text="@{item.tennha}"
                     android:textColor="@color/textColor"
                     android:textSize="20dp"
                     android:textStyle="bold" />

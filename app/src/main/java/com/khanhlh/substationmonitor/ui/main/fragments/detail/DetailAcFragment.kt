@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toBitmap
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailAcFragBinding
@@ -31,7 +32,7 @@ class DetailAcFragment : BaseFragment<DetailAcFragBinding, DetailDeviceViewModel
     }
 
     override fun initView() {
-        vm = DetailDeviceViewModel()
+        vm = DetailDeviceViewModel(MyApp())
         mBinding.vm = vm
         getBundleData()
         crollerConfigure()

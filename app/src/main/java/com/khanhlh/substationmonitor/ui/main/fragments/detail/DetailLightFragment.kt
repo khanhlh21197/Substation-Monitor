@@ -1,22 +1,28 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.detail
 
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.app.TimePickerDialog
+import android.app.TimePickerDialog.OnTimeSetListener
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.TimePicker
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailLightFragBinding
 import com.yanzhenjie.wheel.OnWheelChangedListener
 import com.yanzhenjie.wheel.OnWheelScrollListener
 import com.yanzhenjie.wheel.WheelView
-import com.yanzhenjie.wheel.adapters.ArrayWheelAdapter
 import kotlinx.android.synthetic.main.detail_light_frag.*
+import java.util.*
 
 
 class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceViewModel>(),
@@ -32,13 +38,11 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     }
 
     override fun initView() {
-        vm = DetailDeviceViewModel()
+        vm = DetailDeviceViewModel(MyApp())
         mBinding.vm = vm
         getBundleData()
-        initWheelAdapter()
         initListener()
         onSwitchChange()
-        setupWheel()
         setupSeekBar()
     }
 
@@ -81,15 +85,6 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         timerOff.setOnClickListener(this)
     }
 
-    private fun initWheelAdapter() {
-        for (i in 1..24) {
-            wheelMenu1[i] = i
-        }
-        for (i in 1..60) {
-            wheelMenu2[i] = i
-        }
-    }
-
     private fun onSwitchChange() {
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
             val drawable: TransitionDrawable = light.drawable as TransitionDrawable
@@ -106,7 +101,8 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.timerOn, R.id.timerOff -> showDialog(getString(R.string.app_name))
+            R.id.timerOn -> showDialog(true)
+            R.id.timerOff -> showDialog(false)
         }
     }
 
@@ -134,60 +130,93 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         tvTimerOn.text = newValue.toString()
     }
 
-    private fun showDialog(title: String) {
+    @SuppressLint("SetTextI18n")
+    private fun showTimerPickerDialog(timerOn: Boolean) {
+        val c = Calendar.getInstance()
+        val mHour = c.get(Calendar.HOUR_OF_DAY)
+        val mMinute = c.get(Calendar.MINUTE)
+
+        // Launch Time Picker Dialog
+
+        // Launch Time Picker Dialog
+        val timePickerDialog = TimePickerDialog(
+            activity,
+            OnTimeSetListener { view, hourOfDay, minute ->
+                diffTime(mHour, mMinute, hourOfDay, minute, timerOn)
+                if (timerOn) {
+                    tvTimerOn.text = " : $hourOfDay giờ $minute phút"
+                } else {
+                    tvTimerOff.text = " : $hourOfDay giờ $minute phút"
+                }
+            },
+            mHour,
+            mMinute,
+            true
+        )
+        timePickerDialog.show()
+    }
+
+    private fun diffTime(
+        currentHour: Int,
+        currentMinute: Int,
+        hour: Int,
+        minute: Int,
+        timerOn: Boolean
+    ) {
+        val diffHour = hour - currentHour
+        var diffMinute = 0
+        if (minute > currentMinute) {
+            diffMinute = minute - currentMinute
+        } else {
+            diffMinute = 60 + minute - currentMinute
+        }
+        if (timerOn) {
+            toast("Bật đèn sau $diffHour giờ và $diffMinute phút")
+        } else {
+            toast("Tắt đèn sau $diffHour giờ và $diffMinute phút")
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showDialog(timerOn: Boolean) {
+        val c = Calendar.getInstance()
+        val mHour = c.get(Calendar.HOUR_OF_DAY)
+        val mMinute = c.get(Calendar.MINUTE)
+        var pickedHour = 0
+        var pickedMinute = 0
+
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.timer_picker_wheel)
 
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialog.window!!.attributes)
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window!!.attributes = lp
+
+        val timePicker = dialog.findViewById<TimePicker>(R.id.timePicker)
+        timePicker.setIs24HourView(true)
+        timePicker.setOnTimeChangedListener { view, hourOfDay, minute ->
+            pickedHour = hourOfDay
+            pickedMinute = minute
+        }
+
         val yesBtn = dialog.findViewById(R.id.ok) as TextView
         val noBtn = dialog.findViewById(R.id.cancel) as TextView
-        val hourWheel = dialog.findViewById(R.id.hourWheel) as WheelView
-        val minuteWheel = dialog.findViewById(R.id.minuteWheel) as WheelView
-
-        minuteWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu1))
-        minuteWheel.visibleItems = 2
-        minuteWheel.currentItem = 0
-        minuteWheel.addChangingListener(changedListener)
-        minuteWheel.addScrollingListener(scrolledListener)
-
-        hourWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu2))
-        hourWheel.visibleItems = 2
-        hourWheel.currentItem = 0
-        hourWheel.addChangingListener(changedListener)
-        hourWheel.addScrollingListener(scrolledListener)
 
         yesBtn.setOnClickListener {
+            diffTime(mHour, mMinute, pickedHour, pickedMinute, timerOn)
+            if (timerOn) {
+                tvTimerOn.text = " : $pickedHour giờ $pickedMinute phút"
+            } else {
+                tvTimerOff.text = " : $pickedHour giờ $pickedMinute phút"
+            }
             dialog.dismiss()
         }
 
         noBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
-    }
-
-    private fun setupWheel() {
-        hourOnWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu1))
-        hourOnWheel.visibleItems = 3
-        hourOnWheel.currentItem = 0
-        hourOnWheel.addChangingListener(changedListener)
-        hourOnWheel.addScrollingListener(scrolledListener)
-
-        hourOffWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu1))
-        hourOffWheel.visibleItems = 3
-        hourOffWheel.currentItem = 0
-        hourOffWheel.addChangingListener(changedListener)
-        hourOffWheel.addScrollingListener(scrolledListener)
-
-        minuteOnWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu2))
-        minuteOnWheel.visibleItems = 3
-        minuteOnWheel.currentItem = 0
-        minuteOnWheel.addChangingListener(changedListener)
-        minuteOnWheel.addScrollingListener(scrolledListener)
-
-        minuteOffWheel.setAdapter(ArrayWheelAdapter<Int>(activity, wheelMenu2))
-        minuteOffWheel.visibleItems = 3
-        minuteOffWheel.currentItem = 0
-        minuteOffWheel.addChangingListener(changedListener)
-        minuteOffWheel.addScrollingListener(scrolledListener)
     }
 }

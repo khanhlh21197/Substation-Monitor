@@ -17,11 +17,16 @@ import androidx.databinding.Observable
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
+import com.google.gson.Gson
 import com.khanhlh.substationmonitor.BuildConfig
-import com.khanhlh.substationmonitor.helper.annotation.ToastType
 import com.khanhlh.substationmonitor.exception.EmptyException
+import com.khanhlh.substationmonitor.helper.annotation.ToastType
 import com.khanhlh.substationmonitor.model.BaseResponse
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 import com.uber.autodispose.AutoDispose
@@ -34,10 +39,13 @@ import io.reactivex.Single
 import io.reactivex.android.MainThreadDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.internal.and
 import java.io.Serializable
 import java.net.ConnectException
+import java.net.NetworkInterface
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -149,6 +157,16 @@ fun AppCompatActivity.addFragmentSafely(
 }
 
 fun Activity.dpToPx(@DimenRes resID: Int): Int = this.resources.getDimensionPixelOffset(resID)
+
+fun <T> Any.toJson(t: T): String? {
+    val gson = Gson()
+    return gson.toJson(t)
+}
+
+inline fun <reified T> Any.fromJson(input: String): T {
+    val gson = Gson()
+    return gson.fromJson(input, T::class.java)
+}
 
 fun Activity.navigateToActivity(c: Class<*>, serializable: Serializable? = null) {
     val intent = Intent()
@@ -269,4 +287,25 @@ fun ObservableBoolean.toFlowable(): Flowable<Boolean> = Flowable.create({ emitte
 
 fun <T : Any> T?.notNull(f: (it: T) -> Unit) {
     if (this != null) f(this)
+}
+
+fun getMacAddr(): String? {
+    try {
+        val all: List<NetworkInterface> =
+            Collections.list(NetworkInterface.getNetworkInterfaces())
+        for (nif in all) {
+            if (nif.name != "wlan0") continue
+            val macBytes: ByteArray = nif.hardwareAddress ?: return ""
+            val res1 = StringBuilder()
+            for (b in macBytes) {
+                res1.append(Integer.toHexString(b and 0xFF) + ":")
+            }
+            if (res1.isNotEmpty()) {
+                res1.deleteCharAt(res1.length - 1)
+            }
+            return res1.toString()
+        }
+    } catch (ex: Exception) {
+    }
+    return "02:00:00:00:00:00"
 }

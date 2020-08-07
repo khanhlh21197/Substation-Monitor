@@ -1,8 +1,12 @@
 package com.khanhlh.substationmonitor.mqtt
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import com.google.gson.Gson
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.model.BaseResponse
+import io.reactivex.Observable
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 
@@ -17,6 +21,7 @@ class MqttHelper(private val context: Context) {
     private val PRODUCTKEY = "a11xsrW****"
     private val DEVICENAME = "paho_android"
     private val DEVICESECRET = "tLMT9QWD36U2SArglGqcHCDK9rK9****"
+    private var gson = Gson()
 
     init {
         /* Obtain the MQTT connection information clientId, username, and password. */
@@ -47,49 +52,51 @@ class MqttHelper(private val context: Context) {
         const val TAG = "MqttClient"
     }
 
-    fun connect(
-        vararg topics: String,
-        messageCallBack: ((topic: String, message: MqttMessage) -> Unit)? = null
-    ) {
-        try {
-            client.connect(mqttConnectOptions, null, object: IMqttActionListener{
-                override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    topics.forEach {
-                        subscribeTopic(it)
+    fun connect(vararg topics: String): Observable<BaseResponse> {
+        return Observable.create<BaseResponse> { emitter ->
+            try {
+                client.connect(mqttConnectOptions, null, object : IMqttActionListener {
+                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+                        topics.forEach {
+                            subscribeTopic(it)
+                        }
+                        logD("Connect Succeed")
                     }
-                    logD("Connect Succeed")
-                }
 
-                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                    logD("Connect Failed")
-                }
-            })
-            client.setCallback(object : MqttCallbackExtended {
-                override fun connectComplete(reconnect: Boolean, serverURI: String) {
+                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                        logD("Connect Failed")
+                        emitter.onError(exception!!)
+                    }
+                })
+                client.setCallback(object : MqttCallbackExtended {
+                    override fun connectComplete(reconnect: Boolean, serverURI: String) {
 //                    topics.forEach {
 //                        subscribeTopic(it)
 //                    }
-                    Log.d(TAG, "Connected to: $serverURI")
-                }
+                        Log.d(TAG, "Connected to: $serverURI")
+                    }
 
-                override fun connectionLost(cause: Throwable) {
-                    Log.d(TAG, "The Connection was lost.")
-                }
+                    override fun connectionLost(cause: Throwable) {
+                        Log.d(TAG, "The Connection was lost.")
+                        emitter.onError(cause)
+                    }
 
-                @Throws(Exception::class)
-                override fun messageArrived(topic: String, message: MqttMessage) {
-                    Log.d(TAG, "Incoming message from $topic: " + message.toString())
-                    messageCallBack?.invoke(topic, message)
-                }
+                    @Throws(Exception::class)
+                    override fun messageArrived(topic: String, message: MqttMessage) {
+                        Log.d(TAG, "Incoming message from $topic: " + message.toString())
+                        val response = gson.fromJson(message.toString(), BaseResponse::class.java)
+                        emitter.onNext(response)
+                    }
 
-                override fun deliveryComplete(token: IMqttDeliveryToken) {
+                    override fun deliveryComplete(token: IMqttDeliveryToken) {
 
-                }
-            })
+                    }
+                })
 
 
-        } catch (e: MqttException) {
-            e.printStackTrace()
+            } catch (e: MqttException) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -107,31 +114,34 @@ class MqttHelper(private val context: Context) {
 //
 //    }
 
-    fun publishMessage(topic: String, msg: String) {
+    @SuppressLint("CheckResult")
+    fun publishMessage(topic: String, msg: String): Observable<String> {
+        return Observable.create<String> { emitter ->
+            try {
+                if (!client.isConnected) {
+                    client.connect()
+                }
 
-        try {
-            if (!client.isConnected){
-                client.connect()
+                val message = MqttMessage()
+                message.qos = 0
+                message.payload = msg.toByteArray()
+
+                client.publish(topic, message, null, object : IMqttActionListener {
+                    override fun onSuccess(asyncActionToken: IMqttToken?) {
+                        logD("Publish succeed!")
+                        emitter.onNext("0")
+                    }
+
+                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                        logD("Publish Failed!")
+                        emitter.onNext("1")
+                    }
+
+                })
+            } catch (e: MqttException) {
+                Log.d(TAG, "Error Publishing to $topic: " + e.message)
+                e.printStackTrace()
             }
-
-            val message = MqttMessage()
-            message.qos = 0
-            message.payload = msg.toByteArray()
-
-            client.publish(topic, message, null, object : IMqttActionListener {
-                override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    logD("Publish succeed!")
-                }
-
-                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                    logD("Publish Failed!")
-                }
-
-            })
-            Log.d(TAG, "$msg published to $topic")
-        } catch (e: MqttException) {
-            Log.d(TAG, "Error Publishing to $topic: " + e.message)
-            e.printStackTrace()
         }
 
     }

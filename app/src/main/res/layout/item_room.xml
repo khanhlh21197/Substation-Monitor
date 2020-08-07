@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="item"
-            type="com.khanhlh.substationmonitor.model.Room" />
+            type="com.khanhlh.substationmonitor.model.Phong" />
 
         <variable
             name="presenter"
@@ -68,7 +67,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{item.name}"
                     android:textColor="@color/textColor"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -86,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{item.number}"
+                    android:text="@{item.tenphong}"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="14dp"
                     android:textStyle="bold" />

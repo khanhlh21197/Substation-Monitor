@@ -15,7 +15,7 @@ import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.utils.*
 import io.reactivex.disposables.Disposable
 
-class DetailDeviceViewModel : BaseViewModel<Any>() {
+class DetailDeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     val device = MutableLiveData<Device>()
     val isFlashing = MutableLiveData<Boolean>().init(false)
     val visibility = MutableLiveData<Int>().init(View.GONE)
@@ -31,8 +31,8 @@ class DetailDeviceViewModel : BaseViewModel<Any>() {
         if (it[NAME] != null) name = it[NAME] as String
         if (it[TEMP] != null) temp = it[TEMP] as String
         if (it[THRESHOLD] != null) threshold = it[THRESHOLD] as String
-        if (it[WATTAGE] != null) status = it[WATTAGE] as Boolean
-        if (it[STATUS] != null) wattage = it[STATUS] as String
+        if (it[WATTAGE] != null) wattage = it[WATTAGE] as String
+        if (it[STATUS] != null) status = it[STATUS] as Boolean
         if (it[TYPE] != null) type = it[TYPE] as Long
         device.set(Device(id, name, temp, threshold, type, null, wattage, status))
         try {

@@ -3,6 +3,7 @@ package com.khanhlh.substationmonitor.di
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.ui.login.LoginActivityViewModel
 import com.khanhlh.substationmonitor.ui.register.RegisterActivityViewModel
 
@@ -12,10 +13,10 @@ class ViewModelFactory(private val activity: AppCompatActivity) : ViewModelProvi
         return when {
 
             modelClass.isAssignableFrom(LoginActivityViewModel::class.java) -> {
-                LoginActivityViewModel() as T
+                LoginActivityViewModel(MyApp()) as T
             }
             modelClass.isAssignableFrom(RegisterActivityViewModel::class.java) -> {
-                RegisterActivityViewModel() as T
+                RegisterActivityViewModel(MyApp()) as T
             }
             else -> throw IllegalArgumentException("Unknown class name")
         }

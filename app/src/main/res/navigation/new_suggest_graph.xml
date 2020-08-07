@@ -14,7 +14,7 @@
             app:argType="string" />
         <action
             android:id="@+id/back_action"
-            app:popUpTo="@id/roomFragment" />
+            app:popUpTo="@id/deviceFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_homeFragment_to_roomFragment"
             app:destination="@id/roomFragment" />
+        <argument
+            android:name="id"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -34,48 +37,58 @@
         android:id="@+id/roomFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.room.RoomFragment"
         android:label="RoomFragment">
+
+        <argument
+            android:name="idphong"
+            app:argType="string" />
+
         <action
-            android:id="@+id/action_roomFragment_to_detailDeviceFragment"
-            app:destination="@id/detailDeviceFragment" />
-        <action
-            android:id="@+id/back_action"
-            app:popUpTo="@id/homeFragment" />
-        <action
-            android:id="@+id/action_roomFragment_to_detailAcFragment"
-            app:destination="@id/detailAcFragment" />
-        <action
-            android:id="@+id/action_roomFragment_to_detailTvFrag"
-            app:destination="@id/detailTvFrag" />
-        <action
-            android:id="@+id/action_roomFragment_to_detailLightFragment"
-            app:destination="@id/detailLightFragment" />
+            android:id="@+id/action_roomFragment_to_deviceFragment"
+            app:destination="@id/deviceFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailAcFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailAcFragment"
-        android:label="DetailAcFragment" >
+        android:label="DetailAcFragment">
         <action
-            android:id="@+id/action_detailAcFragment_to_roomFragment"
-            app:destination="@id/roomFragment" />
+            android:id="@+id/back_action"
+            app:popUpTo="@id/deviceFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailTvFrag"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailTvFrag"
-        android:label="DetailTvFrag" >
+        android:label="DetailTvFrag">
         <action
-            android:id="@+id/action_detailTvFrag_to_roomFragment"
-            app:destination="@id/roomFragment" />
+            android:id="@+id/back_action"
+            app:popUpTo="@id/deviceFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailLightFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailLightFragment"
-        android:label="DetailLightFragment" >
+        android:label="DetailLightFragment">
         <argument
             android:name="idDevice"
             android:defaultValue=""
             app:argType="string" />
         <action
-            android:id="@+id/action_detailLightFragment_to_roomFragment"
-            app:destination="@id/roomFragment" />
+            android:id="@+id/back_action"
+            app:popUpTo="@id/deviceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deviceFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.device.DeviceFragment"
+        android:label="DeviceFragment">
+        <action
+            android:id="@+id/action_deviceFragment_to_detailDeviceFragment"
+            app:destination="@id/detailDeviceFragment" />
+        <action
+            android:id="@+id/action_deviceFragment_to_detailAcFragment"
+            app:destination="@id/detailAcFragment" />
+        <action
+            android:id="@+id/action_deviceFragment_to_detailLightFragment"
+            app:destination="@id/detailLightFragment" />
+        <action
+            android:id="@+id/action_deviceFragment_to_detailTvFrag"
+            app:destination="@id/detailTvFrag" />
     </fragment>
 </navigation>

@@ -9,23 +9,27 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
-import com.khanhlh.substationmonitor.extensions.get
-import com.khanhlh.substationmonitor.extensions.init
-import com.khanhlh.substationmonitor.extensions.set
+import com.khanhlh.substationmonitor.extensions.*
+import com.khanhlh.substationmonitor.model.UserTest
+import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.utils.EMAIL
 import com.khanhlh.substationmonitor.utils.ID
 import com.khanhlh.substationmonitor.utils.USER_COLLECTION
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiConsumer
+import kotlinx.android.synthetic.main.activity_login.*
+import okhttp3.internal.and
+import java.net.NetworkInterface
+import java.util.*
 
 
-class LoginActivityViewModel : BaseViewModel<Any?>() {
-
+class LoginActivityViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
     val registerButtonClicked = MutableLiveData<Boolean>()
     val isLoginSuccess = MutableLiveData<Boolean>().init(false)
     val mail = MutableLiveData<String>()
@@ -39,11 +43,11 @@ class LoginActivityViewModel : BaseViewModel<Any?>() {
         registerButtonClicked.value = true
     }
 
-    private fun showLoading() {
+    fun showLoading() {
         loadingVisibility.value = View.VISIBLE
     }
 
-    private fun hideLoading() {
+    public fun hideLoading() {
         loadingVisibility.value = View.INVISIBLE
     }
 

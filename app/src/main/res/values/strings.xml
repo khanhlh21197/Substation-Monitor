@@ -9,6 +9,8 @@
     <string name="login_error">Đăng nhập thất bại</string>
     <string name="login_uppercase">ĐĂNG NHẬP</string>
     <string name="register">Đăng ký</string>
+    <string name="register_success">Đăng ký thành công</string>
+    <string name="register_error">Đăng ký thất bại</string>
     <string name="require_length">Tài khoản và mật khẩu phải nhiều hơn 6 kí tự</string>
     <string name="error_re_password">Nhập lại mật khẩu sai</string>
 
@@ -79,6 +81,10 @@
     <string name="configure_threshold_fail">Cài ngưỡng thất bại</string>
     <string name="empty_threshold">Vui lòng nhập ngưỡng!</string>
     <string name="add_room">Thêm phòng</string>
+    <string name="add_home">Thêm nhà</string>
     <string name="light_timer_on"><u>Hẹn giờ bật đèn</u></string>
     <string name="light_timer_off"><u>Hẹn giờ tắt đèn</u></string>
+    <string name="home">nhà</string>
+    <string name="name">Tên</string>
+    <string name="phoneNumber">Số điện thoại</string>
 </resources>
