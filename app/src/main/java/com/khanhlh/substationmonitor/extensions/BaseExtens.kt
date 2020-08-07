@@ -303,7 +303,7 @@ fun getMacAddr(): String? {
             if (res1.isNotEmpty()) {
                 res1.deleteCharAt(res1.length - 1)
             }
-            return res1.toString()
+            return res1.toString().replace(":", "")
         }
     } catch (ex: Exception) {
     }

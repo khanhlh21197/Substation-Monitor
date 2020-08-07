@@ -76,8 +76,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
     private fun getBundleData() {
         val args = arguments
-        val idDevice = args!!.getString(DetailTvFrag.ID_DEVICE)
-        vm.observerDevice(idDevice as String)
+        val idthietbi = args!!.getString("idthietbi")
     }
 
     private fun initListener() {

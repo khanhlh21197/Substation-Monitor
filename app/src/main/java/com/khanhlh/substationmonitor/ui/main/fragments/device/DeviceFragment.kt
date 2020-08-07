@@ -19,6 +19,7 @@ import androidx.core.os.bundleOf
 import androidx.databinding.ObservableArrayList
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.khanhlh.substationmonitor.MyApp
@@ -33,7 +34,6 @@ import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
-import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailTempFrag
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -70,7 +70,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         initRecycler()
         fab.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                addRoom()
+                addDevice()
             }
         }
     }
@@ -85,8 +85,6 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
             mqttHelper.connect(it)
                 .subscribe({
                     if ("0" == it.errorCode && "true" == it.result) {
-                        idThietBi = it.id!!
-                        thietbi.id = idThietBi
                         thietbis.add(thietbi)
                     } else {
                         toast("Error")
@@ -123,10 +121,10 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         }
     }
 
-    override fun getLayoutId(): Int = R.layout.fragment_room
+    override fun getLayoutId(): Int = R.layout.fragment_device
     override fun onItemClick(v: View?, item: ThietBi) {
         logD(item.id)
-        val bundle = bundleOf(DetailTempFrag.ID_DEVICE to item.id)
+        val bundle = bundleOf("idthietbi" to idThietBi)
         navigate(R.id.detailLightFragment, bundle)
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
@@ -148,11 +146,15 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun addRoom() {
+    private fun addDevice() {
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
         txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
+        val txtInputDeviceName = alertLayout.findViewById<EditText>(R.id.txtInputDeviceName)
+        val inputDeviceName = alertLayout.findViewById<TextInputLayout>(R.id.inputDeviceName)
+        inputDeviceName.visibility = View.VISIBLE
+
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
         val alert =
@@ -179,7 +181,13 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
             getString(R.string.ok)
         ) { dialog: DialogInterface?, which: Int ->
             if (txtInputDevice.text != null) {
-                thietbi = ThietBi("", idPhong, txtInputDevice.text.toString(), "123")
+                thietbi = ThietBi(
+                    "",
+                    getMacAddr()!!,
+                    idPhong,
+                    txtInputDeviceName.text.toString(),
+                    txtInputDevice.text.toString()
+                )
                 mqttHelper.publishMessage("registerthietbi", toJson(thietbi)!!).subscribe()
             } else {
                 Toast.makeText(
@@ -234,7 +242,13 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
 
     override fun onDestroy() {
         super.onDestroy()
+        mqttHelper.close()
         logD("HomeFragment::onDestroy")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mqttHelper.close()
     }
 
 }

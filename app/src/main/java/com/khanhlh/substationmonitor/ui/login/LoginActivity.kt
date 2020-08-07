@@ -54,6 +54,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         gson = Gson()
         mqttHelper = MqttHelper(this)
 
+        connectMqtt()
+
+        btLogin.setOnClickListener {
+            baseViewModel.showLoading()
+            tryLogin()
+        }
+    }
+
+    private fun connectMqtt() {
         macAddress.let {
             mqttHelper.connect(it)
                 .subscribe({
@@ -69,11 +78,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
                 }, {
                     toast(it.toString())
                 })
-        }
-
-        btLogin.setOnClickListener {
-            baseViewModel.showLoading()
-            tryLogin()
         }
     }
 
@@ -136,6 +140,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
 
     override fun onDestroy() {
         super.onDestroy()
+        mqttHelper.close()
+    }
+
+    override fun onStop() {
+        super.onStop()
         mqttHelper.close()
     }
 

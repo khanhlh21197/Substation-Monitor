@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -27,12 +28,13 @@ import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentRoomBinding
 import com.khanhlh.substationmonitor.extensions.getMacAddr
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.extensions.navigate
 import com.khanhlh.substationmonitor.extensions.toJson
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
+import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.Phong
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
-import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailTempFrag
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -64,8 +66,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         vm = RoomViewModel(MyApp())
         mBinding.viewModel = vm
 
-        getBundleData()
         initMqtt()
+        getBundleData()
         initRecycler()
         fab.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -100,6 +102,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     private fun getBundleData() {
         if (arguments != null) {
             idNha = requireArguments().getString("idnha")!!
+            val nha = Nha(id = idNha, mac = getMacAddr()!!)
+            mqttHelper.publishMessage("loginnha", toJson(nha)!!)
         }
     }
 
@@ -125,7 +129,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     override fun getLayoutId(): Int = R.layout.fragment_room
     override fun onItemClick(v: View?, item: Phong) {
         logD(item.id)
-        val bundle = bundleOf(DetailTempFrag.ID_DEVICE to item.id)
+        val bundle = bundleOf("idphong" to idPhong)
+        navigate(R.id.deviceFragment, bundle)
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
 //            DeviceType.FAN -> navigate(R.id.detailDeviceFragment, bundle)
@@ -151,11 +156,13 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
         txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
+        val txtLabel = alertLayout.findViewById(R.id.txtLabel) as TextView
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
+        txtLabel.text = "Thêm phòng"
         alert.setView(alertLayout)
         alert.setCancelable(false)
         scanBarcode.setOnClickListener { v: View? ->
@@ -177,7 +184,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
             getString(R.string.ok)
         ) { dialog: DialogInterface?, which: Int ->
             if (txtInputDevice.text != null) {
-                phong = Phong("", txtInputDevice.text.toString(), idNha)
+                phong = Phong("", getMacAddr()!!, txtInputDevice.text.toString(), idNha)
                 mqttHelper.publishMessage("registerphong", toJson(phong)!!).subscribe()
             } else {
                 Toast.makeText(
@@ -233,6 +240,11 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     override fun onDestroy() {
         super.onDestroy()
         logD("HomeFragment::onDestroy")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mqttHelper.close()
     }
 
 }

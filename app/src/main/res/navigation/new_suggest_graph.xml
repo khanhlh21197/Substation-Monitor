@@ -78,6 +78,9 @@
         android:id="@+id/deviceFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.device.DeviceFragment"
         android:label="DeviceFragment">
+        <argument
+            android:name="idthietbi"
+            app:argType="string" />
         <action
             android:id="@+id/action_deviceFragment_to_detailDeviceFragment"
             app:destination="@id/detailDeviceFragment" />

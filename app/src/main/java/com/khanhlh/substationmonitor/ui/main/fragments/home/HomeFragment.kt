@@ -76,7 +76,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
         gson = Gson()
         mqttHelper = MqttHelper(requireActivity())
+    }
 
+    override fun onResume() {
+        super.onResume()
+        connectMqtt()
+    }
+
+    private fun connectMqtt() {
         macAddress.let {
             mqttHelper.connect(it)
                 .subscribe({
@@ -224,6 +231,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
     override fun onDeleteClick(v: View?, item: Nha) {
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mqttHelper.close()
     }
 
     override fun onDestroy() {

@@ -118,10 +118,6 @@ class MqttHelper(private val context: Context) {
     fun publishMessage(topic: String, msg: String): Observable<String> {
         return Observable.create<String> { emitter ->
             try {
-                if (!client.isConnected) {
-                    client.connect()
-                }
-
                 val message = MqttMessage()
                 message.qos = 0
                 message.payload = msg.toByteArray()
@@ -129,6 +125,7 @@ class MqttHelper(private val context: Context) {
                 client.publish(topic, message, null, object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken?) {
                         logD("Publish succeed!")
+                        logD("$topic - $message")
                         emitter.onNext("0")
                     }
 
