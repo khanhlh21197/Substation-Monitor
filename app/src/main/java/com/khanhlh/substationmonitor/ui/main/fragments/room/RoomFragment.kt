@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.room
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent
@@ -26,14 +27,12 @@ import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentRoomBinding
-import com.khanhlh.substationmonitor.extensions.getMacAddr
-import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.extensions.navigate
-import com.khanhlh.substationmonitor.extensions.toJson
+import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.Phong
+import com.khanhlh.substationmonitor.model.PhongResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -83,27 +82,43 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         mqttHelper = MqttHelper(requireActivity())
 
         macAddress.let {
-            mqttHelper.connect(it)
-                .subscribe({
+            mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
+                override fun onSuccess(message: String) {
+                    val it = Gson().fromJson<PhongResponse>(message)
                     if ("0" == it.errorCode && "true" == it.result) {
-                        idPhong = it.id!!
-                        phong.id = idPhong
-                        phongs.add(phong)
+                        if (!it.message.isNullOrEmpty()) {
+                            idPhong = it.message.toString()
+                            phong.idphong = idPhong
+                            phongs.add(phong)
+                        } else {
+                            val rooms: ArrayList<Phong> = it.id!!
+                            phong.idphong = phong._id
+                            if (phongs.isEmpty()) {
+                                phongs.addAll(rooms)
+                            }
+                        }
                     } else {
                         toast("Error")
                     }
+                }
 
-                }, {
-                    toast(it.toString())
-                })
+                override fun onError(error: Throwable) {
+                    toast(error.toString())
+                }
+            })
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun getBundleData() {
         if (arguments != null) {
             idNha = requireArguments().getString("idnha")!!
-            val nha = Nha(id = idNha, mac = getMacAddr()!!)
-            mqttHelper.publishMessage("loginnha", toJson(nha)!!)
+            val nha = Nha(idnha = idNha, mac = getMacAddr()!!)
+            mqttHelper.publishMessage("loginphong", toJson(nha)!!).subscribe({
+                logD(it.toString())
+            }, {
+                logD(it.toString())
+            })
         }
     }
 
@@ -128,8 +143,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
 
     override fun getLayoutId(): Int = R.layout.fragment_room
     override fun onItemClick(v: View?, item: Phong) {
-        logD(item.id)
-        val bundle = bundleOf("idphong" to idPhong)
+        logD(item.idphong)
+        val bundle = bundleOf("idphong" to item.idphong)
         navigate(R.id.deviceFragment, bundle)
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
@@ -239,6 +254,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
 
     override fun onDestroy() {
         super.onDestroy()
+        mqttHelper.close()
         logD("HomeFragment::onDestroy")
     }
 

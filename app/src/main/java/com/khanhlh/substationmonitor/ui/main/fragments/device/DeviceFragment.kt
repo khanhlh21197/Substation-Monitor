@@ -26,13 +26,11 @@ import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentDeviceBinding
-import com.khanhlh.substationmonitor.extensions.getMacAddr
-import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.extensions.navigate
-import com.khanhlh.substationmonitor.extensions.toJson
+import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.ThietBi
+import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -82,17 +80,27 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         mqttHelper = MqttHelper(requireActivity())
 
         macAddress.let {
-            mqttHelper.connect(it)
-                .subscribe({
+            mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
+                override fun onSuccess(message: String) {
+                    val it = fromJson<ThietBiResponse>(message)
                     if ("0" == it.errorCode && "true" == it.result) {
-                        thietbis.add(thietbi)
+                        if (it.message.isNullOrEmpty()) {
+                            val devices: ArrayList<ThietBi> = it.id!!
+                            if (thietbis.isEmpty()) {
+                                thietbis.addAll(devices)
+                            }
+                        } else {
+                            thietbis.add(thietbi)
+                        }
                     } else {
                         toast("Error")
                     }
+                }
 
-                }, {
-                    toast(it.toString())
-                })
+                override fun onError(error: Throwable) {
+                    toast(error.toString())
+                }
+            })
         }
     }
 

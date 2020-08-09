@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
@@ -16,6 +17,9 @@ import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.shared_preference.clear
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
+import com.khanhlh.substationmonitor.model.BaseResponse
+import com.khanhlh.substationmonitor.model.Nha
+import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.ui.main.MainActivity
@@ -64,20 +68,24 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
 
     private fun connectMqtt() {
         macAddress.let {
-            mqttHelper.connect(it)
-                .subscribe({
-                    if ("0" == it.errorCode && "true" == it.result) {
+            mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
+                override fun onSuccess(message: String) {
+                    val baseResponse = Gson().fromJson<NhaResponse>(message)
+                    if ("0" == baseResponse.errorCode && "true" == baseResponse.result) {
                         baseViewModel.isLoginSuccess.set(true)
-                        id = it.id!!
-                        navigateToActivity(MainActivity::class.java, id)
+//                        id = baseResponse.id!!
                         if (switchSaveUser.isChecked) saveUser()
+                        navigateToActivity(MainActivity::class.java, baseResponse)
                     } else {
                         baseViewModel.isLoginSuccess.set(false)
                     }
                     baseViewModel.hideLoading()
-                }, {
-                    toast(it.toString())
-                })
+                }
+
+                override fun onError(error: Throwable) {
+                    toast(error.toString())
+                }
+            })
         }
     }
 
@@ -112,6 +120,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
 
     override fun observeViewModel() {
         super.observeViewModel()
+        baseViewModel.registerButtonClicked.observe(this,
+            Observer<Boolean> { t ->
+                if (t!!) {
+                    navigateToActivity(RegisterActivity::class.java)
+                }
+            })
         btRegister.setOnClickListener { navigateToActivity(RegisterActivity::class.java) }
     }
 

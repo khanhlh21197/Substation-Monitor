@@ -195,19 +195,19 @@ fun <T> Single<T>.async(withDelay: Long = 0): Single<T> =
     this.subscribeOn(Schedulers.io()).delay(withDelay, TimeUnit.MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
 
-fun <R : BaseResponse> Single<R>.getOriginData(): Single<R> {
-    return this.compose { upstream ->
-        upstream.flatMap { t: R ->
-            with(t) {
-                if (t.errorCode.equals("0")) {
-                    return@flatMap Single.just(t)
-                } else {
-                    return@flatMap Single.error<R>(Throwable(message))
-                }
-            }
-        }
-    }
-}
+//fun <R : BaseResponse> Single<R>.getOriginData(): Single<R> {
+//    return this.compose { upstream ->
+//        upstream.flatMap { t: R ->
+//            with(t) {
+//                if (t.errorCode.equals("0")) {
+//                    return@flatMap Single.just(t)
+//                } else {
+//                    return@flatMap Single.error<R>(Throwable(message))
+//                }
+//            }
+//        }
+//    }
+//}
 
 fun <T> Single<T>.bindLifeCycle(owner: LifecycleOwner): SingleSubscribeProxy<T> =
     this.`as`(

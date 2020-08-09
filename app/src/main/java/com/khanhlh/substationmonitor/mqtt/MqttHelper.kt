@@ -52,51 +52,48 @@ class MqttHelper(private val context: Context) {
         const val TAG = "MqttClient"
     }
 
-    fun connect(vararg topics: String): Observable<BaseResponse> {
-        return Observable.create<BaseResponse> { emitter ->
-            try {
-                client.connect(mqttConnectOptions, null, object : IMqttActionListener {
-                    override fun onSuccess(asyncActionToken: IMqttToken?) {
-                        topics.forEach {
-                            subscribeTopic(it)
-                        }
-                        logD("Connect Succeed")
+    fun connect(vararg topics: String, messageCallBack: MessageCallBack) {
+        try {
+            client.connect(mqttConnectOptions, null, object : IMqttActionListener {
+                override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    topics.forEach {
+                        subscribeTopic(it)
                     }
+                    logD("Connect Succeed")
+                }
 
-                    override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                        logD("Connect Failed")
-                        emitter.onError(exception!!)
-                    }
-                })
-                client.setCallback(object : MqttCallbackExtended {
-                    override fun connectComplete(reconnect: Boolean, serverURI: String) {
+                override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
+                    logD("Connect Failed")
+                }
+            })
+            client.setCallback(object : MqttCallbackExtended {
+                override fun connectComplete(reconnect: Boolean, serverURI: String) {
 //                    topics.forEach {
 //                        subscribeTopic(it)
 //                    }
-                        Log.d(TAG, "Connected to: $serverURI")
-                    }
+                    Log.d(TAG, "Connected to: $serverURI")
+                }
 
-                    override fun connectionLost(cause: Throwable) {
-                        Log.d(TAG, "The Connection was lost.")
-                        emitter.onError(cause)
-                    }
+                override fun connectionLost(cause: Throwable) {
+                    Log.d(TAG, "The Connection was lost.")
+                    messageCallBack.onError(cause)
+                }
 
-                    @Throws(Exception::class)
-                    override fun messageArrived(topic: String, message: MqttMessage) {
-                        Log.d(TAG, "Incoming message from $topic: " + message.toString())
-                        val response = gson.fromJson(message.toString(), BaseResponse::class.java)
-                        emitter.onNext(response)
-                    }
+                @Throws(Exception::class)
+                override fun messageArrived(topic: String, message: MqttMessage) {
+                    Log.d(TAG, "Incoming message from $topic: " + message.toString())
 
-                    override fun deliveryComplete(token: IMqttDeliveryToken) {
+                    messageCallBack.onSuccess(message.toString())
+                }
 
-                    }
-                })
+                override fun deliveryComplete(token: IMqttDeliveryToken) {
+
+                }
+            })
 
 
-            } catch (e: MqttException) {
-                e.printStackTrace()
-            }
+        } catch (e: MqttException) {
+            e.printStackTrace()
         }
     }
 
@@ -118,6 +115,7 @@ class MqttHelper(private val context: Context) {
     fun publishMessage(topic: String, msg: String): Observable<String> {
         return Observable.create<String> { emitter ->
             try {
+                if (!client.isConnected) client.connect()
                 val message = MqttMessage()
                 message.qos = 0
                 message.payload = msg.toByteArray()
@@ -158,8 +156,13 @@ class MqttHelper(private val context: Context) {
 
     fun close() {
         client.apply {
-            unregisterResources()
+//            unregisterResources()
             close()
         }
+    }
+
+    interface MessageCallBack {
+        fun onSuccess(message: String)
+        fun onError(error: Throwable)
     }
 }

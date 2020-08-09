@@ -15,10 +15,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.model.BaseResponse
+import com.khanhlh.substationmonitor.model.Nha
+import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 
 class MainActivity : AppCompatActivity() {
-    lateinit var id: String
+    lateinit var response: NhaResponse
 
     companion object {
         lateinit var instance: MainActivity
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBundleData() {
         val bundle = intent.extras
-        id = bundle!!.getSerializable(KEY_SERIALIZABLE).toString()
+        response = bundle!!.getSerializable(KEY_SERIALIZABLE) as NhaResponse
     }
 
     private fun setUpActionBar() {
@@ -78,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         val controller = host.navController
 
         val bundle = Bundle()
-        bundle.putString("id", id)
+        bundle.putSerializable(KEY_SERIALIZABLE, response)
         val navController = findNavController(R.id.nav_host_container)
         navController.setGraph(navController.graph, bundle)
 

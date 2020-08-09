@@ -26,14 +26,13 @@ import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
-import com.khanhlh.substationmonitor.extensions.getMacAddr
-import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.extensions.navigate
-import com.khanhlh.substationmonitor.extensions.toJson
+import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.Nha
+import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
+import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -48,6 +47,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     private lateinit var gson: Gson
     private lateinit var macAddress: String
     private lateinit var idNha: String
+    private lateinit var idArray: Array<String>
     lateinit var nha: Nha
     val homes = ObservableArrayList<Nha>()
 
@@ -85,25 +85,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
     private fun connectMqtt() {
         macAddress.let {
-            mqttHelper.connect(it)
-                .subscribe({
+            mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
+                override fun onSuccess(message: String) {
+                    val it: NhaResponse = fromJson(message)
                     if ("0" == it.errorCode && "true" == it.result) {
-                        idNha = it.id!!
-                        nha.id = idNha
-                        homes.add(nha)
+                        if (it.message.isNullOrEmpty()) {
+                            idNha = it.id.toString()
+                            nha.idnha = idNha
+                            homes.add(nha)
+                        } else {
+                            val gson = Gson()
+                            val nha: Nha = gson.fromJson(it.message!!, Nha::class.java)
+                            nha.idnha = nha._id
+                            homes.add(nha)
+                        }
                     } else {
                         toast("Error")
                     }
+                }
 
-                }, {
-                    toast(it.toString())
-                })
+                override fun onError(error: Throwable) {
+                    toast(error.toString())
+                }
+            })
         }
     }
 
     private fun getBundleData() {
         val args = arguments
-        id = args!!.getString("id").toString()
+        val response = args!!.getSerializable(KEY_SERIALIZABLE) as NhaResponse
+        id = response.message!!
+        val nhas: ArrayList<Nha> = response.id!!
+        if (homes.isEmpty()) {
+            homes.addAll(nhas)
+        }
+//        idArray = response.id!!.split(",").toTypedArray()
     }
 
     private fun initRecycler() {
@@ -128,7 +144,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     override fun getLayoutId(): Int = R.layout.fragment_home
     override fun onItemClick(v: View?, item: Nha) {
         logD(item.tennha)
-        val bundle = bundleOf("idnha" to idNha)
+        val bundle = bundleOf("idnha" to item._id)
         navigate(R.id.roomFragment, bundle)
     }
 
