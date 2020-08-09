@@ -9,6 +9,7 @@ import com.khanhlh.substationmonitor.databinding.ActivityRegisterBinding
 import com.khanhlh.substationmonitor.di.ViewModelFactory
 import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.model.BaseResponse
+import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.ui.login.LoginActivity
@@ -39,9 +40,9 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
         gson = Gson()
         mqttHelper = MqttHelper(this)
         macAddress.let {
-            mqttHelper.connect(it, messageCallBack = object: MqttHelper.MessageCallBack{
+            mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it = fromJson<BaseResponse<String>>(message)
+                    val it = Gson().fromJson<NhaResponse>(message)
                     if ("0" == it.errorCode && "true" == it.result) {
                         toast(getString(R.string.register_success))
                         navigateToActivity(LoginActivity::class.java)

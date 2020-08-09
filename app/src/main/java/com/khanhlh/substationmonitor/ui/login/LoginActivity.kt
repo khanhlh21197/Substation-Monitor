@@ -17,8 +17,6 @@ import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.shared_preference.clear
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
-import com.khanhlh.substationmonitor.model.BaseResponse
-import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper

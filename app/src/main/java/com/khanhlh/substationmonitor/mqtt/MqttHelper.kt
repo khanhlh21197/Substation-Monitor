@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.model.BaseResponse
 import io.reactivex.Observable
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
@@ -59,11 +58,11 @@ class MqttHelper(private val context: Context) {
                     topics.forEach {
                         subscribeTopic(it)
                     }
-                    logD("Connect Succeed")
+                    logD("mqttHelper Connect Succeed")
                 }
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                    logD("Connect Failed")
+                    logD("mqttHelper Connect Failed")
                 }
             })
             client.setCallback(object : MqttCallbackExtended {
@@ -71,17 +70,17 @@ class MqttHelper(private val context: Context) {
 //                    topics.forEach {
 //                        subscribeTopic(it)
 //                    }
-                    Log.d(TAG, "Connected to: $serverURI")
+                    Log.d(TAG, "mqttHelper Connected to: $serverURI")
                 }
 
                 override fun connectionLost(cause: Throwable) {
-                    Log.d(TAG, "The Connection was lost.")
+                    Log.d(TAG, "mqttHelper The Connection was lost.")
                     messageCallBack.onError(cause)
                 }
 
                 @Throws(Exception::class)
                 override fun messageArrived(topic: String, message: MqttMessage) {
-                    Log.d(TAG, "Incoming message from $topic: " + message.toString())
+                    Log.d(TAG, "mqttHelper Incoming message from $topic: " + message.toString())
 
                     messageCallBack.onSuccess(message.toString())
                 }
@@ -122,19 +121,19 @@ class MqttHelper(private val context: Context) {
 
                 client.publish(topic, message, null, object : IMqttActionListener {
                     override fun onSuccess(asyncActionToken: IMqttToken?) {
-                        logD("Publish succeed!")
-                        logD("$topic - $message")
+                        logD("mqttHelper Publish succeed!")
+                        logD("mqttHelper $topic - $message")
                         emitter.onNext("0")
                     }
 
                     override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
-                        logD("Publish Failed!")
+                        logD("mqttHelper Publish Failed!")
                         emitter.onNext("1")
                     }
 
                 })
             } catch (e: MqttException) {
-                Log.d(TAG, "Error Publishing to $topic: " + e.message)
+                Log.d(TAG, "mqttHelper Error Publishing to $topic: " + e.message)
                 e.printStackTrace()
             }
         }
@@ -144,11 +143,11 @@ class MqttHelper(private val context: Context) {
     fun subscribeTopic(topic: String, qos: Int = 0) {
         client.subscribe(topic, qos).actionCallback = object : IMqttActionListener {
             override fun onSuccess(asyncActionToken: IMqttToken) {
-                Log.d(TAG, "Subscribed to $topic")
+                Log.d(TAG, "mqttHelper Subscribed to $topic")
             }
 
             override fun onFailure(asyncActionToken: IMqttToken, exception: Throwable) {
-                Log.d(TAG, "Failed to subscribe to $topic")
+                Log.d(TAG, "mqttHelper Failed to subscribe to $topic")
                 exception.printStackTrace()
             }
         }
@@ -156,7 +155,7 @@ class MqttHelper(private val context: Context) {
 
     fun close() {
         client.apply {
-//            unregisterResources()
+            unregisterResources()
             close()
         }
     }

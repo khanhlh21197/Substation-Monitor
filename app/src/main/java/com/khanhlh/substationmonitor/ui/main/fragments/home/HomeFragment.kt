@@ -87,16 +87,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it: NhaResponse = fromJson(message)
+                    val it: NhaResponse = Gson().fromJson(message)
                     if ("0" == it.errorCode && "true" == it.result) {
-                        if (it.message.isNullOrEmpty()) {
-                            idNha = it.id.toString()
+                        if (!it.message.isNullOrEmpty()) {
+                            idNha = it.message.toString()
                             nha.idnha = idNha
-                            homes.add(nha)
-                        } else {
-                            val gson = Gson()
-                            val nha: Nha = gson.fromJson(it.message!!, Nha::class.java)
-                            nha.idnha = nha._id
                             homes.add(nha)
                         }
                     } else {

@@ -15,8 +15,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.model.BaseResponse
-import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 

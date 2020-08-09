@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
@@ -32,7 +33,11 @@ import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
+import kotlinx.android.synthetic.main.fragment_device.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.fab
+import kotlinx.android.synthetic.main.fragment_home.recycler
+import kotlinx.android.synthetic.main.fragment_room.*
 
 
 class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
@@ -63,14 +68,24 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         vm = DeviceViewModel(MyApp())
         mBinding.viewModel = vm
 
-        getBundleData()
         initMqtt()
+        getBundleData()
         initRecycler()
         fab.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 addDevice()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        deviceShimmer.startShimmer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        deviceShimmer.stopShimmer()
     }
 
     private fun initMqtt() {
@@ -82,7 +97,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it = fromJson<ThietBiResponse>(message)
+                    val it = Gson().fromJson<ThietBiResponse>(message)
                     if ("0" == it.errorCode && "true" == it.result) {
                         if (it.message.isNullOrEmpty()) {
                             val devices: ArrayList<ThietBi> = it.id!!
@@ -90,11 +105,13 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
                                 thietbis.addAll(devices)
                             }
                         } else {
+                            thietbi.id = it.message!!
                             thietbis.add(thietbi)
                         }
                     } else {
                         toast("Error")
                     }
+                    deviceShimmer.stopShimmer()
                 }
 
                 override fun onError(error: Throwable) {
@@ -107,6 +124,11 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     private fun getBundleData() {
         if (arguments != null) {
             idPhong = requireArguments().getString("idphong")!!
+            val tb = ThietBi(idphong = idPhong, mac = getMacAddr()!!)
+            Handler().postDelayed({
+                mqttHelper.publishMessage("loginthietbi", toJson(tb)!!)
+                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
+            }, 1000)
         }
     }
 
@@ -132,7 +154,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     override fun getLayoutId(): Int = R.layout.fragment_device
     override fun onItemClick(v: View?, item: ThietBi) {
         logD(item.id)
-        val bundle = bundleOf("idthietbi" to idThietBi)
+        val bundle = bundleOf("idthietbi" to item._id)
         navigate(R.id.detailLightFragment, bundle)
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)

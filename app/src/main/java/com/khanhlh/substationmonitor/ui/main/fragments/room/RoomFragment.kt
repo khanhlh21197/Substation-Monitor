@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
@@ -34,7 +35,9 @@ import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.Phong
 import com.khanhlh.substationmonitor.model.PhongResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
-import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.fab
+import kotlinx.android.synthetic.main.fragment_home.recycler
+import kotlinx.android.synthetic.main.fragment_room.*
 
 
 class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
@@ -65,6 +68,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         vm = RoomViewModel(MyApp())
         mBinding.viewModel = vm
 
+        roomShimmer.startShimmer()
         initMqtt()
         getBundleData()
         initRecycler()
@@ -92,7 +96,6 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
                             phongs.add(phong)
                         } else {
                             val rooms: ArrayList<Phong> = it.id!!
-                            phong.idphong = phong._id
                             if (phongs.isEmpty()) {
                                 phongs.addAll(rooms)
                             }
@@ -100,6 +103,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
                     } else {
                         toast("Error")
                     }
+                    roomShimmer.stopShimmer()
                 }
 
                 override fun onError(error: Throwable) {
@@ -114,11 +118,13 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         if (arguments != null) {
             idNha = requireArguments().getString("idnha")!!
             val nha = Nha(idnha = idNha, mac = getMacAddr()!!)
-            mqttHelper.publishMessage("loginphong", toJson(nha)!!).subscribe({
-                logD(it.toString())
-            }, {
-                logD(it.toString())
-            })
+            Handler().postDelayed({
+                mqttHelper.publishMessage("loginphong", toJson(nha)!!).subscribe({
+                    logD(it.toString())
+                }, {
+                    logD(it.toString())
+                })
+            }, 1000)
         }
     }
 
@@ -144,7 +150,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     override fun getLayoutId(): Int = R.layout.fragment_room
     override fun onItemClick(v: View?, item: Phong) {
         logD(item.idphong)
-        val bundle = bundleOf("idphong" to item.idphong)
+        val bundle = bundleOf("idphong" to item._id)
         navigate(R.id.deviceFragment, bundle)
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
@@ -153,6 +159,16 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
 //            DeviceType.TEMP -> navigate(R.id.detailDeviceFragment, bundle)
 //            DeviceType.TV -> navigate(R.id.detailTvFrag, bundle)
 //        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        roomShimmer.startShimmer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        roomShimmer.stopShimmer()
     }
 
     override fun onImageClick(v: View?) {
