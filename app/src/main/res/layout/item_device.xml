@@ -76,8 +76,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:text="@{item.tenthietbi}"
                     android:textColor="@color/textColor"
-                    android:textSize="20dp"
+                    android:textSize="@dimen/_14ssp"
                     android:textStyle="bold" />
 
             </LinearLayout>

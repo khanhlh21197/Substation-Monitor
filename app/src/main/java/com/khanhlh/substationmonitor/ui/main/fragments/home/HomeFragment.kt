@@ -87,7 +87,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it: NhaResponse = Gson().fromJson(message)
+                    val it: NhaResponse = fromJson(message)
                     if ("0" == it.errorCode && "true" == it.result) {
                         if (!it.message.isNullOrEmpty()) {
                             idNha = it.message.toString()
@@ -244,14 +244,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        mqttHelper.close()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        logD("HomeFragment::onDestroy")
+    override fun onPause() {
+        super.onPause()
         mqttHelper.close()
     }
 

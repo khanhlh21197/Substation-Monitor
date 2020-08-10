@@ -40,13 +40,12 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/custom_edit_text"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -89,13 +88,12 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/custom_edit_text"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="20dp"
@@ -152,7 +150,6 @@
                     android:orientation="horizontal">
 
                     <androidx.appcompat.widget.AppCompatButton
-
                         android:id="@+id/btLogin"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

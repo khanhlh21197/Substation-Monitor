@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.ui.register
 
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
@@ -8,7 +9,6 @@ import com.khanhlh.substationmonitor.base.BaseActivity
 import com.khanhlh.substationmonitor.databinding.ActivityRegisterBinding
 import com.khanhlh.substationmonitor.di.ViewModelFactory
 import com.khanhlh.substationmonitor.extensions.*
-import com.khanhlh.substationmonitor.model.BaseResponse
 import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
@@ -31,6 +31,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
         binding.viewModel = baseViewModel
 
         initMqtt()
+        checkConnection()
         btLogin.setOnClickListener { tryRegister() }
     }
 
@@ -42,7 +43,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it = Gson().fromJson<NhaResponse>(message)
+                    val it = fromJson<NhaResponse>(message)
                     if ("0" == it.errorCode && "true" == it.result) {
                         toast(getString(R.string.register_success))
                         navigateToActivity(LoginActivity::class.java)
@@ -95,6 +96,19 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
     override fun onDestroy() {
         super.onDestroy()
         mqttHelper.close()
+    }
+
+    private fun checkConnection() {
+        mqttHelper.isConnected.observe(this, Observer<Boolean> { t ->
+            if (t!!) {
+                toast("Đã kết nối với Server")
+                baseViewModel.hideLoading()
+            } else {
+                toast("Ngắt kết nối")
+                baseViewModel.showLoading()
+                initMqtt()
+            }
+        })
     }
 
 }

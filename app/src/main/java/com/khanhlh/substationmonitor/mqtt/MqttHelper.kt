@@ -3,8 +3,10 @@ package com.khanhlh.substationmonitor.mqtt
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.extensions.set
 import io.reactivex.Observable
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
@@ -21,6 +23,7 @@ class MqttHelper(private val context: Context) {
     private val DEVICENAME = "paho_android"
     private val DEVICESECRET = "tLMT9QWD36U2SArglGqcHCDK9rK9****"
     private var gson = Gson()
+    val isConnected = MutableLiveData<Boolean>(false)
 
     init {
         /* Obtain the MQTT connection information clientId, username, and password. */
@@ -55,6 +58,7 @@ class MqttHelper(private val context: Context) {
         try {
             client.connect(mqttConnectOptions, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
+                    isConnected.set(true)
                     topics.forEach {
                         subscribeTopic(it)
                     }
@@ -63,6 +67,7 @@ class MqttHelper(private val context: Context) {
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                     logD("mqttHelper Connect Failed")
+                    isConnected.set(false)
                 }
             })
             client.setCallback(object : MqttCallbackExtended {
@@ -71,11 +76,13 @@ class MqttHelper(private val context: Context) {
 //                        subscribeTopic(it)
 //                    }
                     Log.d(TAG, "mqttHelper Connected to: $serverURI")
+                    isConnected.set(true)
                 }
 
                 override fun connectionLost(cause: Throwable) {
                     Log.d(TAG, "mqttHelper The Connection was lost.")
                     messageCallBack.onError(cause)
+                    isConnected.set(false)
                 }
 
                 @Throws(Exception::class)

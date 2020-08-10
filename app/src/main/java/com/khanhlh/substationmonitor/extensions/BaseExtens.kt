@@ -17,17 +17,16 @@ import androidx.databinding.Observable
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.BuildConfig
+import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.exception.EmptyException
 import com.khanhlh.substationmonitor.helper.annotation.ToastType
 import com.khanhlh.substationmonitor.model.BaseResponse
+import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 import com.uber.autodispose.AutoDispose
 import com.uber.autodispose.FlowableSubscribeProxy
@@ -158,12 +157,12 @@ fun AppCompatActivity.addFragmentSafely(
 
 fun Activity.dpToPx(@DimenRes resID: Int): Int = this.resources.getDimensionPixelOffset(resID)
 
-fun <T> Any.toJson(t: T): String? {
+fun <T> toJson(t: T): String? {
     val gson = Gson()
     return gson.toJson(t)
 }
 
-inline fun <reified T> Any.fromJson(input: String): T {
+inline fun <reified T> fromJson(input: String): T {
     val gson = Gson()
     return gson.fromJson(input, T::class.java)
 }

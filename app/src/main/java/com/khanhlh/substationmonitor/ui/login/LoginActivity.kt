@@ -57,6 +57,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         mqttHelper = MqttHelper(this)
 
         connectMqtt()
+        checkConnection()
 
         btLogin.setOnClickListener {
             baseViewModel.showLoading()
@@ -64,20 +65,35 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         }
     }
 
+    private fun checkConnection() {
+        mqttHelper.isConnected.observe(this, Observer<Boolean> { t ->
+            if (t!!) {
+                toast("Đã kết nối với Server")
+                baseViewModel.hideLoading()
+            } else {
+                toast("Ngắt kết nối")
+                baseViewModel.showLoading()
+                connectMqtt()
+            }
+        })
+    }
+
     private fun connectMqtt() {
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val baseResponse = Gson().fromJson<NhaResponse>(message)
+                    val baseResponse = fromJson<NhaResponse>(message)
                     if ("0" == baseResponse.errorCode && "true" == baseResponse.result) {
                         baseViewModel.isLoginSuccess.set(true)
 //                        id = baseResponse.id!!
-                        if (switchSaveUser.isChecked) saveUser()
+                        if (switchSaveUser.isChecked)
+                            saveUser()
+                        baseViewModel.hideLoading()
                         navigateToActivity(MainActivity::class.java, baseResponse)
                     } else {
                         baseViewModel.isLoginSuccess.set(false)
+                        baseViewModel.hideLoading()
                     }
-                    baseViewModel.hideLoading()
                 }
 
                 override fun onError(error: Throwable) {

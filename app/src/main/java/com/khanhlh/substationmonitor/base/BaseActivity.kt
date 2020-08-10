@@ -12,6 +12,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import com.khanhlh.substationmonitor.R
+import com.khanhlh.substationmonitor.extensions.toast
 
 
 abstract class BaseActivity<B : ViewDataBinding, T : BaseViewModel<*>> :

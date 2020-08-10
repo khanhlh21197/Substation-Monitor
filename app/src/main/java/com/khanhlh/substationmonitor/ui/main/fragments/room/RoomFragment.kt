@@ -69,8 +69,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         mBinding.viewModel = vm
 
         roomShimmer.startShimmer()
-        initMqtt()
-        getBundleData()
+
         initRecycler()
         fab.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -88,7 +87,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it = Gson().fromJson<PhongResponse>(message)
+                    val it = fromJson<PhongResponse>(message)
                     if ("0" == it.errorCode && "true" == it.result) {
                         if (!it.message.isNullOrEmpty()) {
                             idPhong = it.message.toString()
@@ -163,12 +162,13 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
 
     override fun onResume() {
         super.onResume()
-        roomShimmer.startShimmer()
+        initMqtt()
+        getBundleData()
     }
 
     override fun onPause() {
         super.onPause()
-        roomShimmer.stopShimmer()
+        mqttHelper.close()
     }
 
     override fun onImageClick(v: View?) {
@@ -266,17 +266,6 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
 
     override fun onDeleteClick(v: View?, item: Phong) {
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mqttHelper.close()
-        logD("HomeFragment::onDestroy")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mqttHelper.close()
     }
 
 }

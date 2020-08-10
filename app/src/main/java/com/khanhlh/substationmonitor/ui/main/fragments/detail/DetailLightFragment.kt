@@ -2,22 +2,28 @@ package com.khanhlh.substationmonitor.ui.main.fragments.detail
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.app.TimePickerDialog
-import android.app.TimePickerDialog.OnTimeSetListener
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.TransitionDrawable
+import android.os.Handler
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.TimePicker
+import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailLightFragBinding
+import com.khanhlh.substationmonitor.extensions.fromJson
+import com.khanhlh.substationmonitor.extensions.logD
+import com.khanhlh.substationmonitor.extensions.toJson
+import com.khanhlh.substationmonitor.model.Lenh
+import com.khanhlh.substationmonitor.model.ThietBiResponse
+import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.yanzhenjie.wheel.OnWheelChangedListener
 import com.yanzhenjie.wheel.OnWheelScrollListener
 import com.yanzhenjie.wheel.WheelView
@@ -28,8 +34,9 @@ import java.util.*
 class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceViewModel>(),
     View.OnClickListener {
     private var wheelScrolled = false
-    private var wheelMenu1 = arrayOfNulls<Int>(24)
-    private var wheelMenu2 = arrayOfNulls<Int>(60)
+    private lateinit var mqttHelper: MqttHelper
+    private lateinit var gson: Gson
+    private lateinit var idthietbi: String
 
     companion object {
         const val ID_DEVICE = "ID_DEVICE"
@@ -40,10 +47,20 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     override fun initView() {
         vm = DetailDeviceViewModel(MyApp())
         mBinding.vm = vm
-        getBundleData()
+
         initListener()
         onSwitchChange()
         setupSeekBar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initMqtt()
+        getBundleData()
+    }
+
+    private fun initMqtt() {
+        mqttHelper = MqttHelper(requireActivity())
     }
 
     private fun setupSeekBar() {
@@ -76,7 +93,27 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
     private fun getBundleData() {
         val args = arguments
-        val idthietbi = args!!.getString("idthietbi")
+        idthietbi = args!!.getString("idthietbi").toString().toUpperCase(Locale.getDefault())
+        idthietbi.let {
+            mqttHelper.connect("S$it", messageCallBack = object : MqttHelper.MessageCallBack {
+                override fun onSuccess(message: String) {
+                    val tb = fromJson<ThietBiResponse>(message)
+                    if ("0" == tb.errorCode) {
+                        if ("true" == tb.result) {
+                            lightSwitch.isChecked = "bat" == tb.message
+                        } else {
+                            toast("Gui lenh that bai")
+                        }
+                    } else {
+                        toast("Vui long thu lai sau")
+                    }
+                }
+
+                override fun onError(error: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+        }
     }
 
     private fun initListener() {
@@ -85,13 +122,21 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     }
 
     private fun onSwitchChange() {
+        lightSwitch.isEnabled = false
+        Handler().postDelayed({ lightSwitch.isEnabled = true }, 1000)
+
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
             val drawable: TransitionDrawable = light.drawable as TransitionDrawable
+            val lenh = Lenh()
             if (isChecked) {
+                lenh.lenh = "bat"
                 drawable.startTransition(100)
             } else {
+                lenh.lenh = "tat"
                 drawable.reverseTransition(100)
             }
+            mqttHelper.publishMessage("P$idthietbi", toJson(lenh)!!)
+                .subscribe({ logD("mqttHelper $it") }, { logD("mqttHelper $it") })
         }
     }
 
@@ -118,7 +163,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
     // Wheel changed listener
     private val changedListener =
-        OnWheelChangedListener { wheel, oldValue, newValue ->
+        OnWheelChangedListener { _, _, newValue ->
             if (!wheelScrolled) {
                 updateStatus(newValue)
             }
@@ -129,32 +174,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         tvTimerOn.text = newValue.toString()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun showTimerPickerDialog(timerOn: Boolean) {
-        val c = Calendar.getInstance()
-        val mHour = c.get(Calendar.HOUR_OF_DAY)
-        val mMinute = c.get(Calendar.MINUTE)
-
-        // Launch Time Picker Dialog
-
-        // Launch Time Picker Dialog
-        val timePickerDialog = TimePickerDialog(
-            activity,
-            OnTimeSetListener { view, hourOfDay, minute ->
-                diffTime(mHour, mMinute, hourOfDay, minute, timerOn)
-                if (timerOn) {
-                    tvTimerOn.text = " : $hourOfDay giờ $minute phút"
-                } else {
-                    tvTimerOff.text = " : $hourOfDay giờ $minute phút"
-                }
-            },
-            mHour,
-            mMinute,
-            true
-        )
-        timePickerDialog.show()
-    }
-
+    @SuppressLint("CheckResult")
     private fun diffTime(
         currentHour: Int,
         currentMinute: Int,
@@ -162,6 +182,12 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         minute: Int,
         timerOn: Boolean
     ) {
+        var gioBat = ""
+        var phutBat = ""
+        var gioTat = ""
+        var phutTat = ""
+        val lenh = Lenh()
+
         val diffHour = hour - currentHour
         var diffMinute = 0
         if (minute > currentMinute) {
@@ -170,10 +196,28 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
             diffMinute = 60 + minute - currentMinute
         }
         if (timerOn) {
+            gioBat = hour.toString()
+            if (gioBat.toInt() < 10) gioBat = "0$gioBat"
+            phutBat = minute.toString()
+            if (phutBat.toInt() < 10) phutBat = "0$phutBat"
+            lenh.lenh = "hengiobat"
+            lenh.param = "$gioBat&$phutBat"
             toast("Bật đèn sau $diffHour giờ và $diffMinute phút")
         } else {
+            gioTat = hour.toString()
+            if (gioTat.toInt() < 10) gioTat = "0$gioTat"
+            phutTat = minute.toString()
+            if (phutTat.toInt() < 10) phutTat = "0$phutBat"
+            lenh.lenh = "hengiotat"
+            lenh.param = "$gioTat&$phutTat"
             toast("Tắt đèn sau $diffHour giờ và $diffMinute phút")
         }
+        val message: String = "{" +
+                "\"lenh\":\"${lenh.lenh}\"," +
+                "\"param\":\"${lenh.param}\"" +
+                "}"
+        mqttHelper.publishMessage("P$idthietbi", message)
+            .subscribe({ logD("mqttHelper $it") }, { logD("mqttHelper $it") })
     }
 
     @SuppressLint("SetTextI18n")
@@ -197,7 +241,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
         val timePicker = dialog.findViewById<TimePicker>(R.id.timePicker)
         timePicker.setIs24HourView(true)
-        timePicker.setOnTimeChangedListener { view, hourOfDay, minute ->
+        timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
             pickedHour = hourOfDay
             pickedMinute = minute
         }
@@ -217,5 +261,10 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
         noBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mqttHelper.close()
     }
 }

@@ -59,7 +59,7 @@ class RegisterActivityViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
         loadingVisibility.value = View.VISIBLE
     }
 
-    private fun hideLoading() {
+    fun hideLoading() {
         loadingVisibility.value = View.INVISIBLE
     }
 

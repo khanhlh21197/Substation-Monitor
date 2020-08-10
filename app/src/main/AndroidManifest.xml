@@ -35,8 +35,8 @@
         <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.register.RegisterActivity" />
 
-        <service android:name=".service.TempMonitoringService" />
-        <service android:name=".service.warning.WarningService" />
+<!--        <service android:name=".service.TempMonitoringService" />-->
+<!--        <service android:name=".service.warning.WarningService" />-->
     </application>
 
 </manifest>

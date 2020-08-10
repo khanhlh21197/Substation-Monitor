@@ -84,7 +84,7 @@
     <string name="add_home">Thêm nhà</string>
     <string name="light_timer_on"><u>Hẹn giờ bật đèn</u></string>
     <string name="light_timer_off"><u>Hẹn giờ tắt đèn</u></string>
-    <string name="home">nhà</string>
+    <string name="home">Nhà</string>
     <string name="name">Tên</string>
     <string name="phoneNumber">Số điện thoại</string>
 </resources>
