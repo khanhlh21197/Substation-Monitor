@@ -14,6 +14,7 @@ interface ItemClickPresenter<in Any> {
     fun onItemLongClick(v: View? = null, item: Any)
     fun onImageClick(v: View? = null)
     fun onDeleteClick(v: View? = null, item: Any)
+    fun onSwitchChanged(v: View? = null, isChecked: Boolean = false)
 }
 
 interface ItemDecorator {

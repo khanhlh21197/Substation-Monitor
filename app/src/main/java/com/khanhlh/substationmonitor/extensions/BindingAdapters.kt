@@ -5,9 +5,10 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.animation.*
 import android.widget.ImageView
-import androidx.annotation.NonNull
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.suke.widget.SwitchButton
 
 @SuppressLint("CheckResult")
 object BindingAdapters {
@@ -16,6 +17,12 @@ object BindingAdapters {
     @BindingAdapter(value = ["imageUrl", "placeholder"], requireAll = false)
     fun setImageUrl(imageView: ImageView, url: String?, placeHolder: Drawable?) {
         imageView.setImageDrawable(placeHolder)
+    }
+
+    @InverseBindingAdapter(attribute = "onCheckedChange")
+    @JvmStatic
+    fun onCheckedChange(view: SwitchButton): Boolean {
+        return view.isChecked
     }
 
     private val INTERPOLATOR: Interpolator = FastOutSlowInInterpolator()
