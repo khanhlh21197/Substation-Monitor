@@ -1,6 +1,7 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.room
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.databinding.ObservableArrayList
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.api.FirebaseCommon
@@ -21,6 +22,14 @@ class RoomViewModel(app: MyApp) : BaseViewModel<Any>(app) {
         }, {
             logD(it.toString())
         })
+    }
+
+    fun showLoading() {
+        loadingVisibility.value = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        loadingVisibility.value = View.INVISIBLE
     }
 
     private fun add(id: String, data: Map<String, Any>, devices: String) {

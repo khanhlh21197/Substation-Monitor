@@ -13,6 +13,7 @@ import android.view.WindowManager
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.TimePicker
+import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
@@ -29,7 +30,6 @@ import com.yanzhenjie.wheel.OnWheelScrollListener
 import com.yanzhenjie.wheel.WheelView
 import kotlinx.android.synthetic.main.detail_light_frag.*
 import java.util.*
-
 
 class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceViewModel>(),
     View.OnClickListener {
@@ -135,8 +135,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
                 lenh.lenh = "tat"
                 drawable.reverseTransition(100)
             }
-            mqttHelper.publishMessage("P$idthietbi", toJson(lenh)!!)
-                .subscribe({ logD("mqttHelper $it") }, { logD("mqttHelper $it") })
+            publishMessage("P$idthietbi", toJson(lenh)!!)
         }
     }
 
@@ -216,8 +215,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
                 "\"lenh\":\"${lenh.lenh}\"," +
                 "\"param\":\"${lenh.param}\"" +
                 "}"
-        mqttHelper.publishMessage("P$idthietbi", message)
-            .subscribe({ logD("mqttHelper $it") }, { logD("mqttHelper $it") })
+        publishMessage("P$idthietbi", message)
     }
 
     @SuppressLint("SetTextI18n")
@@ -261,6 +259,18 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
         noBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
+    }
+
+    private fun publishMessage(topic: String, json: String) {
+        mqttHelper.isConnected.observe(this, Observer<Boolean> {
+            if (it) {
+                vm.hideLoading()
+                mqttHelper.publishMessage(topic, json)
+                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
+            } else {
+                vm.showLoading()
+            }
+        })
     }
 
     override fun onPause() {

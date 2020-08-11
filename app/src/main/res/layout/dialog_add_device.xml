@@ -11,14 +11,14 @@
         android:id="@+id/txtLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Thêm thiết bị"
+        android:text="@string/add_device"
         android:textSize="@dimen/_16ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/emailAddress"
+        android:id="@+id/tipDeviceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,35 +26,35 @@
         app:layout_constraintTop_toBottomOf="@+id/txtLabel">
 
         <EditText
-            android:id="@+id/txtInputDevice"
+            android:id="@+id/deviceName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:ems="10"
-            android:hint="Nhập tên hoặc quét mã barcode"
+            android:hint="Nhập tên"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/inputDeviceName"
+        android:id="@+id/tipDeviceId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailAddress">
+        app:layout_constraintTop_toBottomOf="@+id/tipDeviceName">
 
         <EditText
-            android:id="@+id/txtInputDeviceName"
+            android:id="@+id/deviceId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
             android:ems="10"
-            android:hint="Nhập tên hoặc quét mã barcode"
+            android:hint="Nhập mã"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,11 +65,11 @@
         android:layout_marginTop="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_8sdp"
         android:src="@drawable/ic_barcode"
-        app:layout_constraintBottom_toBottomOf="@id/emailAddress"
+        app:layout_constraintBottom_toBottomOf="@id/tipDeviceName"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/emailAddress"
-        app:layout_constraintTop_toTopOf="@id/emailAddress"
+        app:layout_constraintStart_toEndOf="@+id/tipDeviceName"
+        app:layout_constraintTop_toTopOf="@id/tipDeviceName"
         tools:layout_editor_absoluteY="24dp" />
 
     <Button
@@ -83,5 +83,5 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailAddress" />
+        app:layout_constraintTop_toBottomOf="@+id/tipDeviceName" />
 </androidx.constraintlayout.widget.ConstraintLayout>

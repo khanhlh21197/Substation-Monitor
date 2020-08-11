@@ -69,6 +69,8 @@
     <string name="delete">Xóa</string>
     <string name="device">Thiết bị</string>
     <string name="delete_device">Bạn có muốn xóa thiết bị ?</string>
+    <string name="delete_all">Xóa tất cả</string>
+    <string name="server_error">Đã xảy ra lỗi, vui lòng thử lại sau!</string>
     <string name="delete_room">Bạn có muốn xóa phòng ?</string>
     <string name="delete_device_success">Xóa thành công</string>
     <string name="delete_device_fail">Xóa thất bại, vui lòng thử lại</string>
@@ -87,4 +89,7 @@
     <string name="home">Nhà</string>
     <string name="name">Tên</string>
     <string name="phoneNumber">Số điện thoại</string>
+    <string name="add_device">Thêm thiết bị</string>
+    <string name="connected">Đã kết nối đến Server</string>
+    <string name="disconnected">Đang kết nối…</string>
 </resources>

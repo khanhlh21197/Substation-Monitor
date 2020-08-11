@@ -47,7 +47,7 @@ class LoginActivityViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
         loadingVisibility.value = View.VISIBLE
     }
 
-    public fun hideLoading() {
+    fun hideLoading() {
         loadingVisibility.value = View.INVISIBLE
     }
 

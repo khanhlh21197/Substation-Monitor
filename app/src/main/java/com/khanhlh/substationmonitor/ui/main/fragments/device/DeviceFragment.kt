@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.device
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent
@@ -8,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
@@ -38,7 +39,6 @@ import kotlinx.android.synthetic.main.fragment_home.fab
 import kotlinx.android.synthetic.main.fragment_home.recycler
 import java.util.*
 
-
 class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     ItemClickPresenter<ThietBi> {
     private lateinit var mqttHelper: MqttHelper
@@ -47,15 +47,22 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     private lateinit var thietbi: ThietBi
     private val thietbis = ObservableArrayList<ThietBi>()
     private lateinit var idThietBi: String
+    private var currentIndex: Int = 0
+    private var publishInfo: String = ""
+    private lateinit var deviceName: EditText
 
     companion object {
         const val ID_ROOM = "ID_ROOM"
+        const val LOGIN_DEVICE = "loginthietbi"
+        const val REGISTER_DEVICE = "registerthietbi"
+        const val DELETE_DEVICE = "deletethietbi"
+        const val DELETE_ALL_DEVICE = "deleteallthietbi"
+        const val UPDATE_DEVICE = "updatethietbi"
     }
 
     var idPhong = ""
     private val RESULT_LOAD_IMAGE = 1
     lateinit var imageView: ImageView
-    lateinit var txtInputDevice: EditText
 
     private val mAdapter by lazy {
         SingleTypeAdapter<ThietBi>(mContext, R.layout.item_device, thietbis).apply {
@@ -73,6 +80,26 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
                 addDevice()
             }
         }
+
+        fabDeleteAll.setOnClickListener {
+            deleteAllDevices()
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    private fun deleteAllDevices() {
+        createDialog(
+            requireActivity(),
+            getString(R.string.delete_device),
+            getString(R.string.app_name),
+            getString(R.string.cancel),
+            getString(R.string.ok),
+            null,
+            View.OnClickListener {
+                val tb = ThietBi(idphong = idPhong, mac = getMacAddr()!!)
+                publishMessage(DELETE_ALL_DEVICE, toJson(tb)!!)
+            }
+        )
     }
 
     override fun onResume() {
@@ -95,21 +122,47 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it = fromJson<ThietBiResponse>(message)
-                    if ("0" == it.errorCode && "true" == it.result) {
-                        if (it.message.isNullOrEmpty()) {
-                            val devices: ArrayList<ThietBi> = it.id!!
-                            if (thietbis.isEmpty()) {
-                                thietbis.addAll(devices)
+                    val response = fromJson<ThietBiResponse>(message)
+                    if ("0" == response.errorCode && "true" == response.result) {
+                        when (publishInfo) {
+                            REGISTER_DEVICE -> {
+                                thietbi.id = response.message!!
+                                thietbis.add(thietbi)
                             }
-                        } else {
-                            thietbi.id = it.message!!
-                            thietbis.add(thietbi)
+                            LOGIN_DEVICE -> {
+                                val devices: ArrayList<ThietBi> = response.id!!
+                                thietbis.clear()
+                                thietbis.addAll(devices)
+                                val ids = arrayListOf<String>()
+                                thietbis.forEach { ids.add(it.mathietbi) }
+                                thietbis.forEach {
+                                    val mqttHelper = MqttHelper(requireActivity())
+                                    mqttHelper.connect(
+                                        "S${it.mathietbi}",
+                                        messageCallBack = object : MqttHelper.MessageCallBack {
+                                            override fun onSuccess(message: String) {
+                                                val tb = fromJson<ThietBiResponse>(message)
+                                                if ("0" == response.errorCode && "true" == response.result) {
+                                                    it.trangthai = tb.message == "bat"
+                                                }
+                                            }
+
+                                            override fun onError(error: Throwable) {
+                                                toast(R.string.server_error)
+                                            }
+                                        })
+                                }
+                            }
+                            DELETE_DEVICE -> {
+                                thietbis.removeAt(currentIndex)
+                            }
+                            DELETE_ALL_DEVICE -> {
+                                thietbis.clear()
+                            }
                         }
                     } else {
-                        toast("Error")
+                        toast(R.string.server_error)
                     }
-                    deviceShimmer.stopShimmer()
                 }
 
                 override fun onError(error: Throwable) {
@@ -123,10 +176,8 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         if (arguments != null) {
             idPhong = requireArguments().getString("idphong")!!
             val tb = ThietBi(idphong = idPhong, mac = getMacAddr()!!)
-            Handler().postDelayed({
-                mqttHelper.publishMessage("loginthietbi", toJson(tb)!!)
-                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
-            }, 1000)
+
+            publishMessage(LOGIN_DEVICE, toJson(tb)!!)
         }
     }
 
@@ -151,9 +202,16 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
 
     override fun getLayoutId(): Int = R.layout.fragment_device
     override fun onItemClick(v: View?, item: ThietBi) {
-        logD(item.id)
-        val bundle = bundleOf("idthietbi" to item.mathietbi)
-        navigate(R.id.detailLightFragment, bundle)
+        when (v!!.id) {
+            R.id.switchBtn -> {
+                logD(item.id)
+            }
+            R.id.card_view -> {
+                logD(item.id)
+                val bundle = bundleOf("idthietbi" to item.mathietbi)
+                navigate(R.id.detailLightFragment, bundle)
+            }
+        }
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
 //            DeviceType.FAN -> navigate(R.id.detailDeviceFragment, bundle)
@@ -178,10 +236,11 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
-        txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
-        val txtInputDeviceName = alertLayout.findViewById<EditText>(R.id.txtInputDeviceName)
-        val inputDeviceName = alertLayout.findViewById<TextInputLayout>(R.id.inputDeviceName)
-        inputDeviceName.visibility = View.VISIBLE
+        deviceName = alertLayout.findViewById<EditText>(R.id.deviceName)
+        val deviceId = alertLayout.findViewById<EditText>(R.id.deviceId)
+        val tipDeviceId = alertLayout.findViewById<TextInputLayout>(R.id.tipDeviceId)
+
+        tipDeviceId.visibility = View.VISIBLE
 
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
@@ -208,15 +267,15 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         alert.setPositiveButton(
             getString(R.string.ok)
         ) { dialog: DialogInterface?, which: Int ->
-            if (txtInputDevice.text != null) {
+            if (deviceName.text != null) {
                 thietbi = ThietBi(
                     "",
                     getMacAddr()!!,
                     idPhong,
-                    txtInputDeviceName.text.toString().toUpperCase(Locale.ROOT),
-                    txtInputDevice.text.toString().toUpperCase(Locale.ROOT)
+                    deviceName.text.toString().toUpperCase(Locale.ROOT),
+                    deviceId.text.toString().toUpperCase(Locale.ROOT)
                 )
-                mqttHelper.publishMessage("registerthietbi", toJson(thietbi)!!).subscribe()
+                publishMessage(REGISTER_DEVICE, toJson(thietbi)!!)
             } else {
                 Toast.makeText(
                     activity,
@@ -240,7 +299,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         if (result != null) {
             if (result.contents != null) {
                 if (requestCode == 1) {
-                    txtInputDevice.setText(result.contents)
+                    deviceName.setText(result.contents)
                 }
             }
         }
@@ -265,6 +324,35 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     }
 
     override fun onDeleteClick(v: View?, item: ThietBi) {
+        currentIndex = thietbis.indexOf(item)
+        createDialog(
+            requireActivity(),
+            getString(R.string.delete_device),
+            getString(R.string.app_name),
+            getString(R.string.cancel),
+            getString(R.string.ok),
+            null,
+            View.OnClickListener {
+                val tb = ThietBi(mac = getMacAddr()!!, mathietbi = item.mathietbi)
+                publishMessage(DELETE_DEVICE, toJson(tb)!!)
+            }
+        )
+    }
+
+    private fun publishMessage(topic: String, json: String) {
+        this.publishInfo = topic
+        mqttHelper.isConnected.observe(this, Observer<Boolean> {
+            if (it) {
+                vm.hideLoading()
+                mqttHelper.publishMessage(topic, json)
+                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
+            } else {
+                vm.showLoading()
+            }
+        })
+    }
+
+    override fun onSwitchChange(isChecked: Boolean) {
 
     }
 

@@ -5,9 +5,10 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.animation.*
 import android.widget.ImageView
-import androidx.annotation.NonNull
 import androidx.databinding.BindingAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
+import com.suke.widget.SwitchButton
 
 @SuppressLint("CheckResult")
 object BindingAdapters {
@@ -28,6 +29,14 @@ object BindingAdapters {
         } else {
             if (view.animation != null)
                 view.animation.cancel()
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("onSwitchChange")
+    fun onSwitchChange(switch: SwitchButton, item: ItemClickPresenter<Any>) {
+        switch.setOnCheckedChangeListener { view, isChecked ->
+            item.onSwitchChange(isChecked)
         }
     }
 
