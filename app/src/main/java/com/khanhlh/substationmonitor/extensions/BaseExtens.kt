@@ -1,15 +1,14 @@
 package com.khanhlh.substationmonitor.extensions
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
-import androidx.annotation.AnimRes
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.IdRes
+import androidx.annotation.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
@@ -17,16 +16,17 @@ import androidx.databinding.Observable
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.BuildConfig
-import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.exception.EmptyException
 import com.khanhlh.substationmonitor.helper.annotation.ToastType
-import com.khanhlh.substationmonitor.model.BaseResponse
-import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 import com.uber.autodispose.AutoDispose
 import com.uber.autodispose.FlowableSubscribeProxy
@@ -66,6 +66,27 @@ fun Activity.toast(
         ToastType.ERROR,
         ToastType.NORMAL,
         ToastType.SUCCESS -> runOnUiThread(Runnable { Toast.makeText(this, msg, duration).show() })
+    }
+}
+
+@SuppressLint("ResourceType")
+fun Activity.toast(
+    @LayoutRes
+    msg: Int,
+    duration: Int = Toast.LENGTH_SHORT,
+    @ToastType type: Int = ToastType.NORMAL
+) {
+    when (type) {
+        ToastType.WARNING,
+        ToastType.ERROR,
+        ToastType.NORMAL,
+        ToastType.SUCCESS -> runOnUiThread(Runnable {
+            Toast.makeText(
+                this,
+                this.getString(msg),
+                duration
+            ).show()
+        })
     }
 }
 
@@ -307,4 +328,34 @@ fun getMacAddr(): String? {
     } catch (ex: Exception) {
     }
     return "02:00:00:00:00:00"
+}
+
+@SuppressLint("LogNotTimber")
+fun createDialog(
+    act: Activity, message: String?,
+    title: String?, leftButtonText: String?, rightButtonText: String?,
+    leftClick: View.OnClickListener?, rightClick: View.OnClickListener?
+) {
+    return try {
+        MaterialDialog.Builder(act)
+            .title(title!!)
+            .content(message!!)
+            .positiveText(rightButtonText!!)
+            .negativeText(leftButtonText!!)
+            .onPositive { dialog, which ->
+                rightClick?.onClick(act.currentFocus)
+                if (dialog.isShowing) {
+                    dialog.dismiss()
+                }
+            }
+            .onNegative { dialog, which ->
+                leftClick?.onClick(act.currentFocus)
+                if (dialog.isShowing) {
+                    dialog.dismiss()
+                }
+            }.build()
+            .show()
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    }
 }

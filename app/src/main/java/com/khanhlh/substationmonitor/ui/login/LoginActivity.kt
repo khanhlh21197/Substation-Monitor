@@ -46,7 +46,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         sharedPref = getSharedPreferences(USER_PREF, Context.MODE_PRIVATE)
         getUser()
         onSwitchListener()
+    }
 
+    override fun onResume() {
+        super.onResume()
         initMqtt()
     }
 
@@ -65,13 +68,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         }
     }
 
+    @SuppressLint("ResourceType")
     private fun checkConnection() {
         mqttHelper.isConnected.observe(this, Observer<Boolean> { t ->
             if (t!!) {
-                toast("Đã kết nối với Server")
+                toast(R.string.connected)
                 baseViewModel.hideLoading()
             } else {
-                toast("Ngắt kết nối")
+                toast(R.string.disconnected)
                 baseViewModel.showLoading()
                 connectMqtt()
             }
@@ -164,11 +168,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         } else {
             baseViewModel.errorMessage.value = MyApp.context.getString(R.string.require_length)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mqttHelper.close()
     }
 
     override fun onStop() {

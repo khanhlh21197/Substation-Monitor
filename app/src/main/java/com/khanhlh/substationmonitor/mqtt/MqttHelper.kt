@@ -58,7 +58,6 @@ class MqttHelper(private val context: Context) {
         try {
             client.connect(mqttConnectOptions, null, object : IMqttActionListener {
                 override fun onSuccess(asyncActionToken: IMqttToken?) {
-                    isConnected.set(true)
                     topics.forEach {
                         subscribeTopic(it)
                     }

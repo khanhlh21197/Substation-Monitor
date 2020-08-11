@@ -108,7 +108,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
     private fun getBundleData() {
         val args = arguments
-        val response = args!!.getSerializable(KEY_SERIALIZABLE) as NhaResponse
+        if (args?.getSerializable(KEY_SERIALIZABLE) == null) return
+        val response = args.getSerializable(KEY_SERIALIZABLE) as NhaResponse
         id = response.message!!
         val nhas: ArrayList<Nha> = response.id!!
         if (homes.isEmpty()) {
@@ -158,14 +159,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
-        txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
+        txtInputDevice = alertLayout.findViewById(R.id.deviceName)
         txtLabel = alertLayout.findViewById(R.id.txtLabel)
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
-        alert.setMessage(getString(R.string.add_home))
+        txtLabel.text = (getString(R.string.add_home))
         alert.setView(alertLayout)
         alert.setCancelable(false)
         scanBarcode.setOnClickListener { v: View? ->
@@ -238,15 +239,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     }
 
     override fun onItemLongClick(v: View?, item: Nha) {
+
     }
 
     override fun onDeleteClick(v: View?, item: Nha) {
-
+        logD(item.tennha)
     }
 
     override fun onPause() {
         super.onPause()
         mqttHelper.close()
+    }
+
+    override fun onSwitchChange(isChecked: Boolean) {
+
     }
 
 }

@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.khanhlh.substationmonitor.model.Nha" />
+            type="com.khanhlh.substationmonitor.model.ThietBi" />
 
         <variable
             name="presenter"
@@ -53,12 +53,14 @@
                     android:layout_height="70dp"
                     android:layout_gravity="center">
 
-                    <ImageView
-                        android:id="@+id/image_view"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_home" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/light"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:src="@drawable/trans_off"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 </RelativeLayout>
 
@@ -67,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{item.tennha}"
+                    android:text="@{item.tenthietbi}"
                     android:textColor="@color/textColor"
                     android:textSize="@dimen/_14ssp"
                     android:textStyle="bold" />
@@ -86,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14dp"
+                    android:textSize="@dimen/_14ssp"
                     android:textStyle="bold" />
 
                 <com.suke.widget.SwitchButton
@@ -94,9 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="5dp"
-                    onSwitchChange="@{isChecked -> presenter.onSwitchChange(isChecked)}"
-                    android:onClick="@{v -> presenter.onImageClick(v)}" />
+                    android:layout_marginTop="5dp" />
             </RelativeLayout>
         </RelativeLayout>
 

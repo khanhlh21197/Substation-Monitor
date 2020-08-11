@@ -27,8 +27,8 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/light"
-                android:layout_width="@dimen/_250sdp"
-                android:layout_height="@dimen/_350sdp"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="@dimen/_200sdp"
                 android:src="@drawable/trans_off"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -7,7 +7,7 @@
 
         <variable
             name="user"
-            type="com.khanhlh.substationmonitor.model.User" />
+            type="com.khanhlh.substationmonitor.model.UserTest" />
 
         <variable
             name="vm"
@@ -67,7 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:fontFamily="@font/advent_pro_light"
+                        android:fontFamily="@font/montserrat_regular"
                         android:text="@{user.email}"
                         android:textColor="@color/coral"
                         android:textSize="16sp"
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/advent_pro_light"
+                        android:fontFamily="@font/montserrat_regular"
                         android:text="@{user.name}"
                         android:textColor="@color/coral"
                         android:textSize="16sp"
@@ -97,12 +97,24 @@
                         android:id="@+id/textView5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/advent_pro_light"
+                        android:fontFamily="@font/montserrat_regular"
                         android:text="@{user.phoneNumber}"
                         android:textColor="@color/coral"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="@+id/textView4"
                         app:layout_constraintTop_toBottomOf="@+id/textView4"
+                        tools:text="Customer Phone Number" />
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:text="@{user.nha}"
+                        android:textColor="@color/coral"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@+id/textView5"
+                        app:layout_constraintTop_toBottomOf="@+id/textView5"
                         tools:text="Customer Phone Number" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

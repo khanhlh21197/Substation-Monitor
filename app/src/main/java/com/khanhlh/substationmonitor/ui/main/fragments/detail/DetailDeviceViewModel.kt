@@ -70,4 +70,12 @@ class DetailDeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     fun onMinusClicked() {
 
     }
+
+    fun showLoading() {
+        loadingVisibility.value = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        loadingVisibility.value = View.INVISIBLE
+    }
 }

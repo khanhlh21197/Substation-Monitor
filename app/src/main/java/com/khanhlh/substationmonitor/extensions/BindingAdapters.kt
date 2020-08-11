@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.suke.widget.SwitchButton
 
 @SuppressLint("CheckResult")
@@ -19,8 +20,8 @@ object BindingAdapters {
         imageView.setImageDrawable(placeHolder)
     }
 
-    @InverseBindingAdapter(attribute = "onCheckedChange")
     @JvmStatic
+    @InverseBindingAdapter(attribute = "onCheckedChange")
     fun onCheckedChange(view: SwitchButton): Boolean {
         return view.isChecked
     }
@@ -35,6 +36,14 @@ object BindingAdapters {
         } else {
             if (view.animation != null)
                 view.animation.cancel()
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("onSwitchChange")
+    fun onSwitchChange(switch: SwitchButton, item: ItemClickPresenter<Any>) {
+        switch.setOnCheckedChangeListener { view, isChecked ->
+            item.onSwitchChange(isChecked)
         }
     }
 

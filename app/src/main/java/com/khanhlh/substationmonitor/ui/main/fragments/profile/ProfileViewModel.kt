@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.profile
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.api.FirebaseCommon
@@ -30,4 +31,12 @@ class ProfileViewModel(app: MyApp) : BaseViewModel<Any>(app) {
         }
 
     fun logOut() {}
+
+    fun showLoading() {
+        loadingVisibility.value = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        loadingVisibility.value = View.INVISIBLE
+    }
 }

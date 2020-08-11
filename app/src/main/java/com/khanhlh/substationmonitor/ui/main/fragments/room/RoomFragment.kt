@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
@@ -20,6 +19,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -35,9 +35,7 @@ import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.Phong
 import com.khanhlh.substationmonitor.model.PhongResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
-import kotlinx.android.synthetic.main.fragment_home.fab
-import kotlinx.android.synthetic.main.fragment_home.recycler
-import kotlinx.android.synthetic.main.fragment_room.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
 class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
@@ -67,8 +65,6 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     override fun initView() {
         vm = RoomViewModel(MyApp())
         mBinding.viewModel = vm
-
-        roomShimmer.startShimmer()
 
         initRecycler()
         fab.setOnClickListener {
@@ -102,7 +98,6 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
                     } else {
                         toast("Error")
                     }
-                    roomShimmer.stopShimmer()
                 }
 
                 override fun onError(error: Throwable) {
@@ -117,13 +112,15 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         if (arguments != null) {
             idNha = requireArguments().getString("idnha")!!
             val nha = Nha(idnha = idNha, mac = getMacAddr()!!)
-            Handler().postDelayed({
-                mqttHelper.publishMessage("loginphong", toJson(nha)!!).subscribe({
-                    logD(it.toString())
-                }, {
-                    logD(it.toString())
-                })
-            }, 1000)
+
+            mqttHelper.isConnected.observe(this, Observer<Boolean> {
+                if (it) {
+                    vm.hideLoading()
+                    publishMessage("loginphong", toJson(nha)!!)
+                } else {
+                    vm.showLoading()
+                }
+            })
         }
     }
 
@@ -186,14 +183,14 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
-        txtInputDevice = alertLayout.findViewById(R.id.txtInputDevice)
+        txtInputDevice = alertLayout.findViewById(R.id.deviceName)
         val txtLabel = alertLayout.findViewById(R.id.txtLabel) as TextView
         val scanBarcode =
             alertLayout.findViewById<ImageView>(R.id.scanBarcode)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
-        txtLabel.text = "Thêm phòng"
+        txtLabel.text = getString(R.string.add_room)
         alert.setView(alertLayout)
         alert.setCancelable(false)
         scanBarcode.setOnClickListener { v: View? ->
@@ -216,7 +213,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         ) { dialog: DialogInterface?, which: Int ->
             if (txtInputDevice.text != null) {
                 phong = Phong("", getMacAddr()!!, txtInputDevice.text.toString(), idNha)
-                mqttHelper.publishMessage("registerphong", toJson(phong)!!).subscribe()
+                publishMessage("registerphong", toJson(phong)!!)
             } else {
                 Toast.makeText(
                     activity,
@@ -265,6 +262,22 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     }
 
     override fun onDeleteClick(v: View?, item: Phong) {
+
+    }
+
+    private fun publishMessage(topic: String, json: String) {
+        mqttHelper.isConnected.observe(this, Observer<Boolean> {
+            if (it) {
+                vm.hideLoading()
+                mqttHelper.publishMessage(topic, json)
+                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
+            } else {
+                vm.showLoading()
+            }
+        })
+    }
+
+    override fun onSwitchChange(isChecked: Boolean) {
 
     }
 

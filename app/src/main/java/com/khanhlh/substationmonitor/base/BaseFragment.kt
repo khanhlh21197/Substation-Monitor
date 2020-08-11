@@ -1,12 +1,17 @@
 package com.khanhlh.substationmonitor.base
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -15,6 +20,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
+import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.extensions.dispatchFailure
 import com.khanhlh.substationmonitor.extensions.toast
 import com.khanhlh.substationmonitor.helper.annotation.ToastType
@@ -41,6 +47,8 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
     private lateinit var errorSnackbar: Snackbar
 
     protected lateinit var mContext: Context
+
+    private lateinit var progressDialog: Dialog
 
     protected var lazyLoad = false
 
@@ -85,6 +93,18 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
 //        mBinding.setVariable(BR.vm, this)
         mBinding.executePendingBindings()
         mBinding.lifecycleOwner = this
+
+        progressDialog = Dialog(requireActivity())
+        progressDialog.apply {
+            window?.let {
+                it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                it.requestFeature(Window.FEATURE_NO_TITLE)
+            }
+            setContentView(R.layout.progress_dialog)
+            setCancelable(true)
+            setCanceledOnTouchOutside(false)
+        }
+
         return mBinding.root
     }
 
@@ -192,13 +212,14 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
         requireActivity().requestPermissions(arrayOf(perm), requestCode)
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     open fun observeViewModel() {
         vm.errorMessage.observe(viewLifecycleOwner, Observer { errorMessage ->
             showError(errorMessage)
         })
-//        baseViewModel.loadingVisibility.observe(this, Observer { visibility ->
-//            if (visibility == View.VISIBLE) showLoading() else hideLoading()
-//        })
+        vm.loadingVisibility.observe(this, Observer { visibility ->
+            if (visibility == View.VISIBLE) showLoading() else hideLoading()
+        })
     }
 
     override fun onDestroy() {
@@ -209,5 +230,16 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
     private fun showError(error: String) {
         errorSnackbar = Snackbar.make(mBinding.root, error, Snackbar.LENGTH_LONG)
         errorSnackbar.show()
+    }
+
+    fun hideLoading() {
+
+        progressDialog.dismiss()
+    }
+
+    fun showLoading() {
+
+        progressDialog.show()
+
     }
 }
