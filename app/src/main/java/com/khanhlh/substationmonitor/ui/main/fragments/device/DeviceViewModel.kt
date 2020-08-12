@@ -1,6 +1,7 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.device
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
 import com.khanhlh.substationmonitor.MyApp
@@ -14,6 +15,18 @@ import com.khanhlh.substationmonitor.utils.*
 class DeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     val list = ObservableArrayList<Device>()
     private val idSet = mutableSetOf<String>()
+
+    private val TAG = "MyViewModel"
+
+    fun onButton1LongClick(text: CharSequence) : Unit {
+        Log.d(TAG, "onButton1LongClick: " + text)
+    }
+    val f1 : (CharSequence) -> Unit = {text -> onButton1LongClick(text)}
+
+    fun onButton2LongClick() {
+        Log.d(TAG, "onButton2LongClick")
+    }
+    val f2 : () -> Unit = {onButton2LongClick()}
 
     @SuppressLint("CheckResult", "LogNotTimber")
     fun observerAllDevices(devices: String) {

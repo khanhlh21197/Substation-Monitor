@@ -1,5 +1,7 @@
 package com.khanhlh.substationmonitor.extensions
 
+import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
+import com.suke.widget.SwitchButton
 import org.markdownj.MarkdownProcessor
 import us.feras.mdv.MarkdownView
 
@@ -17,4 +19,12 @@ fun MarkdownView.loadMarkdownWithBaseURL(baseUrl: String?, txt: String?, cssFile
 
 fun MarkdownView.setMarkdown(markdown: String?) {
     loadMarkdown(markdown, "file:///android_asset/markdown.css")
+}
+
+fun SwitchButton.setOnCheckedChange(itemClickPresenter: ItemClickPresenter<Any>) {
+    let {
+        it.setOnCheckedChangeListener { view, isChecked ->
+            itemClickPresenter.onSwitchChange(isChecked)
+        }
+    }
 }

@@ -11,6 +11,10 @@
         <variable
             name="presenter"
             type="com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter" />
+
+        <variable
+            name="viewModel"
+            type="com.khanhlh.substationmonitor.ui.main.fragments.device.DeviceViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -91,14 +95,13 @@
                     android:textSize="@dimen/_14ssp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/switchBtn"
+                <com.suke.widget.SwitchButton
+                    android:id="@+id/switchOnOff"
+                    isChecked="@{item.trangthai}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="5dp"
-                    android:text="@{item.status}"
-                    android:textSize="@dimen/_16ssp" />
+                    android:layout_margin="@dimen/_4sdp" />
             </RelativeLayout>
         </RelativeLayout>
 

@@ -122,9 +122,6 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     }
 
     private fun onSwitchChange() {
-        lightSwitch.isEnabled = false
-        Handler().postDelayed({ lightSwitch.isEnabled = true }, 1000)
-
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
             val drawable: TransitionDrawable = light.drawable as TransitionDrawable
             val lenh = Lenh()
@@ -137,6 +134,12 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
             }
             publishMessage("P$idthietbi", toJson(lenh)!!)
         }
+        lightSwitch.isEnabled = false
+        Handler().postDelayed({
+            if (lightSwitch != null) {
+                lightSwitch.isEnabled = true
+            }
+        }, 1000)
     }
 
     override fun getLayoutId(): Int = R.layout.detail_light_frag

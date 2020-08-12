@@ -321,6 +321,15 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     }
 
     override fun onItemLongClick(v: View?, item: ThietBi) {
+        createDialog(
+            requireActivity(),
+            getString(R.string.app_name),
+            getString(R.string.app_name),
+            getString(R.string.cancel),
+            getString(R.string.ok),
+            null,
+            null
+        )
     }
 
     override fun onDeleteClick(v: View?, item: ThietBi) {

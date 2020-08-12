@@ -201,6 +201,17 @@ fun Activity.navigateToActivity(c: Class<*>, serializable: Serializable? = null)
     startActivity(intent, options)
 }
 
+fun Activity.goToActivity(c: Class<*>, bundle: Bundle? = null) {
+    val intent = Intent()
+    bundle?.let {
+        intent.putExtras(bundle)
+    }
+    val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+
+    intent.setClass(this, c)
+    startActivity(intent, options)
+}
+
 fun Any.logD(msg: String?) {
     if (BuildConfig.DEBUG) {
         Log.d(javaClass.simpleName, msg)

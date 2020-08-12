@@ -94,9 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="5dp"
-                    onSwitchChange="@{isChecked -> presenter.onSwitchChange(isChecked)}"
-                    android:onClick="@{v -> presenter.onImageClick(v)}" />
+                    android:layout_marginTop="5dp" />
             </RelativeLayout>
         </RelativeLayout>
 

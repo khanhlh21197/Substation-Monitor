@@ -32,7 +32,9 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
 
         initMqtt()
         checkConnection()
-        btLogin.setOnClickListener { tryRegister() }
+        btnRegister.setOnClickListener { tryRegister() }
+        back.setOnClickListener { onBackPressed() }
+        btnLogin.setOnClickListener { navigateToActivity(LoginActivity::class.java) }
     }
 
     private fun initMqtt() {
@@ -91,11 +93,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
     override fun onStop() {
         super.onStop()
         mqttHelper.close()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mqttHelper.close()
+        mqttHelper.isConnected.removeObservers(this)
     }
 
     private fun checkConnection() {

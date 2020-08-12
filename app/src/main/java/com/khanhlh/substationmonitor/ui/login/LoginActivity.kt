@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -32,7 +33,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
     private lateinit var mqttHelper: MqttHelper
     private lateinit var gson: Gson
     private lateinit var macAddress: String
-    private lateinit var id: String
+    private lateinit var userJson: String
 
     override fun initVariables() {
         baseViewModel = LoginActivityViewModel(MyApp())
@@ -93,7 +94,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
                         if (switchSaveUser.isChecked)
                             saveUser()
                         baseViewModel.hideLoading()
-                        navigateToActivity(MainActivity::class.java, baseResponse)
+                        val bundle = Bundle()
+                        bundle.putSerializable("nha", baseResponse)
+                        bundle.putString("user", userJson)
+                        goToActivity(MainActivity::class.java, bundle)
                     } else {
                         baseViewModel.isLoginSuccess.set(false)
                         baseViewModel.hideLoading()
@@ -164,7 +168,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
                     baseViewModel.mail.get()!!, baseViewModel.password.get()!!, mac = macAddress
                 )
             }
-            mqttHelper.publishMessage("loginuser", gson.toJson(user)).subscribe()
+            userJson = gson.toJson(user)
+            mqttHelper.publishMessage("loginuser", userJson).subscribe()
         } else {
             baseViewModel.errorMessage.value = MyApp.context.getString(R.string.require_length)
         }
@@ -173,6 +178,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
     override fun onStop() {
         super.onStop()
         mqttHelper.close()
+        mqttHelper.isConnected.removeObservers(this)
     }
 
 }

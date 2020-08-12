@@ -16,10 +16,10 @@ import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.NhaResponse
-import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
 
 class MainActivity : AppCompatActivity() {
     lateinit var response: NhaResponse
+    lateinit var userJson: String
 
     companion object {
         lateinit var instance: MainActivity
@@ -44,7 +44,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBundleData() {
         val bundle = intent.extras
-        response = bundle!!.getSerializable(KEY_SERIALIZABLE) as NhaResponse
+        if (bundle != null) {
+            response = bundle.getSerializable("nha") as NhaResponse
+            userJson = bundle.getString("user") as String
+        }
     }
 
     private fun setUpActionBar() {
@@ -79,14 +82,15 @@ class MainActivity : AppCompatActivity() {
         val controller = host.navController
 
         val bundle = Bundle()
-        bundle.putSerializable(KEY_SERIALIZABLE, response)
+        bundle.putSerializable("nha", response)
+        bundle.putString("user", userJson)
         val navController = findNavController(R.id.nav_host_container)
         navController.setGraph(navController.graph, bundle)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomBar)
         bottomNavigationView.setupWithNavController(controller)
 
-        bottomNavigationView.menu.findItem(R.id.searchFragment).isVisible = false
+        bottomNavigationView.menu.findItem(R.id.searchFragment).isVisible = true
     }
 
     override fun onSupportNavigateUp(): Boolean {

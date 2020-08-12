@@ -108,8 +108,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
     private fun getBundleData() {
         val args = arguments
-        if (args?.getSerializable(KEY_SERIALIZABLE) == null) return
-        val response = args.getSerializable(KEY_SERIALIZABLE) as NhaResponse
+        if (args?.getSerializable("nha") == null) return
+        val response = args.getSerializable("nha") as NhaResponse
         id = response.message!!
         val nhas: ArrayList<Nha> = response.id!!
         if (homes.isEmpty()) {

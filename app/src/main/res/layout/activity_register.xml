@@ -344,7 +344,7 @@
                             android:orientation="horizontal">
 
                             <Button
-                                android:id="@+id/btLogin"
+                                android:id="@+id/btnRegister"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/login_bt_background"
@@ -360,9 +360,9 @@
                                 android:layout_marginStart="16dp"
                                 android:fontFamily="@font/montserrat_semibold"
                                 android:text="@string/login_uppercase"
-                                app:layout_constraintBottom_toBottomOf="@+id/btLogin"
+                                app:layout_constraintBottom_toBottomOf="@+id/btnRegister"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="@+id/btLogin"
+                                app:layout_constraintTop_toTopOf="@+id/btnRegister"
                                 app:layout_constraintVertical_bias="0.448" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
