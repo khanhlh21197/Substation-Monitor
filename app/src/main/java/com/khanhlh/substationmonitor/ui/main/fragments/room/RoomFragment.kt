@@ -277,8 +277,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         })
     }
 
-    override fun onSwitchChange(isChecked: Boolean) {
-
+    override fun onSwitchChange(isChecked: Boolean) : Boolean {
+        return false
     }
 
 }

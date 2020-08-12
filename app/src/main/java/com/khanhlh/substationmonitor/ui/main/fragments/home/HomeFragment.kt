@@ -251,8 +251,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         mqttHelper.close()
     }
 
-    override fun onSwitchChange(isChecked: Boolean) {
-
+    override fun onSwitchChange(isChecked: Boolean) :Boolean{
+        return false
     }
 
 }

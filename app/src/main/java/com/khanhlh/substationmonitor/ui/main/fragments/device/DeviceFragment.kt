@@ -361,8 +361,8 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         })
     }
 
-    override fun onSwitchChange(isChecked: Boolean) {
-
+    override fun onSwitchChange(isChecked: Boolean) : Boolean {
+        return false
     }
 
 }

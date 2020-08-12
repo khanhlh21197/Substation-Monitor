@@ -29,7 +29,8 @@ object BindingAdapters {
      */
     @Suppress("unused")
     @BindingAdapter("invisibleUnless")
-    @JvmStatic fun invisibleUnless(view: View, visible: Boolean) {
+    @JvmStatic
+    fun invisibleUnless(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
     }
 
@@ -38,7 +39,8 @@ object BindingAdapters {
      */
     @Suppress("unused")
     @BindingAdapter("goneUnless")
-    @JvmStatic fun goneUnless(view: View, visible: Boolean) {
+    @JvmStatic
+    fun goneUnless(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
@@ -49,7 +51,8 @@ object BindingAdapters {
      * this [BindingAdapter] sets it.
      */
     @BindingAdapter("hideKeyboardOnInputDone")
-    @JvmStatic fun hideKeyboardOnInputDone(view: EditText, enabled: Boolean) {
+    @JvmStatic
+    fun hideKeyboardOnInputDone(view: EditText, enabled: Boolean) {
         if (!enabled) return
         val listener = TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -67,7 +70,7 @@ object BindingAdapters {
     @BindingAdapter(value = ["onLongClick", "onLongClickText"], requireAll = true)
     fun setOnLongClickListener(view: View, onLongClick: (CharSequence) -> Unit, text: String?) {
         view.setOnLongClickListener {
-            onLongClick.invoke(text?:"")
+            onLongClick.invoke(text ?: "")
             true
         }
     }
@@ -78,6 +81,15 @@ object BindingAdapters {
         view.setOnLongClickListener {
             onLongClick.invoke()
             true
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("onLongClick")
+    fun setOnLongClickListener(view: View, item: Any, itemClickPresenter: ItemClickPresenter<Any>) {
+        view.setOnLongClickListener {
+            itemClickPresenter.onItemLongClick(view, item)
+            false
         }
     }
 
@@ -95,7 +107,8 @@ object BindingAdapters {
     }
 
     @BindingAdapter("isChecked")
-    @JvmStatic fun setCheck(switch: SwitchButton, isChecked: Boolean) {
+    @JvmStatic
+    fun setCheck(switch: SwitchButton, isChecked: Boolean) {
         switch.isChecked = isChecked
     }
 
