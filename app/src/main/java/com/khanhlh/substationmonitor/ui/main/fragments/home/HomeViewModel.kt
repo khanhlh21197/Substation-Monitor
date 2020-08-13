@@ -1,6 +1,7 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.home
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.QuerySnapshot
@@ -64,4 +65,12 @@ class HomeViewModel(app: MyApp) : BaseViewModel<Any>(app) {
         FirebaseCommon.updateDevice(id, add)
 
     fun getDevicesOfUser() = FirebaseCommon.getDevicesOfUser()
+
+    fun showLoading() {
+        loadingVisibility.value = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        loadingVisibility.value = View.INVISIBLE
+    }
 }

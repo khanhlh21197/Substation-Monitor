@@ -73,12 +73,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
     private fun checkConnection() {
         mqttHelper.isConnected.observe(this, Observer<Boolean> { t ->
             if (t!!) {
-                toast(R.string.connected)
+                showError(getString(R.string.connected))
                 baseViewModel.hideLoading()
             } else {
-                toast(R.string.disconnected)
+                showError(getString(R.string.disconnected))
                 baseViewModel.showLoading()
-                connectMqtt()
             }
         })
     }
@@ -152,11 +151,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
     }
 
     companion object {
-        private const val USER_EMAIL = "USER_EMAIL";
-        private const val USER_PASSWORD = "USER_PASSWORD";
+        const val USER_EMAIL = "USER_EMAIL";
+        const val USER_PASSWORD = "USER_PASSWORD";
         private const val SWITCH_STATE = "SWITCH_STATE";
-        private const val DEFAULT_EMAIL = "";
-        private const val DEFAULT_PASSWORD = "";
+        const val DEFAULT_EMAIL = "";
+        const val DEFAULT_PASSWORD = "";
     }
 
     @SuppressLint("CheckResult")
@@ -175,8 +174,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         mqttHelper.close()
         mqttHelper.isConnected.removeObservers(this)
     }

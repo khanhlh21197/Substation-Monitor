@@ -11,6 +11,10 @@
             name="vm"
             type="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceViewModel" />
 
+        <variable
+            name="item"
+            type="com.khanhlh.substationmonitor.model.ThietBi" />
+
     </data>
 
     <androidx.core.widget.NestedScrollView

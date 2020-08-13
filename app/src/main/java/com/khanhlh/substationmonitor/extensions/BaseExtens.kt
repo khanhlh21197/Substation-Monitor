@@ -23,6 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.BuildConfig
 import com.khanhlh.substationmonitor.exception.EmptyException

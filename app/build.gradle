@@ -176,4 +176,6 @@ dependencies {
     implementation 'com.karumi:dexter:6.2.1'
     //wheel
     implementation 'com.yanzhenjie:wheel:1.0.0'
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-rc1'
 }

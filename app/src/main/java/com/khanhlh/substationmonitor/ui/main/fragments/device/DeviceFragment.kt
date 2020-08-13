@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
@@ -31,6 +32,7 @@ import com.khanhlh.substationmonitor.databinding.FragmentDeviceBinding
 import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
+import com.khanhlh.substationmonitor.model.Lenh
 import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
@@ -50,10 +52,12 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     private var currentIndex: Int = 0
     private var publishInfo: String = ""
     private lateinit var deviceName: EditText
+    private lateinit var tbTest: ThietBi
 
     companion object {
         const val ID_ROOM = "ID_ROOM"
         const val LOGIN_DEVICE = "loginthietbi"
+        const val STATUS_PHONG = "StatusPHONG"
         const val REGISTER_DEVICE = "registerthietbi"
         const val DELETE_DEVICE = "deletethietbi"
         const val DELETE_ALL_DEVICE = "deleteallthietbi"
@@ -129,29 +133,27 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
                                 thietbi.id = response.message!!
                                 thietbis.add(thietbi)
                             }
+                            STATUS_PHONG -> {
+                                val devices: ArrayList<ThietBi> = response.id!!
+                                thietbis.clear()
+                                tbTest = ThietBi(
+                                    tenthietbi = "TenTest",
+                                    mathietbi = "MaTest",
+                                    status = "bat"
+                                )
+                                thietbis.add(tbTest)
+                                thietbis.addAll(devices)
+                            }
                             LOGIN_DEVICE -> {
                                 val devices: ArrayList<ThietBi> = response.id!!
                                 thietbis.clear()
+                                tbTest = ThietBi(
+                                    tenthietbi = "TenTest",
+                                    mathietbi = "MaTest",
+                                    status = "bat"
+                                )
+                                thietbis.add(tbTest)
                                 thietbis.addAll(devices)
-                                val ids = arrayListOf<String>()
-                                thietbis.forEach { ids.add(it.mathietbi) }
-                                thietbis.forEach {
-                                    val mqttHelper = MqttHelper(requireActivity())
-                                    mqttHelper.connect(
-                                        "S${it.mathietbi}",
-                                        messageCallBack = object : MqttHelper.MessageCallBack {
-                                            override fun onSuccess(message: String) {
-                                                val tb = fromJson<ThietBiResponse>(message)
-                                                if ("0" == response.errorCode && "true" == response.result) {
-                                                    it.trangthai = tb.message == "bat"
-                                                }
-                                            }
-
-                                            override fun onError(error: Throwable) {
-                                                toast(R.string.server_error)
-                                            }
-                                        })
-                                }
                             }
                             DELETE_DEVICE -> {
                                 thietbis.removeAt(currentIndex)
@@ -177,7 +179,8 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
             idPhong = requireArguments().getString("idphong")!!
             val tb = ThietBi(idphong = idPhong, mac = getMacAddr()!!)
 
-            publishMessage(LOGIN_DEVICE, toJson(tb)!!)
+//            publishMessage(LOGIN_DEVICE, toJson(tb)!!)
+            publishMessage(STATUS_PHONG, toJson(tb)!!)
         }
     }
 
@@ -208,7 +211,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
             }
             R.id.card_view -> {
                 logD(item.id)
-                val bundle = bundleOf("idthietbi" to item.mathietbi)
+                val bundle = bundleOf("idthietbi" to item.mathietbi, "idphong" to idPhong)
                 navigate(R.id.detailLightFragment, bundle)
             }
         }
@@ -361,8 +364,17 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         })
     }
 
-    override fun onSwitchChange(isChecked: Boolean) : Boolean {
-        return false
+    override fun onSwitchChange(isChecked: Boolean, item: ThietBi) {
+        logD("${item.tenthietbi}}: $isChecked")
+        val lenh = Lenh()
+        lenh.idphong = idPhong
+        if (isChecked) {
+            lenh.lenh = "bat"
+        } else {
+            lenh.lenh = "tat"
+        }
+        val idthietbi = item.mathietbi.toUpperCase(Locale.ROOT)
+        publishMessage("P$idthietbi", toJson(lenh)!!)
     }
 
 }

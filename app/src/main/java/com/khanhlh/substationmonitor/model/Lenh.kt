@@ -4,5 +4,6 @@ import java.io.Serializable
 
 data class Lenh(
     var lenh: String = "",
-    var param: String = ""
+    var param: String = "",
+    var idphong: String = ""
 ) : Serializable

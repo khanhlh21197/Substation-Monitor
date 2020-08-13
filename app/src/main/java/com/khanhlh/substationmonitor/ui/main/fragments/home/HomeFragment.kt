@@ -1,8 +1,10 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.home
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.graphics.Rect
@@ -18,6 +20,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.databinding.ObservableArrayList
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -29,10 +32,13 @@ import com.khanhlh.substationmonitor.databinding.FragmentHomeBinding
 import com.khanhlh.substationmonitor.extensions.*
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
+import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.model.Nha
 import com.khanhlh.substationmonitor.model.NhaResponse
+import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
-import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
+import com.khanhlh.substationmonitor.ui.login.LoginActivity
+import com.khanhlh.substationmonitor.utils.USER_PREF
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -50,6 +56,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     private lateinit var idArray: Array<String>
     lateinit var nha: Nha
     val homes = ObservableArrayList<Nha>()
+    private var publishInfo = ""
+    private lateinit var response: NhaResponse
+    private lateinit var userJson: String
+    private lateinit var sharedPref: SharedPreferences
+
+    companion object {
+        const val REGISTER_NHA = "registernha"
+        const val LOGIN_USER = "loginuser"
+    }
 
     private val mAdapter by lazy {
         SingleTypeAdapter<Nha>(mContext, R.layout.item_home, homes).apply {
@@ -67,8 +82,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
                 addHome()
             }
         }
-        getBundleData()
         initMqtt()
+        getBundleData()
     }
 
     private fun initMqtt() {
@@ -87,12 +102,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val it: NhaResponse = fromJson(message)
-                    if ("0" == it.errorCode && "true" == it.result) {
-                        if (!it.message.isNullOrEmpty()) {
-                            idNha = it.message.toString()
-                            nha.idnha = idNha
-                            homes.add(nha)
+                    val baseResponse: NhaResponse = fromJson(message)
+                    if ("0" == baseResponse.errorCode && "true" == baseResponse.result) {
+                        when (publishInfo) {
+                            REGISTER_NHA -> {
+                                if (!baseResponse.message.isNullOrEmpty()) {
+                                    idNha = baseResponse.message.toString()
+                                    nha.idnha = idNha
+                                    homes.add(nha)
+                                }
+                            }
+                            LOGIN_USER -> {
+                                val nhas: ArrayList<Nha> = baseResponse.id!!
+                                if (homes.isEmpty()) {
+                                    homes.addAll(nhas)
+                                }
+                            }
                         }
                     } else {
                         toast("Error")
@@ -107,13 +132,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     }
 
     private fun getBundleData() {
+        sharedPref = requireActivity().getSharedPreferences(USER_PREF, Context.MODE_PRIVATE)
+        val email = sharedPref.get(LoginActivity.USER_EMAIL, LoginActivity.DEFAULT_EMAIL)
+        val pass = sharedPref.get(LoginActivity.USER_PASSWORD, LoginActivity.DEFAULT_PASSWORD)
+        val user = UserTest(email, pass, mac = getMacAddr()!!)
         val args = arguments
-        if (args?.getSerializable("nha") == null) return
-        val response = args.getSerializable("nha") as NhaResponse
-        id = response.message!!
-        val nhas: ArrayList<Nha> = response.id!!
-        if (homes.isEmpty()) {
-            homes.addAll(nhas)
+        if (args?.getSerializable("nha") != null) {
+            response = args.getSerializable("nha") as NhaResponse
+            userJson = args.getString("user") as String
+            id = response.message!!
+            val nhas: ArrayList<Nha> = response.id!!
+            if (homes.isEmpty()) {
+                homes.addAll(nhas)
+            }
+        } else {
+            publishMessage(LOGIN_USER, toJson(user)!!)
         }
 //        idArray = response.id!!.split(",").toTypedArray()
     }
@@ -203,7 +236,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
 
     private fun registerHome(ten: String) {
         nha = Nha("", id, ten, getMacAddr()!!)
-        mqttHelper.publishMessage("registernha", toJson(nha)!!).subscribe()
+        publishMessage(REGISTER_NHA, toJson(nha)!!)
     }
 
     override fun onActivityResult(
@@ -251,8 +284,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         mqttHelper.close()
     }
 
-    override fun onSwitchChange(isChecked: Boolean) :Boolean{
-        return false
+    override fun onSwitchChange(isChecked: Boolean, item: Nha) {
+        logD("onSwitchChange: $isChecked")
     }
+
+    private fun publishMessage(topic: String, json: String) {
+        publishInfo = topic
+        mqttHelper.isConnected.observe(this, Observer<Boolean> {
+            if (it) {
+                vm.hideLoading()
+                mqttHelper.publishMessage(topic, json)
+                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
+            } else {
+                vm.showLoading()
+            }
+        })
+    }
+
+    override val title: String
+        get() = "HomeFragment"
 
 }

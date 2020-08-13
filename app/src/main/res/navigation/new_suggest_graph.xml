@@ -81,6 +81,9 @@
         <argument
             android:name="idthietbi"
             app:argType="string" />
+        <argument
+            android:name="idphong"
+            app:argType="string" />
         <action
             android:id="@+id/action_deviceFragment_to_detailDeviceFragment"
             app:destination="@id/detailDeviceFragment" />

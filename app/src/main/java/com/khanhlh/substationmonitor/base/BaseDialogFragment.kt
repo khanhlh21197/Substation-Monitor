@@ -17,15 +17,13 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.extensions.dispatchFailure
 import com.khanhlh.substationmonitor.extensions.toast
 import com.khanhlh.substationmonitor.helper.annotation.ToastType
-import com.khanhlh.substationmonitor.ui.main.MainViewModel
 
 
 /**
@@ -34,7 +32,7 @@ import com.khanhlh.substationmonitor.ui.main.MainViewModel
  * Created by ditclear on 2017/9/27.
  */
 
-abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragment() {
+abstract class BaseDialogFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : DialogFragment() {
     protected val mBinding: VB by lazy {
         DataBindingUtil.inflate<VB>(
             layoutInflater,
@@ -47,8 +45,6 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
     lateinit var vm: T
 
     private lateinit var errorSnackbar: Snackbar
-
-    private lateinit var viewModel: MainViewModel
 
     protected lateinit var mContext: Context
 
@@ -87,14 +83,6 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
             // 加载数据
 //            loadData(true);
         }
-        updateTitle(title)
-    }
-
-    private fun updateTitle(title: String) {
-        activity?.run {
-            viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        } ?: throw Throwable("invalid activity")
-        viewModel.updateActionBarTitle(title)
     }
 
     override fun onCreateView(
@@ -115,6 +103,16 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
             setContentView(R.layout.progress_dialog)
             setCancelable(true)
             setCanceledOnTouchOutside(false)
+        }
+
+        val window = dialog!!.window
+        if (window != null) {
+            window.setLayout(
+                (ViewGroup.LayoutParams.MATCH_PARENT * 0.7).toInt(),
+                (ViewGroup.LayoutParams.MATCH_PARENT * 0.7).toInt()
+            )
+            window.requestFeature(Window.FEATURE_NO_TITLE)
+            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
 
         return mBinding.root
@@ -156,8 +154,6 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
     abstract fun initView()
 
     abstract fun getLayoutId(): Int
-
-    open val title: String = ""
 
     fun toast(msg: String) {
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show()

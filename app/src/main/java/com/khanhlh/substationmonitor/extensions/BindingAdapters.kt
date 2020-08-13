@@ -3,6 +3,7 @@ package com.khanhlh.substationmonitor.extensions
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.view.View
 import android.view.animation.*
 import android.view.inputmethod.EditorInfo
@@ -10,10 +11,11 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
 import com.suke.widget.SwitchButton
+import kotlinx.android.synthetic.main.detail_light_frag.*
 
 @SuppressLint("CheckResult")
 object BindingAdapters {
@@ -84,15 +86,6 @@ object BindingAdapters {
         }
     }
 
-    @JvmStatic
-    @BindingAdapter("onLongClick")
-    fun setOnLongClickListener(view: View, item: Any, itemClickPresenter: ItemClickPresenter<Any>) {
-        view.setOnLongClickListener {
-            itemClickPresenter.onItemLongClick(view, item)
-            false
-        }
-    }
-
     private val INTERPOLATOR: Interpolator = FastOutSlowInInterpolator()
 
     @JvmStatic
@@ -106,10 +99,33 @@ object BindingAdapters {
         }
     }
 
+    @JvmStatic
+    @BindingAdapter("transitionDrawable")
+    fun setTransition(view: AppCompatImageView, status: Boolean) {
+        val drawable: TransitionDrawable = view.drawable as TransitionDrawable
+        if (status) {
+            drawable.startTransition(100)
+        } else {
+            drawable.reverseTransition(100)
+        }
+    }
+
     @BindingAdapter("isChecked")
     @JvmStatic
     fun setCheck(switch: SwitchButton, isChecked: Boolean) {
         switch.isChecked = isChecked
+    }
+
+    @BindingAdapter("onCheckedChanged")
+    @JvmStatic
+    fun onCheckedChanged(switch: SwitchButton, listener: SwitchButton.OnCheckedChangeListener) {
+        switch.setOnCheckedChangeListener(listener)
+    }
+
+    @BindingAdapter("onItemLongClick")
+    @JvmStatic
+    fun onItemLongClick(view: View, listener: View.OnLongClickListener) {
+        view.setOnLongClickListener(listener)
     }
 
     private fun createFlashingAnimation(): Animation? {

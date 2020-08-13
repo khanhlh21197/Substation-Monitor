@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.TransitionDrawable
+import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.Window
@@ -37,11 +38,16 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
     private lateinit var mqttHelper: MqttHelper
     private lateinit var gson: Gson
     private lateinit var idthietbi: String
+    private lateinit var idphong: String
 
     companion object {
         const val ID_DEVICE = "ID_DEVICE"
         const val TAG = "DetailDeviceFragment"
         const val REP_DELAY = 1L
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun initView() {
@@ -93,7 +99,10 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
 
     private fun getBundleData() {
         val args = arguments
-        idthietbi = args!!.getString("idthietbi").toString().toUpperCase(Locale.getDefault())
+        args!!.let {
+            idthietbi = it.getString("idthietbi").toString().toUpperCase(Locale.getDefault())
+            idphong = it.getString("idphong").toString()
+        }
         idthietbi.let {
             mqttHelper.connect("S$it", messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
@@ -125,6 +134,7 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
             val drawable: TransitionDrawable = light.drawable as TransitionDrawable
             val lenh = Lenh()
+            lenh.idphong = idphong
             if (isChecked) {
                 lenh.lenh = "bat"
                 drawable.startTransition(100)

@@ -146,7 +146,13 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     override fun getLayoutId(): Int = R.layout.fragment_room
     override fun onItemClick(v: View?, item: Phong) {
         logD(item.idphong)
-        val bundle = bundleOf("idphong" to item._id)
+        var sendId = ""
+        if (item.idphong.isNotEmpty()) {
+            sendId = item.idphong
+        } else {
+            sendId = item._id
+        }
+        val bundle = bundleOf("idphong" to sendId)
         navigate(R.id.deviceFragment, bundle)
 //        when ((item.type)) {
 //            DeviceType.AC -> navigate(R.id.detailAcFragment, bundle)
@@ -277,8 +283,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         })
     }
 
-    override fun onSwitchChange(isChecked: Boolean) : Boolean {
-        return false
+    override fun onSwitchChange(isChecked: Boolean, item: Phong) {
+        logD("onSwitchChange: $isChecked")
     }
 
 }

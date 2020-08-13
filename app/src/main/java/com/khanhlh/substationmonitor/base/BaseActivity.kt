@@ -56,7 +56,7 @@ abstract class BaseActivity<B : ViewDataBinding, T : BaseViewModel<*>> :
         })
     }
 
-    private fun showError(error: String) {
+    fun showError(error: String) {
         errorSnackbar = Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG)
         errorSnackbar.show()
     }

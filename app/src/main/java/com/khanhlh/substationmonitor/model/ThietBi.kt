@@ -9,14 +9,8 @@ data class ThietBi(
     val tenthietbi: String = "",
     val mathietbi: String = "",
     val _id: String = "",
-    var trangthai: Boolean = false
+    var status: String = "tat"
 ) : Serializable {
-    val status: String
-        get() {
-            if (trangthai) {
-                return "Bật"
-            } else {
-                return "Tắt"
-            }
-        }
+    val trangthai: Boolean
+        get() = status == "bat"
 }

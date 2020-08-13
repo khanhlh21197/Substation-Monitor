@@ -4,8 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -16,10 +19,12 @@ import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.NhaResponse
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var response: NhaResponse
     lateinit var userJson: String
+    private lateinit var viewModel: MainViewModel
 
     companion object {
         lateinit var instance: MainActivity
@@ -58,6 +63,14 @@ class MainActivity : AppCompatActivity() {
         //set back button
         actionbar!!.setDisplayHomeAsUpEnabled(true)
         actionbar.setDisplayHomeAsUpEnabled(true)
+        actionbar.hide()
+
+        app_bar.findViewById<Button>(R.id.back).setOnClickListener { onBackPressed() }
+        app_bar.findViewById<TextView>(R.id.label).text = "MainActivity"
+        viewModel = MainViewModel()
+        viewModel.title.observe(this, Observer {
+            app_bar.findViewById<TextView>(R.id.label).text = it
+        })
 
 //        actionBarVM = BaseViewModel()
 //        actionBarVM.title.observe(

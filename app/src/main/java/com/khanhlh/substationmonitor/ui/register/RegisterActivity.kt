@@ -83,10 +83,10 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
                 logD(gson.toJson(user))
                 mqttHelper.publishMessage("registeruser", gson.toJson(user)).subscribe()
             } else {
-                baseViewModel.errorMessage.value = MyApp.context.getString(R.string.require_length)
+                baseViewModel.errorMessage.value = getString(R.string.error_re_password)
             }
         } else {
-            baseViewModel.errorMessage.value = MyApp.context.getString(R.string.require_length)
+            baseViewModel.errorMessage.value = getString(R.string.require_length)
         }
     }
 
@@ -104,7 +104,6 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
             } else {
                 toast("Ngắt kết nối")
                 baseViewModel.showLoading()
-                initMqtt()
             }
         })
     }
