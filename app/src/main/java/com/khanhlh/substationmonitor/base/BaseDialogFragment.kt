@@ -108,11 +108,12 @@ abstract class BaseDialogFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : 
         val window = dialog!!.window
         if (window != null) {
             window.setLayout(
-                (ViewGroup.LayoutParams.MATCH_PARENT * 0.7).toInt(),
-                (ViewGroup.LayoutParams.MATCH_PARENT * 0.7).toInt()
+                (ViewGroup.LayoutParams.MATCH_PARENT * 0.9).toInt(),
+                (ViewGroup.LayoutParams.MATCH_PARENT * 0.6).toInt()
             )
             window.requestFeature(Window.FEATURE_NO_TITLE)
             window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            window.attributes.windowAnimations = R.style.MyCustomTheme
         }
 
         return mBinding.root

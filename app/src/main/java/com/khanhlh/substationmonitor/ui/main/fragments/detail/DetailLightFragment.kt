@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
+import com.khanhlh.substationmonitor.base.BaseDialogFragment
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailLightFragBinding
 import com.khanhlh.substationmonitor.extensions.fromJson
@@ -32,7 +33,7 @@ import com.yanzhenjie.wheel.WheelView
 import kotlinx.android.synthetic.main.detail_light_frag.*
 import java.util.*
 
-class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceViewModel>(),
+class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDeviceViewModel>(),
     View.OnClickListener {
     private var wheelScrolled = false
     private lateinit var mqttHelper: MqttHelper
@@ -44,6 +45,14 @@ class DetailLightFragment : BaseFragment<DetailLightFragBinding, DetailDeviceVie
         const val ID_DEVICE = "ID_DEVICE"
         const val TAG = "DetailDeviceFragment"
         const val REP_DELAY = 1L
+    }
+
+    fun newInstance(idthietbi: String): DetailLightFragment{
+        val args = Bundle()
+
+        val fragment = DetailLightFragment()
+        fragment.arguments = args
+        return fragment
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

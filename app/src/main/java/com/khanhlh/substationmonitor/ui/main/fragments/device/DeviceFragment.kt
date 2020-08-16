@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.EditText
@@ -17,7 +16,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -36,6 +34,7 @@ import com.khanhlh.substationmonitor.model.Lenh
 import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailLightFragment
 import kotlinx.android.synthetic.main.fragment_device.*
 import kotlinx.android.synthetic.main.fragment_home.fab
 import kotlinx.android.synthetic.main.fragment_home.recycler
@@ -53,6 +52,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     private var publishInfo: String = ""
     private lateinit var deviceName: EditText
     private lateinit var tbTest: ThietBi
+    private var listTB = arrayListOf<ThietBi>()
 
     companion object {
         const val ID_ROOM = "ID_ROOM"
@@ -118,6 +118,13 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     }
 
     private fun initMqtt() {
+        tbTest = ThietBi(
+            id = "12345",
+            tenthietbi = "TenTest",
+            mathietbi = "MaTest",
+            status = "bat"
+        )
+        thietbis.add(tbTest)
         macAddress = getMacAddr()!!
 
         gson = Gson()
@@ -136,12 +143,6 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
                             STATUS_PHONG -> {
                                 val devices: ArrayList<ThietBi> = response.id!!
                                 thietbis.clear()
-                                tbTest = ThietBi(
-                                    tenthietbi = "TenTest",
-                                    mathietbi = "MaTest",
-                                    status = "bat"
-                                )
-                                thietbis.add(tbTest)
                                 thietbis.addAll(devices)
                             }
                             LOGIN_DEVICE -> {
@@ -176,11 +177,14 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
 
     private fun getBundleData() {
         if (arguments != null) {
-            idPhong = requireArguments().getString("idphong")!!
+//            idPhong = requireArguments().getString("idphong")!!
+            val thietBiResponse = requireArguments().getSerializable("thietbi") as ThietBiResponse
+            listTB = thietBiResponse.id!!
+            thietbis.addAll(listTB)
             val tb = ThietBi(idphong = idPhong, mac = getMacAddr()!!)
 
 //            publishMessage(LOGIN_DEVICE, toJson(tb)!!)
-            publishMessage(STATUS_PHONG, toJson(tb)!!)
+//            publishMessage(STATUS_PHONG, toJson(tb)!!)
         }
     }
 
@@ -210,9 +214,11 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
                 logD(item.id)
             }
             R.id.card_view -> {
-                logD(item.id)
-                val bundle = bundleOf("idthietbi" to item.mathietbi, "idphong" to idPhong)
-                navigate(R.id.detailLightFragment, bundle)
+                val lightDetail = DetailLightFragment().newInstance(item.id)
+                lightDetail.show(requireActivity().supportFragmentManager, "lightDetail")
+//                logD(item.id)
+//                val bundle = bundleOf("idthietbi" to item.mathietbi, "idphong" to idPhong)
+//                navigate(R.id.detailLightFragment, bundle)
             }
         }
 //        when ((item.type)) {

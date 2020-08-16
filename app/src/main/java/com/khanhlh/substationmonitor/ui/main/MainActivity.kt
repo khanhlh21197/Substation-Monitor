@@ -19,10 +19,11 @@ import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.NhaResponse
+import com.khanhlh.substationmonitor.model.ThietBiResponse
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    lateinit var response: NhaResponse
+    lateinit var response: ThietBiResponse
     lateinit var userJson: String
     private lateinit var viewModel: MainViewModel
 
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private fun getBundleData() {
         val bundle = intent.extras
         if (bundle != null) {
-            response = bundle.getSerializable("nha") as NhaResponse
+            response = bundle.getSerializable("thietbi") as ThietBiResponse
             userJson = bundle.getString("user") as String
         }
     }
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         val controller = host.navController
 
         val bundle = Bundle()
-        bundle.putSerializable("nha", response)
+        bundle.putSerializable("thietbi", response)
         bundle.putString("user", userJson)
         val navController = findNavController(R.id.nav_host_container)
         navController.setGraph(navController.graph, bundle)

@@ -82,8 +82,8 @@
 
         <Constraint
             android:id="@+id/fab"
-            android:layout_width="@dimen/_56sdp"
-            android:layout_height="@dimen/_56sdp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginBottom="@dimen/fab_margin"
             android:rotation="0.0"

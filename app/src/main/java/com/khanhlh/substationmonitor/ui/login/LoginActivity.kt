@@ -19,6 +19,8 @@ import com.khanhlh.substationmonitor.helper.shared_preference.clear
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
 import com.khanhlh.substationmonitor.model.NhaResponse
+import com.khanhlh.substationmonitor.model.ThietBi
+import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.ui.main.MainActivity
@@ -64,8 +66,17 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         checkConnection()
 
         btLogin.setOnClickListener {
-            baseViewModel.showLoading()
-            tryLogin()
+//            baseViewModel.showLoading()
+//            tryLogin()
+            val user = UserTest("email", "pass", mac = macAddress)
+            userJson = toJson(user)!!
+            val bundle = Bundle()
+            val tb = ThietBi("idtb", macAddress, "123", "Tentb", "MaTB", "_idtb", "bat")
+            val listTB = arrayListOf(tb)
+            val baseResponse = ThietBiResponse("0", "true", "", listTB, toJson(listTB))
+            bundle.putSerializable("thietbi", baseResponse)
+            bundle.putString("user", userJson)
+            goToActivity(MainActivity::class.java, bundle)
         }
     }
 

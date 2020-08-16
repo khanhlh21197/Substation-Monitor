@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/new_suggest_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/deviceFragment">
 
     <fragment
         android:id="@+id/detailDeviceFragment"
@@ -16,36 +16,12 @@
             android:id="@+id/back_action"
             app:popUpTo="@id/deviceFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.khanhlh.substationmonitor.ui.main.fragments.home.HomeFragment"
-        android:label="HomeFragment">
-        <action
-            android:id="@+id/action_homeFragment_to_roomFragment"
-            app:destination="@id/roomFragment" />
-        <argument
-            android:name="id"
-            app:argType="string" />
-    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.profile.ProfileFragment"
         android:label="ProfileFragment" />
 
-    <fragment
-        android:id="@+id/roomFragment"
-        android:name="com.khanhlh.substationmonitor.ui.main.fragments.room.RoomFragment"
-        android:label="RoomFragment">
-
-        <argument
-            android:name="idphong"
-            app:argType="string" />
-
-        <action
-            android:id="@+id/action_roomFragment_to_deviceFragment"
-            app:destination="@id/deviceFragment" />
-    </fragment>
     <fragment
         android:id="@+id/detailAcFragment"
         android:name="com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailAcFragment"
@@ -97,4 +73,16 @@
             android:id="@+id/action_deviceFragment_to_detailTvFrag"
             app:destination="@id/detailTvFrag" />
     </fragment>
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.home.HomeFragment"
+        android:label="HomeFragment" />
+    <fragment
+        android:id="@+id/roomFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.room.RoomFragment"
+        android:label="RoomFragment" />
+    <fragment
+        android:id="@+id/searchFragment2"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.SearchFragment"
+        android:label="SearchFragment" />
 </navigation>
