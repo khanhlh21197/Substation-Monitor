@@ -5,13 +5,11 @@ import android.app.Dialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
+import android.view.*
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -106,17 +104,27 @@ abstract class BaseDialogFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : 
         }
 
         val window = dialog!!.window
-        if (window != null) {
-            window.setLayout(
-                (ViewGroup.LayoutParams.MATCH_PARENT * 0.9).toInt(),
-                (ViewGroup.LayoutParams.MATCH_PARENT * 0.6).toInt()
-            )
-            window.requestFeature(Window.FEATURE_NO_TITLE)
-            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            window.attributes.windowAnimations = R.style.MyCustomTheme
-        }
+//        if (window != null) {
+//            window.requestFeature(Window.FEATURE_NO_TITLE)
+//            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//            window.attributes.windowAnimations = R.style.MyCustomTheme
+//        }
 
         return mBinding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val window = dialog!!.window
+        val size = Point()
+
+        val display: Display = window!!.windowManager.defaultDisplay
+        display.getSize(size)
+
+        val width: Int = size.x
+
+        window.setLayout((width * 0.8).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
+        window.setGravity(Gravity.CENTER)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

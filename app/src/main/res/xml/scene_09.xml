@@ -56,6 +56,8 @@
             android:layout_width="@dimen/_24sdp"
             android:layout_height="@dimen/_24sdp"
             android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
             android:rotation="0.0"
             motion:layout_constraintBottom_toBottomOf="@id/background"
             motion:layout_constraintStart_toStartOf="parent" />

@@ -11,15 +11,12 @@ import android.os.Handler
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.TimePicker
+import android.widget.*
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseDialogFragment
-import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.DetailLightFragBinding
 import com.khanhlh.substationmonitor.extensions.fromJson
 import com.khanhlh.substationmonitor.extensions.logD
@@ -39,7 +36,8 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
     private lateinit var mqttHelper: MqttHelper
     private lateinit var gson: Gson
     private lateinit var idthietbi: String
-    private lateinit var idphong: String
+    private lateinit var iduser: String
+    private var countDown = false
 
     companion object {
         const val ID_DEVICE = "ID_DEVICE"
@@ -47,8 +45,11 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         const val REP_DELAY = 1L
     }
 
-    fun newInstance(idthietbi: String): DetailLightFragment{
+    fun newInstance(idthietbi: String, iduser: String): DetailLightFragment {
         val args = Bundle()
+
+        args.putString("idthietbi", idthietbi)
+        args.putString("iduser", iduser)
 
         val fragment = DetailLightFragment()
         fragment.arguments = args
@@ -63,9 +64,26 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         vm = DetailDeviceViewModel(MyApp())
         mBinding.vm = vm
 
+        radioGroupListener()
         initListener()
         onSwitchChange()
         setupSeekBar()
+    }
+
+    private fun radioGroupListener() {
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.radioTimer -> {
+                    countDown = false
+                    llTimerOff.visibility = View.GONE
+                }
+                R.id.radioCountDown -> {
+                    countDown = true
+                    llTimerOff.visibility = View.VISIBLE
+                }
+
+            }
+        }
     }
 
     override fun onResume() {
@@ -110,7 +128,7 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         val args = arguments
         args!!.let {
             idthietbi = it.getString("idthietbi").toString().toUpperCase(Locale.getDefault())
-            idphong = it.getString("idphong").toString()
+            iduser = it.getString("iduser").toString()
         }
         idthietbi.let {
             mqttHelper.connect("S$it", messageCallBack = object : MqttHelper.MessageCallBack {
@@ -143,7 +161,7 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
             val drawable: TransitionDrawable = light.drawable as TransitionDrawable
             val lenh = Lenh()
-            lenh.idphong = idphong
+            lenh.iduser = iduser
             if (isChecked) {
                 lenh.lenh = "bat"
                 drawable.startTransition(100)
@@ -201,7 +219,8 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         currentMinute: Int,
         hour: Int,
         minute: Int,
-        timerOn: Boolean
+        timerOn: Boolean,
+        countDownTime: Int
     ) {
         var gioBat = ""
         var phutBat = ""
@@ -222,8 +241,14 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
             phutBat = minute.toString()
             if (phutBat.toInt() < 10) phutBat = "0$phutBat"
             lenh.lenh = "hengiobat"
-            lenh.param = "$gioBat&$phutBat"
-            toast("Bật đèn sau $diffHour giờ và $diffMinute phút")
+
+            if (countDown) {
+                lenh.param = "$gioBat&$phutBat&$countDownTime"
+                toast("Bật đèn trong $countDownTime giây")
+            } else {
+                lenh.param = "$gioBat&$phutBat"
+                toast("Bật đèn sau $diffHour giờ và $diffMinute phút")
+            }
         } else {
             gioTat = hour.toString()
             if (gioTat.toInt() < 10) gioTat = "0$gioTat"
@@ -260,6 +285,11 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         dialog.window!!.attributes = lp
 
         val timePicker = dialog.findViewById<TimePicker>(R.id.timePicker)
+        val llTurnOnIn = dialog.findViewById<LinearLayout>(R.id.llTurnOnIn)
+        val edtOnIn = dialog.findViewById<EditText>(R.id.edtOnIn)
+        var countDownTime: Int = 0
+        if (countDown) llTurnOnIn.visibility = View.VISIBLE
+
         timePicker.setIs24HourView(true)
         timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->
             pickedHour = hourOfDay
@@ -270,7 +300,10 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         val noBtn = dialog.findViewById(R.id.cancel) as TextView
 
         yesBtn.setOnClickListener {
-            diffTime(mHour, mMinute, pickedHour, pickedMinute, timerOn)
+            if (countDown) {
+                countDownTime = edtOnIn.text.toString().toInt()
+            }
+            diffTime(mHour, mMinute, pickedHour, pickedMinute, timerOn, countDownTime)
             if (timerOn) {
                 tvTimerOn.text = " : $pickedHour giờ $pickedMinute phút"
             } else {

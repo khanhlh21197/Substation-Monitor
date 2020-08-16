@@ -68,14 +68,14 @@ object BindingAdapters {
         view.setOnEditorActionListener(listener)
     }
 
-    @JvmStatic
-    @BindingAdapter(value = ["onLongClick", "onLongClickText"], requireAll = true)
-    fun setOnLongClickListener(view: View, onLongClick: (CharSequence) -> Unit, text: String?) {
-        view.setOnLongClickListener {
-            onLongClick.invoke(text ?: "")
-            true
-        }
-    }
+//    @JvmStatic
+//    @BindingAdapter(value = ["onLongClick", "onLongClickText"], requireAll = true)
+//    fun setOnLongClickListener(view: View, onLongClick: (CharSequence) -> Unit, text: String?) {
+//        view.setOnLongClickListener {
+//            onLongClick.invoke(text ?: "")
+//            true
+//        }
+//    }
 
     @JvmStatic
     @BindingAdapter("onLongClick")

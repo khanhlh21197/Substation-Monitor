@@ -15,12 +15,51 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/llTurnOnIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/timePicker">
+
+        <TextView
+            android:id="@+id/timerOnIn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:text="@string/light_on_in"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_16ssp" />
+
+        <EditText
+            android:id="@+id/edtOnIn"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:background="@drawable/bg_textview"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/tvTimerOnIn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="giây"
+            android:textSize="@dimen/_16ssp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/timePicker">
+        app:layout_constraintTop_toBottomOf="@id/llTurnOnIn">
 
         <Button
             android:id="@+id/cancel"

@@ -19,7 +19,6 @@ import com.khanhlh.substationmonitor.helper.shared_preference.clear
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
 import com.khanhlh.substationmonitor.model.NhaResponse
-import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
@@ -66,17 +65,17 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         checkConnection()
 
         btLogin.setOnClickListener {
-//            baseViewModel.showLoading()
-//            tryLogin()
-            val user = UserTest("email", "pass", mac = macAddress)
-            userJson = toJson(user)!!
-            val bundle = Bundle()
-            val tb = ThietBi("idtb", macAddress, "123", "Tentb", "MaTB", "_idtb", "bat")
-            val listTB = arrayListOf(tb)
-            val baseResponse = ThietBiResponse("0", "true", "", listTB, toJson(listTB))
-            bundle.putSerializable("thietbi", baseResponse)
-            bundle.putString("user", userJson)
-            goToActivity(MainActivity::class.java, bundle)
+            baseViewModel.showLoading()
+            tryLogin()
+//            val user = UserTest("email", "pass", mac = macAddress)
+//            userJson = toJson(user)!!
+//            val bundle = Bundle()
+//            val tb = ThietBi("idtb", macAddress, "123", "Tentb", "MaTB", "_idtb", "bat")
+//            val listTB = arrayListOf(tb)
+//            val baseResponse = ThietBiResponse("0", "true", "", listTB, toJson(listTB))
+//            bundle.putSerializable("thietbi", baseResponse)
+//            bundle.putString("user", userJson)
+//            goToActivity(MainActivity::class.java, bundle)
         }
     }
 
@@ -97,7 +96,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
         macAddress.let {
             mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
                 override fun onSuccess(message: String) {
-                    val baseResponse = fromJson<NhaResponse>(message)
+                    val baseResponse = fromJson<ThietBiResponse>(message)
                     if ("0" == baseResponse.errorCode && "true" == baseResponse.result) {
                         baseViewModel.isLoginSuccess.set(true)
 //                        id = baseResponse.id!!
@@ -105,7 +104,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginActivityViewModel>
                             saveUser()
                         baseViewModel.hideLoading()
                         val bundle = Bundle()
-                        bundle.putSerializable("nha", baseResponse)
+                        bundle.putSerializable("thietbi", baseResponse)
                         bundle.putString("user", userJson)
                         goToActivity(MainActivity::class.java, bundle)
                     } else {

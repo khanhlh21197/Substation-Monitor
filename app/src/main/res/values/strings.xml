@@ -84,8 +84,11 @@
     <string name="empty_threshold">Vui lòng nhập ngưỡng!</string>
     <string name="add_room">Thêm phòng</string>
     <string name="add_home">Thêm nhà</string>
-    <string name="light_timer_on"><u>Hẹn giờ bật đèn</u></string>
-    <string name="light_timer_off"><u>Hẹn giờ tắt đèn</u></string>
+    <string name="light_timer_on"><u>Hẹn giờ bật</u></string>
+    <string name="light_timer_off"><u>Hẹn giờ tắt</u></string>
+    <string name="light_on_in"><u>Bật trong</u></string>
+    <string name="timer"><u>Hẹn giờ</u></string>
+    <string name="count_down"><u>Count down</u></string>
     <string name="home">Nhà</string>
     <string name="name">Tên</string>
     <string name="phoneNumber">Số điện thoại</string>

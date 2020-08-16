@@ -24,5 +24,8 @@
     <dimen name="activity_margin_half">8dp</dimen>
     <dimen name="activity_margin_content">24dp</dimen>
 
+    <dimen name="popup_width">300dp</dimen>
+    <dimen name="popup_height">400dp</dimen>
+
 
 </resources>
