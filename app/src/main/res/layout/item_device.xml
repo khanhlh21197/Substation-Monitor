@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:onClick="@{(v)->presenter.onItemClick(v,item)}"
+        onItemLongClick="@{(v)->presenter.onItemLongClick(v,item)}"
         app:cardCornerRadius="15dp"
         app:cardElevation="4dp"
         app:cardUseCompatPadding="true">

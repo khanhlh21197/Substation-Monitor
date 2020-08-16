@@ -139,4 +139,11 @@ class DetailAcFragment : BaseFragment<DetailAcFragBinding, DetailDeviceViewModel
     fun increment() {
         if (croller.progress < croller.max) croller.progress++
     }
+
+    override fun getTitle(): String {
+        return "DetailAcFragment"
+    }
+
+    override val onFabClick: View.OnClickListener
+        get() = View.OnClickListener { toast(getTitle()) }
 }

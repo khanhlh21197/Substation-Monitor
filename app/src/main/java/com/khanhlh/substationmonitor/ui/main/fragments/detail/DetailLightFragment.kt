@@ -75,11 +75,11 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
             when (checkedId) {
                 R.id.radioTimer -> {
                     countDown = false
-                    llTimerOff.visibility = View.GONE
+                    llTimerOff.visibility = View.VISIBLE
                 }
                 R.id.radioCountDown -> {
                     countDown = true
-                    llTimerOff.visibility = View.VISIBLE
+                    llTimerOff.visibility = View.GONE
                 }
 
             }
@@ -288,7 +288,11 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         val llTurnOnIn = dialog.findViewById<LinearLayout>(R.id.llTurnOnIn)
         val edtOnIn = dialog.findViewById<EditText>(R.id.edtOnIn)
         var countDownTime: Int = 0
-        if (countDown) llTurnOnIn.visibility = View.VISIBLE
+        if (countDown) {
+            llTurnOnIn.visibility = View.VISIBLE
+        } else {
+            llTurnOnIn.visibility = View.GONE
+        }
 
         timePicker.setIs24HourView(true)
         timePicker.setOnTimeChangedListener { _, hourOfDay, minute ->

@@ -4,21 +4,23 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.provider.Settings
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.logD
-import com.khanhlh.substationmonitor.model.NhaResponse
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,8 +29,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var userJson: String
     private lateinit var viewModel: MainViewModel
 
+    private object Holder {
+        val INSTANCE = MainActivity()
+    }
+
     companion object {
-        lateinit var instance: MainActivity
+        @JvmStatic
+        fun getInstance(): MainActivity {
+            return Holder.INSTANCE
+        }
     }
 
     private var currentNavController: LiveData<NavController>? = null
@@ -38,7 +47,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getBundleData()
-        instance = this
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
@@ -68,9 +76,14 @@ class MainActivity : AppCompatActivity() {
 
         app_bar.findViewById<Button>(R.id.back).setOnClickListener { onBackPressed() }
         app_bar.findViewById<TextView>(R.id.label).text = "MainActivity"
-        viewModel = MainViewModel()
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.title.observe(this, Observer {
             app_bar.findViewById<TextView>(R.id.label).text = it
+        })
+        viewModel.onFabClick.observe(this, Observer {
+            val view = app_bar.findViewById<View>(R.id.motion)
+            val fab = view.findViewById<FloatingActionButton>(R.id.fab)
+            fab.setOnClickListener { it }
         })
 
 //        actionBarVM = BaseViewModel()

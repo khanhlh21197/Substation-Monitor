@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.detail
 
+import android.view.View
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
@@ -10,6 +11,9 @@ class DetailTempFrag : BaseFragment<DetailTempFragBinding, DetailDeviceViewModel
         const val ID_DEVICE = "ID_DEVICE"
         const val TAG = "DetailDeviceFragment"
     }
+
+    override val onFabClick: View.OnClickListener
+        get() = View.OnClickListener { toast(getTitle()) }
 
     override fun initView() {
         vm = DetailDeviceViewModel(MyApp())
@@ -24,4 +28,7 @@ class DetailTempFrag : BaseFragment<DetailTempFragBinding, DetailDeviceViewModel
     }
 
     override fun getLayoutId(): Int = R.layout.detail_temp_frag
+    override fun getTitle(): String {
+        return "DetailTempFragment"
+    }
 }

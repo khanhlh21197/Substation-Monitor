@@ -61,6 +61,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     private lateinit var userJson: String
     private lateinit var sharedPref: SharedPreferences
 
+    override val onFabClick: View.OnClickListener
+        get() = View.OnClickListener { toast(getTitle()) }
+
     companion object {
         const val REGISTER_NHA = "registernha"
         const val LOGIN_USER = "loginuser"
@@ -271,8 +274,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         }
     }
 
-    override fun onItemLongClick(v: View?, item: Nha) {
-
+    override fun onItemLongClick(v: View?, item: Nha) : Boolean {
+        return false
     }
 
     override fun onDeleteClick(v: View?, item: Nha) {
@@ -301,7 +304,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         })
     }
 
-    override val title: String
-        get() = "HomeFragment"
+    override fun getTitle(): String {
+        return "HomeFragment"
+    }
 
 }

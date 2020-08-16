@@ -18,7 +18,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.databinding.ObservableArrayList
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -73,6 +72,10 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         const val UPDATE_DEVICE = "updatethietbi"
     }
 
+    override val onFabClick: View.OnClickListener
+        @RequiresApi(Build.VERSION_CODES.O)
+        get() = View.OnClickListener { addDevice() }
+
     private val RESULT_LOAD_IMAGE = 1
     lateinit var imageView: ImageView
 
@@ -82,6 +85,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
         vm = DeviceViewModel(MyApp())
         mBinding.viewModel = vm
@@ -338,7 +342,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         }
     }
 
-    override fun onItemLongClick(v: View?, item: ThietBi) {
+    override fun onItemLongClick(v: View?, item: ThietBi): Boolean {
         createDialog(
             requireActivity(),
             getString(R.string.app_name),
@@ -348,6 +352,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
             null,
             null
         )
+        return true
     }
 
     override fun onDeleteClick(v: View?, item: ThietBi) {
@@ -390,6 +395,10 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         }
         val idthietbi = item.mathietbi.toUpperCase(Locale.ROOT)
         publishMessage("P$idthietbi", toJson(lenh)!!)
+    }
+
+    override fun getTitle(): String {
+        return "DeviceFragment"
     }
 
 }

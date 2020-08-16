@@ -99,10 +99,10 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
     private fun checkConnection() {
         mqttHelper.isConnected.observe(this, Observer<Boolean> { t ->
             if (t!!) {
-                toast("Đã kết nối với Server")
+                showError("Đã kết nối với Server")
                 baseViewModel.hideLoading()
             } else {
-                toast("Ngắt kết nối")
+                showError("Ngắt kết nối")
                 baseViewModel.showLoading()
             }
         })

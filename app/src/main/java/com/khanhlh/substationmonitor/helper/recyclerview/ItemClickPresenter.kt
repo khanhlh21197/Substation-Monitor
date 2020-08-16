@@ -11,7 +11,7 @@ import androidx.databinding.ViewDataBinding
  */
 interface ItemClickPresenter<in Any> {
     fun onItemClick(v: View? = null, item: Any)
-    fun onItemLongClick(v: View? = null, item: Any)
+    fun onItemLongClick(v: View? = null, item: Any): Boolean = true
     fun onImageClick(v: View? = null)
     fun onDeleteClick(v: View? = null, item: Any)
     fun onSwitchChange(isChecked: Boolean, item: Any)

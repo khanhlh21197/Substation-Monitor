@@ -20,6 +20,7 @@ class DetailDeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     val isFlashing = MutableLiveData<Boolean>().init(false)
     val visibility = MutableLiveData<Int>().init(View.GONE)
     val threshold = MutableLiveData<String>().init("")
+    val fabClick = View.OnClickListener {  }
 
     fun observerDevice(id: String): Disposable = FirebaseCommon.observerDevice(id).subscribe({
         var name = ""

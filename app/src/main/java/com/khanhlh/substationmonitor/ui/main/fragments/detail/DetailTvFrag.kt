@@ -17,6 +17,9 @@ class DetailTvFrag : BaseFragment<DetailTvFragBinding, DetailDeviceViewModel>(),
     private var mAutoDecrement = false
     val repeatUpdateHandler = Handler()
 
+    override val onFabClick: View.OnClickListener
+        get() = View.OnClickListener { toast(getTitle()) }
+
     companion object {
         const val ID_DEVICE = "ID_DEVICE"
         const val TAG = "DetailDeviceFragment"
@@ -87,5 +90,9 @@ class DetailTvFrag : BaseFragment<DetailTvFragBinding, DetailDeviceViewModel>(),
 
     fun increment() {
         if (croller.progress < croller.max) croller.progress++
+    }
+
+    override fun getTitle(): String {
+        return "DetailTvFrag"
     }
 }

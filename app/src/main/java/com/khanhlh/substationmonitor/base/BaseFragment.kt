@@ -87,7 +87,7 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
             // 加载数据
 //            loadData(true);
         }
-        updateTitle(title)
+        updateTitle(getTitle())
     }
 
     private fun updateTitle(title: String) {
@@ -95,7 +95,10 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
             viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         } ?: throw Throwable("invalid activity")
         viewModel.updateActionBarTitle(title)
+        viewModel.onFabClickListener(onFabClick)
     }
+
+    abstract val onFabClick: View.OnClickListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -157,7 +160,7 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
 
     abstract fun getLayoutId(): Int
 
-    open val title: String = ""
+    abstract fun getTitle() : String
 
     fun toast(msg: String) {
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show()

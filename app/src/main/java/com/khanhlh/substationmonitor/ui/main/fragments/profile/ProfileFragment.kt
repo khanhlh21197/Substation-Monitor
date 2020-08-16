@@ -40,6 +40,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     private lateinit var gson: Gson
     private lateinit var macAddress: String
 
+    override val onFabClick: View.OnClickListener
+        get() = View.OnClickListener { toast(getTitle()) }
+
     override fun initView() {
         vm = ProfileViewModel(MyApp())
         mBinding.vm = vm
@@ -105,9 +108,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                     requireActivity().navigateToActivity(LoginActivity::class.java)
                 })!!.show()
         }
-        actionBar.back.setOnClickListener { MainActivity.instance.onBackPressed() }
+        actionBar.back.setOnClickListener { MainActivity.getInstance().onBackPressed() }
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_profile
+    override fun getTitle(): String {
+        return "ProfileFragment"
+    }
 
 }

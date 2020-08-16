@@ -47,6 +47,9 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     private val phongs = ObservableArrayList<Phong>()
     private lateinit var idPhong: String
 
+    override val onFabClick: View.OnClickListener
+        get() = View.OnClickListener { toast(getTitle()) }
+
     companion object {
         const val ID_ROOM = "ID_ROOM"
     }
@@ -264,7 +267,8 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         }
     }
 
-    override fun onItemLongClick(v: View?, item: Phong) {
+    override fun onItemLongClick(v: View?, item: Phong) : Boolean{
+        return true
     }
 
     override fun onDeleteClick(v: View?, item: Phong) {
@@ -285,6 +289,10 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
 
     override fun onSwitchChange(isChecked: Boolean, item: Phong) {
         logD("onSwitchChange: $isChecked")
+    }
+
+    override fun getTitle(): String {
+        return "RoomFragment"
     }
 
 }
