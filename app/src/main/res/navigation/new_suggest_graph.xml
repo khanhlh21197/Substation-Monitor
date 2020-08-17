@@ -68,5 +68,13 @@
             android:id="@+id/action_deviceFragment_to_detailTvFrag"
             app:destination="@id/detailTvFrag" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.khanhlh.substationmonitor.ui.main.fragments.SearchFragment"
+        android:label="SearchFragment" />
 
 </navigation>

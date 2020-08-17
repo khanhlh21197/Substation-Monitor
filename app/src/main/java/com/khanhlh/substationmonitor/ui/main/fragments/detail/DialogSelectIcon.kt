@@ -134,43 +134,13 @@ class DialogSelectIcon : BaseDialogFragment<DialogSelectIconBinding, DeviceViewM
         window.setGravity(Gravity.CENTER)
 
         initMqtt()
-        getBundleData()
     }
 
     private fun initMqtt() {
         mqttHelper = MqttHelper(requireActivity())
     }
 
-    private fun getBundleData() {
-        val args = arguments
-        args!!.let {
-            idthietbi = it.getString("idthietbi").toString().toUpperCase(Locale.getDefault())
-            iduser = it.getString("iduser").toString()
-        }
-        idthietbi.let {
-            mqttHelper.connect("S$it", messageCallBack = object : MqttHelper.MessageCallBack {
-                override fun onSuccess(message: String) {
-                    val tb = fromJson<ThietBiResponse>(message)
-                    if ("0" == tb.errorCode) {
-                        if ("true" == tb.result) {
-                            lightSwitch.isChecked = "bat" == tb.message
-                        } else {
-                            toast("Gui lenh that bai")
-                        }
-                    } else {
-                        toast("Vui long thu lai sau")
-                    }
-                }
-
-                override fun onError(error: Throwable) {
-                    TODO("Not yet implemented")
-                }
-            })
-        }
-    }
-
     private fun initListener() {
-
     }
 
     override fun getLayoutId(): Int = R.layout.dialog_select_icon

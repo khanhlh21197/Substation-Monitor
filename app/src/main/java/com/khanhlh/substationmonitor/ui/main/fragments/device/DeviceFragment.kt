@@ -21,6 +21,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
@@ -132,7 +133,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onFabClick() {
-        add()
+
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -141,6 +142,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         mBinding.viewModel = vm
 
         initRecycler()
+        requireActivity().findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { add() }
     }
 
     @SuppressLint("CheckResult")

@@ -13,6 +13,7 @@
     <string name="register_error">Đăng ký thất bại</string>
     <string name="require_length">Tài khoản và mật khẩu phải nhiều hơn 6 kí tự</string>
     <string name="error_re_password">Nhập lại mật khẩu sai</string>
+    <string name="not_enough">Vui lòng nhập đủ thông tin</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

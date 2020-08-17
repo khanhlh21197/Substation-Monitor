@@ -162,4 +162,7 @@ dependencies {
     implementation 'com.yanzhenjie:wheel:1.0.0'
 
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-rc1'
+
+    //event bus
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }

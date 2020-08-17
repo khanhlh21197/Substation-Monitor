@@ -69,14 +69,43 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterActivityV
         if (baseViewModel.password.get()!!.length > 6 && baseViewModel.mail.get()!!.length > 4) {
             if (baseViewModel.password.get() == baseViewModel.rePassword.get()) {
                 baseViewModel.showLoading()
+                var mail = ""
+                var password = ""
+                var name = ""
+                var phoneNumber = ""
+                var home = ""
+
+                mail = baseViewModel.mail.get()!!
+                password = baseViewModel.password.get()!!
+
+                if (baseViewModel.name.get() != null) {
+                    name = baseViewModel.name.get()!!
+                } else {
+                    baseViewModel.errorMessage.value = getString(R.string.not_enough)
+                    return
+                }
+
+                if (baseViewModel.phoneNumber.get() != null) {
+                    phoneNumber = baseViewModel.phoneNumber.get()!!
+                } else {
+                    baseViewModel.errorMessage.value = getString(R.string.not_enough)
+                    return
+                }
+
+                if (baseViewModel.home.get() != null) {
+                    home = baseViewModel.home.get()!!
+                } else {
+                    baseViewModel.errorMessage.value = getString(R.string.not_enough)
+                    return
+                }
 
                 val user = macAddress.let {
                     UserTest(
-                        baseViewModel.mail.get()!!,
-                        baseViewModel.password.get()!!,
-                        baseViewModel.name.get()!!,
-                        baseViewModel.phoneNumber.get()!!,
-                        baseViewModel.home.get()!!,
+                        mail,
+                        password,
+                        name,
+                        phoneNumber,
+                        home,
                         it
                     )
                 }
