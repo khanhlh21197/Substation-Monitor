@@ -2,6 +2,7 @@ package com.khanhlh.substationmonitor.di.components
 
 import com.khanhlh.substationmonitor.di.modules.NetworkModule
 import com.khanhlh.substationmonitor.ui.login.LoginActivityViewModel
+import com.khanhlh.substationmonitor.ui.main.MainViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.device.DeviceViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel
@@ -22,6 +23,7 @@ interface ViewModelInjector {
     fun inject(roomViewModel: RoomViewModel)
     fun inject(detailDeviceViewModel: DetailDeviceViewModel)
     fun inject(deviceViewModel: DeviceViewModel)
+    fun inject(mainViewModel: MainViewModel)
 
 
     @Component.Builder

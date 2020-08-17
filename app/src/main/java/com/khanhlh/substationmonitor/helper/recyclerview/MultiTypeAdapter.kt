@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
 import androidx.databinding.ViewDataBinding
+import com.khanhlh.substationmonitor.helper.annotation.ItemType
 
 /**
  * 页面描述：MultiTypeAdapter

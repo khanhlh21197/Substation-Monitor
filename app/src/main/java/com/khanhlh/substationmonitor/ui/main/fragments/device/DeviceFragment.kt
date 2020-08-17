@@ -13,14 +13,13 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.ObservableArrayList
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
@@ -29,38 +28,44 @@ import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseFragment
 import com.khanhlh.substationmonitor.databinding.FragmentDeviceBinding
+import com.khanhlh.substationmonitor.enums.AddType
 import com.khanhlh.substationmonitor.extensions.*
+import com.khanhlh.substationmonitor.helper.recyclerview.BindingViewHolder
 import com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter
+import com.khanhlh.substationmonitor.helper.recyclerview.ItemDecorator
 import com.khanhlh.substationmonitor.helper.recyclerview.SingleTypeAdapter
 import com.khanhlh.substationmonitor.helper.shared_preference.get
 import com.khanhlh.substationmonitor.helper.shared_preference.put
-import com.khanhlh.substationmonitor.model.Lenh
-import com.khanhlh.substationmonitor.model.ThietBi
-import com.khanhlh.substationmonitor.model.ThietBiResponse
-import com.khanhlh.substationmonitor.model.UserTest
+import com.khanhlh.substationmonitor.helper.widget.ColorBrewer
+import com.khanhlh.substationmonitor.model.*
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.ui.login.LoginActivity
+import com.khanhlh.substationmonitor.ui.main.MainViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailLightFragment
+import com.khanhlh.substationmonitor.ui.main.fragments.detail.DialogSelectIcon
 import com.khanhlh.substationmonitor.utils.USER_PREF
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_device.*
-import kotlinx.android.synthetic.main.fragment_home.fab
-import kotlinx.android.synthetic.main.fragment_home.recycler
 import java.util.*
 
 class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     ItemClickPresenter<ThietBi> {
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var mqttHelper: MqttHelper
     private lateinit var gson: Gson
     private lateinit var macAddress: String
     private lateinit var thietbi: ThietBi
     private val thietbis = ObservableArrayList<ThietBi>()
+    private val phongs = ObservableArrayList<Phong>()
     private lateinit var idThietBi: String
     private var currentIndex: Int = 0
     private var publishInfo: String = ""
-    private lateinit var deviceName: EditText
+    private lateinit var name: EditText
     private var listTB = arrayListOf<ThietBi>()
     private var iduser = ""
     private lateinit var sharedPref: SharedPreferences
+    private lateinit var addType: AddType
+    private val colorArray by lazy { ColorBrewer.Pastel2.getColorPalette(20) }
 
     companion object {
         const val ID_ROOM = "ID_ROOM"
@@ -72,17 +77,62 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         const val UPDATE_DEVICE = "updatethietbi"
     }
 
-    override val onFabClick: View.OnClickListener
-        @RequiresApi(Build.VERSION_CODES.O)
-        get() = View.OnClickListener { addDevice() }
-
     private val RESULT_LOAD_IMAGE = 1
     lateinit var imageView: ImageView
 
-    private val mAdapter by lazy {
+    private val deviceAdapter by lazy {
         SingleTypeAdapter<ThietBi>(mContext, R.layout.item_device, thietbis).apply {
             itemPresenter = this@DeviceFragment
+            itemDecorator = object : ItemDecorator {
+                override fun decorator(
+                    holder: BindingViewHolder<ViewDataBinding>?,
+                    position: Int,
+                    viewType: Int
+                ) {
+                    if (position > 0) {
+                        holder?.binding?.root?.background?.setTint(colorArray[position])
+                    }
+                }
+            }
         }
+    }
+
+    private val groupAdapter by lazy {
+        SingleTypeAdapter<Phong>(mContext, R.layout.item_room, phongs).apply {
+            itemPresenter = object : ItemClickPresenter<Phong> {
+                override fun onItemClick(v: View?, item: Phong) {
+                    toast(item.tenphong)
+                }
+
+                override fun onImageClick(v: View?) {
+
+                }
+
+                override fun onDeleteClick(v: View?, item: Phong) {
+
+                }
+
+                override fun onSwitchChange(isChecked: Boolean, item: Phong) {
+
+                }
+            }
+            itemDecorator = object : ItemDecorator {
+                override fun decorator(
+                    holder: BindingViewHolder<ViewDataBinding>?,
+                    position: Int,
+                    viewType: Int
+                ) {
+                    if (position > 0) {
+                        holder?.binding?.root?.background?.setTint(colorArray[position])
+                    }
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onFabClick() {
+        add()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -91,15 +141,6 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         mBinding.viewModel = vm
 
         initRecycler()
-        fab.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                addDevice()
-            }
-        }
-
-        fabDeleteAll.setOnClickListener {
-            deleteAllDevices()
-        }
     }
 
     @SuppressLint("CheckResult")
@@ -202,9 +243,26 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     }
 
     private fun initRecycler() {
-        recycler.apply {
-            layoutManager = GridLayoutManager(mContext, 2)
-            adapter = mAdapter
+        devicesList.apply {
+            layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
+            adapter = deviceAdapter
+            addItemDecoration(object : RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(
+                    outRect: Rect,
+                    view: View,
+                    parent: RecyclerView,
+                    state: RecyclerView.State
+                ) {
+                    super.getItemOffsets(outRect, view, parent, state)
+//                    outRect.top = activity?.dpToPx(R.dimen.xdp_12_0) ?: 0
+                }
+            })
+            isPrepared = true
+        }
+
+        groupList.apply {
+            layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
+            adapter = groupAdapter
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
                     outRect: Rect,
@@ -254,18 +312,56 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun addDevice() {
+    fun add() {
+        val arr = arrayOf(
+            getString(R.string.add_room),
+            getString(R.string.add_device)
+        )
+
         val inflater = layoutInflater
         val alertLayout: View =
-            inflater.inflate(R.layout.dialog_add_device, null)
-        deviceName = alertLayout.findViewById<EditText>(R.id.deviceName)
-        val deviceId = alertLayout.findViewById<EditText>(R.id.deviceId)
-        val tipDeviceId = alertLayout.findViewById<TextInputLayout>(R.id.tipDeviceId)
+            inflater.inflate(R.layout.dialog_add, null)
+        name = alertLayout.findViewById<EditText>(R.id.edtName)
+        val txtLabel = alertLayout.findViewById<TextView>(R.id.txtLabel)
+        val id = alertLayout.findViewById<EditText>(R.id.edtId)
+        val tipId = alertLayout.findViewById<TextInputLayout>(R.id.tipId)
+        val spinner = alertLayout.findViewById<Spinner>(R.id.spinner)
+        val circleImageView = alertLayout.findViewById<CircleImageView>(R.id.circleImageView)
 
-        tipDeviceId.visibility = View.VISIBLE
+        circleImageView.setOnClickListener { chooseImage() }
+
+        spinner.visibility = View.VISIBLE
+        val spinnerAdapter =
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, arr)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice)
+        spinner.adapter = spinnerAdapter
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (position == 0) {
+                    tipId.visibility = View.GONE
+                    addType = AddType.ROOM
+                    txtLabel.text = getString(R.string.add_room)
+                } else {
+                    tipId.visibility = View.VISIBLE
+                    addType = AddType.DEVICE
+                    txtLabel.text = getString(R.string.add_device)
+                }
+            }
+        }
+
+        spinner.setSelection(0)
 
         val scanBarcode =
-            alertLayout.findViewById<ImageView>(R.id.scanBarcode)
+            alertLayout.findViewById<ImageView>(R.id.scanName)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
@@ -282,32 +378,45 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         ) { dialog: DialogInterface?, which: Int ->
             Toast.makeText(
                 activity,
-                "Cancel clicked",
+                getString(R.string.cancel),
                 Toast.LENGTH_SHORT
             ).show()
         }
         alert.setPositiveButton(
             getString(R.string.ok)
         ) { dialog: DialogInterface?, which: Int ->
-            if (deviceName.text != null) {
-                thietbi = ThietBi(
-                    "",
-                    getMacAddr()!!,
-                    iduser,
-                    deviceName.text.toString().toUpperCase(Locale.ROOT),
-                    deviceId.text.toString().toUpperCase(Locale.ROOT)
-                )
-                publishMessage(REGISTER_DEVICE, toJson(thietbi)!!)
-            } else {
-                Toast.makeText(
-                    activity,
-                    getString(R.string.input_device_name),
-                    Toast.LENGTH_SHORT
-                ).show()
+            when (addType) {
+                AddType.ROOM -> {
+                    val phong = Phong(tenphong = name.text.toString())
+                    phongs.add(phong)
+                }
+                AddType.DEVICE -> {
+                    if (name.text != null) {
+                        thietbi = ThietBi(
+                            "",
+                            getMacAddr()!!,
+                            iduser,
+                            name.text.toString().toUpperCase(Locale.ROOT),
+                            id.text.toString().toUpperCase(Locale.ROOT)
+                        )
+                        publishMessage(REGISTER_DEVICE, toJson(thietbi)!!)
+                    } else {
+                        Toast.makeText(
+                            activity,
+                            getString(R.string.input_device_name),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
         val dialog = alert.create()
         dialog.show()
+    }
+
+    private fun chooseImage() {
+        val dialogSelectIcon = DialogSelectIcon()
+        dialogSelectIcon.show(requireActivity().supportFragmentManager, "DialogSelectIcon")
     }
 
     override fun onActivityResult(
@@ -321,7 +430,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         if (result != null) {
             if (result.contents != null) {
                 if (requestCode == 1) {
-                    deviceName.setText(result.contents)
+                    name.setText(result.contents)
                 }
             }
         }
@@ -373,7 +482,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
 
     private fun publishMessage(topic: String, json: String) {
         this.publishInfo = topic
-        mqttHelper.isConnected.observe(this, Observer<Boolean> {
+        mqttHelper.isConnected.observe(viewLifecycleOwner, Observer<Boolean> {
             if (it) {
                 vm.hideLoading()
                 mqttHelper.publishMessage(topic, json)
@@ -390,15 +499,17 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
         lenh.iduser = iduser
         if (isChecked) {
             lenh.lenh = "bat"
+            item.trangthai = true
         } else {
             lenh.lenh = "tat"
+            item.trangthai = false
         }
         val idthietbi = item.mathietbi.toUpperCase(Locale.ROOT)
         publishMessage("P$idthietbi", toJson(lenh)!!)
     }
 
     override fun getTitle(): String {
-        return "DeviceFragment"
+        return "Xin chào"
     }
 
 }

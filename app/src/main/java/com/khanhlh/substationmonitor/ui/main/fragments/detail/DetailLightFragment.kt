@@ -3,14 +3,13 @@ package com.khanhlh.substationmonitor.ui.main.fragments.detail
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
+import android.graphics.Point
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.TransitionDrawable
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.*
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
@@ -81,13 +80,25 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
                     countDown = true
                     llTimerOff.visibility = View.GONE
                 }
-
             }
         }
+
     }
 
     override fun onResume() {
         super.onResume()
+
+        val window = dialog!!.window
+        val size = Point()
+
+        val display: Display = window!!.windowManager.defaultDisplay
+        display.getSize(size)
+
+        val width: Int = size.x
+
+        window.setLayout((width * 0.8).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
+        window.setGravity(Gravity.CENTER)
+
         initMqtt()
         getBundleData()
     }

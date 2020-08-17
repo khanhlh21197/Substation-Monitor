@@ -17,8 +17,7 @@ class DetailTvFrag : BaseFragment<DetailTvFragBinding, DetailDeviceViewModel>(),
     private var mAutoDecrement = false
     val repeatUpdateHandler = Handler()
 
-    override val onFabClick: View.OnClickListener
-        get() = View.OnClickListener { toast(getTitle()) }
+    override fun onFabClick() = toast(getTitle())
 
     companion object {
         const val ID_DEVICE = "ID_DEVICE"

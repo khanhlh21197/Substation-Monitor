@@ -103,28 +103,7 @@ abstract class BaseDialogFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : 
             setCanceledOnTouchOutside(false)
         }
 
-        val window = dialog!!.window
-//        if (window != null) {
-//            window.requestFeature(Window.FEATURE_NO_TITLE)
-//            window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//            window.attributes.windowAnimations = R.style.MyCustomTheme
-//        }
-
         return mBinding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val window = dialog!!.window
-        val size = Point()
-
-        val display: Display = window!!.windowManager.defaultDisplay
-        display.getSize(size)
-
-        val width: Int = size.x
-
-        window.setLayout((width * 0.8).toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
-        window.setGravity(Gravity.CENTER)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

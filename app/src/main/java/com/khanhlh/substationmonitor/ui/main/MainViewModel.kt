@@ -1,19 +1,20 @@
 package com.khanhlh.substationmonitor.ui.main
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.khanhlh.substationmonitor.MyApp
+import com.khanhlh.substationmonitor.base.BaseViewModel
 
-class MainViewModel : ViewModel() {
+class MainViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
     private val _title = MutableLiveData<String>()
     val title: LiveData<String>
         get() = _title
-    private val _onFabClick = MutableLiveData<View.OnClickListener>()
-    val onFabClick: LiveData<View.OnClickListener>
-        get() = _onFabClick
+    val onFabClick: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun updateActionBarTitle(title: String) = _title.postValue(title)
-    fun onFabClickListener(onFabClick: View.OnClickListener) = _onFabClick.postValue(onFabClick)
+    fun onFabClickListener(_onFabClick: Boolean) {
+        onFabClick.value = _onFabClick
+    }
 
 }

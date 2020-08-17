@@ -6,6 +6,15 @@
     android:background="@drawable/bg_textview"
     android:padding="@dimen/_8sdp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Hẹn giờ"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TimePicker
         android:id="@+id/timePicker"
         android:layout_width="match_parent"
@@ -19,7 +28,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_8sdp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/timePicker">
@@ -28,11 +36,10 @@
             android:id="@+id/timerOnIn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:fontFamily="@font/montserrat_regular"
             android:gravity="center"
             android:text="@string/light_on_in"
             android:textColor="@color/blue"
-            android:textSize="@dimen/_16ssp" />
+            android:textSize="@dimen/_14ssp" />
 
         <EditText
             android:id="@+id/edtOnIn"
@@ -56,6 +63,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
         android:gravity="end"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

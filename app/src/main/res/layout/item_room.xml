@@ -15,11 +15,11 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_width="@dimen/_130sdp"
+        android:layout_height="@dimen/_130sdp"
         android:onClick="@{(v)->presenter.onItemClick(v,item)}"
         app:cardCornerRadius="15dp"
-        app:cardElevation="4dp"
+        app:cardElevation="2dp"
         app:cardUseCompatPadding="true">
 
         <RelativeLayout
@@ -49,8 +49,8 @@
                 android:padding="10dp">
 
                 <RelativeLayout
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_50sdp"
                     android:layout_gravity="center">
 
                     <ImageView
@@ -69,34 +69,32 @@
                     android:layout_marginTop="10dp"
                     android:text="@{item.tenphong}"
                     android:textColor="@color/textColor"
-                    android:textSize="@dimen/_14ssp"
+                    android:textSize="@dimen/_10ssp"
                     android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp">
+
+                    <TextView
+                        android:id="@+id/tvDeviceCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textStyle="bold" />
+
+                    <com.suke.widget.SwitchButton
+                        android:id="@+id/switchBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:onClick="@{v -> presenter.onImageClick(v)}" />
+                </RelativeLayout>
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="10dp">
-
-                <TextView
-                    android:id="@+id/tvDeviceCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14dp"
-                    android:textStyle="bold" />
-
-                <com.suke.widget.SwitchButton
-                    android:id="@+id/switchBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="5dp"
-                    android:onClick="@{v -> presenter.onImageClick(v)}" />
-            </RelativeLayout>
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

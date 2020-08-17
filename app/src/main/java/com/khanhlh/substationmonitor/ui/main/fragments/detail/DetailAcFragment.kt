@@ -5,7 +5,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
@@ -144,6 +143,5 @@ class DetailAcFragment : BaseFragment<DetailAcFragBinding, DetailDeviceViewModel
         return "DetailAcFragment"
     }
 
-    override val onFabClick: View.OnClickListener
-        get() = View.OnClickListener { toast(getTitle()) }
+    override fun onFabClick() = toast(getTitle())
 }

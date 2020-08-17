@@ -13,10 +13,11 @@ import java.lang.annotation.Target;
  * Created by ditclear on 2017/10/17.
  */
 
-@IntDef({ItemType.HEADER, ItemType.ITEM, ItemType.FOOTER})
+@IntDef({ItemType.HEADER, ItemType.ITEM, ItemType.FOOTER, ItemType.EMPTY})
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface ItemType {
+    int EMPTY = 0;
     int HEADER = 1;
     int ITEM = 2;
     int FOOTER = 3;

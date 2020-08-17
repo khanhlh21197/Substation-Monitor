@@ -12,8 +12,7 @@ class DetailTempFrag : BaseFragment<DetailTempFragBinding, DetailDeviceViewModel
         const val TAG = "DetailDeviceFragment"
     }
 
-    override val onFabClick: View.OnClickListener
-        get() = View.OnClickListener { toast(getTitle()) }
+    override fun onFabClick() = toast(getTitle())
 
     override fun initView() {
         vm = DetailDeviceViewModel(MyApp())

@@ -47,8 +47,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     private val phongs = ObservableArrayList<Phong>()
     private lateinit var idPhong: String
 
-    override val onFabClick: View.OnClickListener
-        get() = View.OnClickListener { toast(getTitle()) }
+    override fun onFabClick() = toast(getTitle())
 
     companion object {
         const val ID_ROOM = "ID_ROOM"
@@ -192,10 +191,10 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
-        txtInputDevice = alertLayout.findViewById(R.id.deviceName)
+        txtInputDevice = alertLayout.findViewById(R.id.edtName)
         val txtLabel = alertLayout.findViewById(R.id.txtLabel) as TextView
         val scanBarcode =
-            alertLayout.findViewById<ImageView>(R.id.scanBarcode)
+            alertLayout.findViewById<ImageView>(R.id.scanName)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)
@@ -267,7 +266,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
         }
     }
 
-    override fun onItemLongClick(v: View?, item: Phong) : Boolean{
+    override fun onItemLongClick(v: View?, item: Phong): Boolean {
         return true
     }
 

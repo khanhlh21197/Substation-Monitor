@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
@@ -19,16 +18,13 @@ import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.navigateToActivity
 import com.khanhlh.substationmonitor.helper.dialog.alert
 import com.khanhlh.substationmonitor.helper.shared_preference.clear
-import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.khanhlh.substationmonitor.ui.login.LoginActivity
 import com.khanhlh.substationmonitor.ui.main.MainActivity
-import com.khanhlh.substationmonitor.ui.main.fragments.device.DeviceFragment
 import com.khanhlh.substationmonitor.utils.USER_PREF
 import kotlinx.android.synthetic.main.custom_action_bar.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
-import java.util.ArrayList
 
 
 /**
@@ -40,8 +36,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     private lateinit var gson: Gson
     private lateinit var macAddress: String
 
-    override val onFabClick: View.OnClickListener
-        get() = View.OnClickListener { toast(getTitle()) }
+    override fun onFabClick() = toast(getTitle())
 
     override fun initView() {
         vm = ProfileViewModel(MyApp())

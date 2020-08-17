@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.khanhlh.substationmonitor.model.Icon" />
+
+        <variable
+            name="presenter"
+            type="com.khanhlh.substationmonitor.helper.recyclerview.ItemClickPresenter" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
+        onItemLongClick="@{(v)->presenter.onItemLongClick(v,item)}"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:onClick="@{(v)->presenter.onItemClick(v,item)}"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true">
+
+        <ImageView
+            android:id="@+id/imgIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@{item.imageSrc}" />
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

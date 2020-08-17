@@ -1,5 +1,6 @@
 package com.khanhlh.substationmonitor.model
 
+import com.khanhlh.substationmonitor.R
 import java.io.Serializable
 
 data class ThietBi(
@@ -11,8 +12,9 @@ data class ThietBi(
     val _id: String = "",
     var status: String = "tat",
     val ip: String = "",
-    val ssid: String = ""
+    val ssid: String = "",
+    val hinhanh: Int = R.drawable.trans_off
 ) : Serializable {
-    val trangthai: Boolean
+    var trangthai: Boolean = false
         get() = status == "bat"
 }

@@ -10,6 +10,7 @@ import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
+import com.khanhlh.substationmonitor.model.Phong
 import com.khanhlh.substationmonitor.utils.*
 
 class DeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
@@ -17,16 +18,6 @@ class DeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     private val idSet = mutableSetOf<String>()
 
     private val TAG = "MyViewModel"
-
-    fun onButton1LongClick(text: CharSequence) : Unit {
-        Log.d(TAG, "onButton1LongClick: " + text)
-    }
-    val f1 : (CharSequence) -> Unit = {text -> onButton1LongClick(text)}
-
-    fun onButton2LongClick() {
-        Log.d(TAG, "onButton2LongClick")
-    }
-    val f2 : () -> Unit = {onButton2LongClick()}
 
     @SuppressLint("CheckResult", "LogNotTimber")
     fun observerAllDevices(devices: String) {

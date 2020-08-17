@@ -61,8 +61,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     private lateinit var userJson: String
     private lateinit var sharedPref: SharedPreferences
 
-    override val onFabClick: View.OnClickListener
-        get() = View.OnClickListener { toast(getTitle()) }
+    override fun onFabClick() = toast(getTitle())
 
     companion object {
         const val REGISTER_NHA = "registernha"
@@ -177,7 +176,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     override fun onItemClick(v: View?, item: Nha) {
         logD(item.tennha)
         val bundle = bundleOf("idnha" to item._id)
-        navigate(R.id.roomFragment, bundle)
+//        navigate(R.id.roomFragment, bundle)
     }
 
     override fun onImageClick(v: View?) {
@@ -195,10 +194,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
         val inflater = layoutInflater
         val alertLayout: View =
             inflater.inflate(R.layout.dialog_add_device, null)
-        txtInputDevice = alertLayout.findViewById(R.id.deviceName)
+        txtInputDevice = alertLayout.findViewById(R.id.edtName)
         txtLabel = alertLayout.findViewById(R.id.txtLabel)
         val scanBarcode =
-            alertLayout.findViewById<ImageView>(R.id.scanBarcode)
+            alertLayout.findViewById<ImageView>(R.id.scanName)
         val alert =
             AlertDialog.Builder(mContext)
         alert.setTitle(R.string.app_name)

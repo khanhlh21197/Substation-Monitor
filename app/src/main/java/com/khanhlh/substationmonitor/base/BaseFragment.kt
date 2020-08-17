@@ -95,10 +95,12 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
             viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         } ?: throw Throwable("invalid activity")
         viewModel.updateActionBarTitle(title)
-        viewModel.onFabClickListener(onFabClick)
+        viewModel.onFabClick.observe(viewLifecycleOwner, Observer<Boolean> { t ->
+            if (t!!) {
+                onFabClick()
+            }
+        })
     }
-
-    abstract val onFabClick: View.OnClickListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -161,6 +163,8 @@ abstract class BaseFragment<VB : ViewDataBinding, T : BaseViewModel<*>> : Fragme
     abstract fun getLayoutId(): Int
 
     abstract fun getTitle() : String
+
+    abstract fun onFabClick()
 
     fun toast(msg: String) {
         Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show()

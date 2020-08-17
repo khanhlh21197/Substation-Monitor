@@ -9,6 +9,7 @@ import com.khanhlh.substationmonitor.di.components.DaggerViewModelInjector
 import com.khanhlh.substationmonitor.di.components.ViewModelInjector
 import com.khanhlh.substationmonitor.di.modules.NetworkModule
 import com.khanhlh.substationmonitor.ui.login.LoginActivityViewModel
+import com.khanhlh.substationmonitor.ui.main.MainViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.detail.DetailDeviceViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.device.DeviceViewModel
 import com.khanhlh.substationmonitor.ui.main.fragments.home.HomeViewModel
@@ -51,13 +52,8 @@ abstract class BaseViewModel<T>(app: MyApp) : AndroidViewModel(app) {
             is RoomViewModel -> injector.inject(this)
             is DetailDeviceViewModel -> injector.inject(this)
             is DeviceViewModel -> injector.inject(this)
+            is MainViewModel -> injector.inject(this)
         }
     }
-
-    private val _title = MutableLiveData<String>()
-    val title: LiveData<String>
-        get() = _title
-
-    open fun updateActionBarTitle(title: String) = _title.postValue(title)
 }
 
