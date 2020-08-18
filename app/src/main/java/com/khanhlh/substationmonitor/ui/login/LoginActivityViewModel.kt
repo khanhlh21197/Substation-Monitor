@@ -1,46 +1,65 @@
 package com.khanhlh.substationmonitor.ui.login
 
-
 import android.annotation.SuppressLint
-import android.content.ContentValues.TAG
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.gson.Gson
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
-import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.extensions.*
+import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.model.UserTest
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
-import com.khanhlh.substationmonitor.utils.EMAIL
-import com.khanhlh.substationmonitor.utils.ID
-import com.khanhlh.substationmonitor.utils.USER_COLLECTION
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.functions.BiConsumer
-import kotlinx.android.synthetic.main.activity_login.*
-import okhttp3.internal.and
-import java.net.NetworkInterface
-import java.util.*
 
 
-class LoginActivityViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
+class LoginActivityViewModel() : BaseViewModel<Any?>() {
     val registerButtonClicked = MutableLiveData<Boolean>()
     val isLoginSuccess = MutableLiveData<Boolean>().init(false)
     val mail = MutableLiveData<String>()
     val password = MutableLiveData<String>()
 
-    val loginClickListener = View.OnClickListener {
-        tryLogin()
-    }
+    val isChecked = MutableLiveData<Boolean>()
+
+    var userJson = MutableLiveData<String>()
+    var response = MutableLiveData<ThietBiResponse>()
+
+    lateinit var mqttHelper: MqttHelper
+    private var macAddress = ""
 
     val registerClickListener = View.OnClickListener {
         registerButtonClicked.value = true
+    }
+
+    init {
+        connectMqtt()
+    }
+
+    private fun connectMqtt() {
+        macAddress = getMacAddr()!!
+        mqttHelper = MqttHelper(MyApp.applicationContext())
+        macAddress.let {
+            mqttHelper.connect(it, messageCallBack = object : MqttHelper.MessageCallBack {
+                override fun onSuccess(message: String) {
+                    val baseResponse = fromJson<ThietBiResponse>(message)
+                    hideLoading()
+                    if ("0" == baseResponse.errorCode && "true" == baseResponse.result) {
+                        isLoginSuccess.set(true)
+//                        id = baseResponse.id!!
+//                        if (isChecked.get()!!)
+//                            saveUser()
+                            hideLoading()
+                        response.value = (baseResponse)
+                    } else {
+                        isLoginSuccess.set(false)
+                        hideLoading()
+                    }
+                }
+
+                override fun onError(error: Throwable) {
+                    errorMessage.set(error.toString())
+                }
+            })
+        }
     }
 
     fun showLoading() {
@@ -51,28 +70,20 @@ class LoginActivityViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
         loadingVisibility.value = View.INVISIBLE
     }
 
-    fun getAllUsers(): Single<QuerySnapshot> =
-        FirebaseCommon.getListDocument(USER_COLLECTION)
-
     @SuppressLint("CheckResult")
     fun tryLogin() {
         showLoading()
         if (password.get()!!.length > 5 && mail.get()!!.length > 5) {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(
-                mail.get()!!,
-                password.get()!!
-            ).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    isLoginSuccess.set(true)
-                    Log.d(TAG, "signInWithEmail:success")
-                } else {
-                    errorMessage.value = task.exception?.localizedMessage
-                    isLoginSuccess.set(false)
-                }
-                hideLoading()
+            val user = macAddress.let {
+                UserTest(
+                    mail.get()!!, password.get()!!, mac = macAddress
+                )
             }
+            userJson.value = (toJson(user))
+            mqttHelper.publishMessage("loginuser", toJson(user)!!).subscribe()
         } else {
-            errorMessage.value = MyApp.context.getString(R.string.require_length)
+            errorMessage.value =
+                getStringSrc(R.string.require_length)
         }
     }
 }

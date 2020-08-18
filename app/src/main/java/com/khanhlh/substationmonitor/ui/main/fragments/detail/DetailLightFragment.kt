@@ -13,7 +13,6 @@ import android.view.*
 import android.widget.*
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.R
 import com.khanhlh.substationmonitor.base.BaseDialogFragment
 import com.khanhlh.substationmonitor.databinding.DetailLightFragBinding
@@ -21,6 +20,7 @@ import com.khanhlh.substationmonitor.extensions.fromJson
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.extensions.toJson
 import com.khanhlh.substationmonitor.model.Lenh
+import com.khanhlh.substationmonitor.model.ThietBi
 import com.khanhlh.substationmonitor.model.ThietBiResponse
 import com.khanhlh.substationmonitor.mqtt.MqttHelper
 import com.yanzhenjie.wheel.OnWheelChangedListener
@@ -44,10 +44,10 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         const val REP_DELAY = 1L
     }
 
-    fun newInstance(idthietbi: String, iduser: String): DetailLightFragment {
+    fun newInstance(thietbi: ThietBi, iduser: String): DetailLightFragment {
         val args = Bundle()
 
-        args.putString("idthietbi", idthietbi)
+        args.putSerializable("thietbi", thietbi)
         args.putString("iduser", iduser)
 
         val fragment = DetailLightFragment()
@@ -60,7 +60,7 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
     }
 
     override fun initView() {
-        vm = DetailDeviceViewModel(MyApp())
+        vm = DetailDeviceViewModel()
         mBinding.vm = vm
 
         radioGroupListener()
@@ -138,7 +138,8 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
     private fun getBundleData() {
         val args = arguments
         args!!.let {
-            idthietbi = it.getString("idthietbi").toString().toUpperCase(Locale.getDefault())
+            val thietbi: ThietBi = it.getSerializable("thietbi") as ThietBi
+            idthietbi = thietbi.mathietbi.toUpperCase(Locale.getDefault())
             iduser = it.getString("iduser").toString()
         }
         idthietbi.let {
@@ -180,14 +181,13 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
                 lenh.lenh = "tat"
                 drawable.reverseTransition(100)
             }
-            publishMessage("P$idthietbi", toJson(lenh)!!)
+            logD(lightSwitch.isClickable.toString())
+            Handler().postDelayed({
+                publishMessage("P$idthietbi", toJson(lenh)!!)
+                logD(lightSwitch.isClickable.toString())
+                logD(toJson(lenh))
+            }, 1000)
         }
-        lightSwitch.isEnabled = false
-        Handler().postDelayed({
-            if (lightSwitch != null) {
-                lightSwitch.isEnabled = true
-            }
-        }, 1000)
     }
 
     override fun getLayoutId(): Int = R.layout.detail_light_frag
@@ -331,12 +331,13 @@ class DetailLightFragment : BaseDialogFragment<DetailLightFragBinding, DetailDev
         dialog.show()
     }
 
+    @SuppressLint("CheckResult")
     private fun publishMessage(topic: String, json: String) {
+        mqttHelper.publishMessage(topic, json)
+            .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
         mqttHelper.isConnected.observe(this, Observer<Boolean> {
             if (it) {
                 vm.hideLoading()
-                mqttHelper.publishMessage(topic, json)
-                    .subscribe({ logD(it.toString()) }, { logD(it.toString()) })
             } else {
                 vm.showLoading()
             }

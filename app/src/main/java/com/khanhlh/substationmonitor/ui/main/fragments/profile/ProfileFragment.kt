@@ -39,7 +39,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     override fun onFabClick() = toast(getTitle())
 
     override fun initView() {
-        vm = ProfileViewModel(MyApp())
+        vm = ProfileViewModel()
         mBinding.vm = vm
 
         includeLayoutListener()

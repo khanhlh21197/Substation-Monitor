@@ -74,7 +74,7 @@ class TempMonitoringService : LifecycleService(), Serializable {
                 intent.extras!!.getString("idDevice")
             Log.v("TempMonitoringService", "onStartCommand")
             startTimer()
-            val viewModel = HomeViewModel(MyApp())
+            val viewModel = HomeViewModel()
             if (idDevice != null) {
                 viewModel.observerAllDevices()
             }

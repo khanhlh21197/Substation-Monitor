@@ -66,7 +66,6 @@ class MqttHelper(private val context: Context) {
 
                 override fun onFailure(asyncActionToken: IMqttToken?, exception: Throwable?) {
                     logD("mqttHelper Connect Failed")
-                    isConnected.set(false)
                 }
             })
             client.setCallback(object : MqttCallbackExtended {

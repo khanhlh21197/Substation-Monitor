@@ -23,9 +23,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.khanhlh.substationmonitor.BuildConfig
+import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.exception.EmptyException
 import com.khanhlh.substationmonitor.helper.annotation.ToastType
 import com.khanhlh.substationmonitor.utils.KEY_SERIALIZABLE
@@ -371,3 +371,5 @@ fun createDialog(
         e.printStackTrace()
     }
 }
+
+fun getStringSrc(resId: Int): String = MyApp.applicationContext().getString(resId)

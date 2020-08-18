@@ -4,6 +4,7 @@ package com.khanhlh.substationmonitor.base
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.di.components.DaggerViewModelInjector
 import com.khanhlh.substationmonitor.di.components.ViewModelInjector
@@ -18,7 +19,7 @@ import com.khanhlh.substationmonitor.ui.main.fragments.room.RoomViewModel
 import com.khanhlh.substationmonitor.ui.register.RegisterActivityViewModel
 
 
-abstract class BaseViewModel<T>(app: MyApp) : AndroidViewModel(app) {
+abstract class BaseViewModel<T>() : ViewModel() {
 
     var loadingVisibility = MutableLiveData<Int>()
 

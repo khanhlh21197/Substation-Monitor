@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_margin="8dp"
-                    android:checked="false"
+                    android:checked="@{viewModel.isChecked}"
                     android:text="@string/save_user" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -154,6 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/login_bt_background"
+                        android:onClick="@{(v)->viewModel.tryLogin()}"
                         android:text="@string/login_uppercase"
                         android:textColor="@color/white"
                         app:layout_constraintEnd_toEndOf="parent"

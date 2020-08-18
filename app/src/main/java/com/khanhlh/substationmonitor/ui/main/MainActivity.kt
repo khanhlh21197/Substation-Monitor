@@ -45,7 +45,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     private lateinit var actionBarVM: BaseViewModel<Any>
 
     override fun initVariables() {
-        baseViewModel = MainViewModel(MyApp())
+        baseViewModel = MainViewModel()
         baseViewModel.attachView(this)
         baseViewModel =
             ViewModelProvider(this, ViewModelFactory(this)).get(MainViewModel::class.java)

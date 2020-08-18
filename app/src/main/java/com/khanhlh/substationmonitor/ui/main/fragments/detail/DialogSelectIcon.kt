@@ -105,7 +105,7 @@ class DialogSelectIcon : BaseDialogFragment<DialogSelectIconBinding, DeviceViewM
     }
 
     override fun initView() {
-        vm = DeviceViewModel(MyApp())
+        vm = DeviceViewModel()
 
         initListener()
         initAdapter()

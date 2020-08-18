@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
@@ -138,7 +139,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
-        vm = DeviceViewModel(MyApp())
+        vm = DeviceViewModel()
         mBinding.viewModel = vm
 
         initRecycler()
@@ -287,7 +288,7 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
                 logD(item.id)
             }
             R.id.card_view -> {
-                val lightDetail = DetailLightFragment().newInstance(item.mathietbi, iduser)
+                val lightDetail = DetailLightFragment().newInstance(item, iduser)
                 lightDetail.show(requireActivity().supportFragmentManager, "lightDetail")
 //                logD(item.id)
 //                val bundle = bundleOf("idthietbi" to item.mathietbi, "iduser" to iduser)
@@ -507,7 +508,9 @@ class DeviceFragment : BaseFragment<FragmentDeviceBinding, DeviceViewModel>(),
             item.trangthai = false
         }
         val idthietbi = item.mathietbi.toUpperCase(Locale.ROOT)
-        publishMessage("P$idthietbi", toJson(lenh)!!)
+        Handler().postDelayed({
+            publishMessage("P$idthietbi", toJson(lenh)!!)
+        }, 100)
     }
 
     override fun getTitle(): String {

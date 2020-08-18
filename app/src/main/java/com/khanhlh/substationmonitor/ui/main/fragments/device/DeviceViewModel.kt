@@ -1,19 +1,16 @@
 package com.khanhlh.substationmonitor.ui.main.fragments.device
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
-import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.enums.UpdateType
 import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
-import com.khanhlh.substationmonitor.model.Phong
 import com.khanhlh.substationmonitor.utils.*
 
-class DeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
+class DeviceViewModel() : BaseViewModel<Any>() {
     val list = ObservableArrayList<Device>()
     private val idSet = mutableSetOf<String>()
 

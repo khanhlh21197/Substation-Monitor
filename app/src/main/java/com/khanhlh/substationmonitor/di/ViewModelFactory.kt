@@ -15,13 +15,13 @@ class ViewModelFactory(private val activity: AppCompatActivity) : ViewModelProvi
         return when {
 
             modelClass.isAssignableFrom(LoginActivityViewModel::class.java) -> {
-                LoginActivityViewModel(MyApp()) as T
+                LoginActivityViewModel() as T
             }
             modelClass.isAssignableFrom(RegisterActivityViewModel::class.java) -> {
-                RegisterActivityViewModel(MyApp()) as T
+                RegisterActivityViewModel() as T
             }
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(MyApp()) as T
+                MainViewModel() as T
             }
             else -> throw IllegalArgumentException("Unknown class name")
         }

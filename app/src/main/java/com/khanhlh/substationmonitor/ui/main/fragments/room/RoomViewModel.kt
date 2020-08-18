@@ -3,7 +3,6 @@ package com.khanhlh.substationmonitor.ui.main.fragments.room
 import android.annotation.SuppressLint
 import android.view.View
 import androidx.databinding.ObservableArrayList
-import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.api.FirebaseCommon
 import com.khanhlh.substationmonitor.base.BaseViewModel
 import com.khanhlh.substationmonitor.enums.UpdateType
@@ -11,7 +10,7 @@ import com.khanhlh.substationmonitor.extensions.logD
 import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.utils.*
 
-class RoomViewModel(app: MyApp) : BaseViewModel<Any>(app) {
+class RoomViewModel() : BaseViewModel<Any>() {
     val list = ObservableArrayList<Device>()
     private val idSet = mutableSetOf<String>()
 

@@ -65,7 +65,7 @@ class RoomFragment : BaseFragment<FragmentRoomBinding, RoomViewModel>(),
     }
 
     override fun initView() {
-        vm = RoomViewModel(MyApp())
+        vm = RoomViewModel()
         mBinding.viewModel = vm
 
         initRecycler()

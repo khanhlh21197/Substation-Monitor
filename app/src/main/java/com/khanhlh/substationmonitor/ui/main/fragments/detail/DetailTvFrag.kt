@@ -26,7 +26,7 @@ class DetailTvFrag : BaseFragment<DetailTvFragBinding, DetailDeviceViewModel>(),
     }
 
     override fun initView() {
-        vm = DetailDeviceViewModel(MyApp())
+        vm = DetailDeviceViewModel()
         mBinding.vm = vm
         getBundleData()
     }

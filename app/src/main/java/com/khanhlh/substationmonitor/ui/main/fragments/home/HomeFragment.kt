@@ -75,7 +75,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(),
     }
 
     override fun initView() {
-        vm = HomeViewModel(MyApp())
+        vm = HomeViewModel()
         mBinding.viewModel = vm
 
         initRecycler()

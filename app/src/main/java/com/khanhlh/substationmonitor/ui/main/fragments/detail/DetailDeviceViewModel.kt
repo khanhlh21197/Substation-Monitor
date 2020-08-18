@@ -15,12 +15,12 @@ import com.khanhlh.substationmonitor.model.Device
 import com.khanhlh.substationmonitor.utils.*
 import io.reactivex.disposables.Disposable
 
-class DetailDeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
+class DetailDeviceViewModel() : BaseViewModel<Any>() {
     val device = MutableLiveData<Device>()
     val isFlashing = MutableLiveData<Boolean>().init(false)
     val visibility = MutableLiveData<Int>().init(View.GONE)
     val threshold = MutableLiveData<String>().init("")
-    val fabClick = View.OnClickListener {  }
+    val fabClick = View.OnClickListener { }
 
     fun observerDevice(id: String): Disposable = FirebaseCommon.observerDevice(id).subscribe({
         var name = ""
@@ -55,11 +55,21 @@ class DetailDeviceViewModel(app: MyApp) : BaseViewModel<Any>(app) {
     fun updateThreshold(id: String) {
         if (threshold.get() != null) {
             FirebaseCommon.update(DEVICES, id, THRESHOLD, threshold.get()!!).subscribe(
-                { errorMessage.set(MyApp.context.getString(R.string.configure_threshold_success)) },
-                { errorMessage.set(MyApp.context.getString(R.string.configure_threshold_fail)) }
+                {
+                    errorMessage.set(
+                        MyApp.applicationContext().getString(R.string.configure_threshold_success)
+                    )
+                },
+                {
+                    errorMessage.set(
+                        MyApp.applicationContext().getString(R.string.configure_threshold_fail)
+                    )
+                }
             )
         } else {
-            errorMessage.set(MyApp.context.getString(R.string.configure_threshold_success))
+            errorMessage.set(
+                MyApp.applicationContext().getString(R.string.configure_threshold_success)
+            )
         }
     }
 

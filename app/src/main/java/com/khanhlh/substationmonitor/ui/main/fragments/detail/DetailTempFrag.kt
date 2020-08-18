@@ -15,7 +15,7 @@ class DetailTempFrag : BaseFragment<DetailTempFragBinding, DetailDeviceViewModel
     override fun onFabClick() = toast(getTitle())
 
     override fun initView() {
-        vm = DetailDeviceViewModel(MyApp())
+        vm = DetailDeviceViewModel()
         mBinding.vm = vm
         getBundleData()
     }

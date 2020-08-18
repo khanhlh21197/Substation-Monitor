@@ -54,6 +54,10 @@ abstract class BaseViewAdapter<T>(context: Context, private val list: Observable
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     override fun getItemCount(): Int = list.size
 
     fun getItem(position: Int): T? = list[position]

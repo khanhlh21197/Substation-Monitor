@@ -2,11 +2,9 @@ package com.khanhlh.substationmonitor.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.khanhlh.substationmonitor.MyApp
 import com.khanhlh.substationmonitor.base.BaseViewModel
 
-class MainViewModel(app: MyApp) : BaseViewModel<Any?>(app) {
+class MainViewModel() : BaseViewModel<Any?>() {
     private val _title = MutableLiveData<String>()
     val title: LiveData<String>
         get() = _title
